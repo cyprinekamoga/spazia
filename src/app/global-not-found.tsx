@@ -1,5 +1,5 @@
 import "@fontsource-variable/inter";
-import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/fraunces/opsz.css";
 import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -18,8 +18,8 @@ export default function GlobalNotFound() {
     <html lang="sv">
       <body className="flex min-h-dvh items-center justify-center bg-snow p-6">
         <main className="w-full max-w-lg text-center">
-          <Link href="/" aria-label="Spazia" className="inline-block">
-            <LogoMark className="mx-auto h-14 w-14" />
+          <Link prefetch={false} href="/" aria-label="Spazia" className="inline-block">
+            <LogoMark className="mx-auto h-16 w-auto" id="logo-404" />
           </Link>
           <p className="font-display mt-6 text-6xl font-extrabold text-night">404</p>
           <h1 className="mt-4 text-2xl font-bold text-night">{sv.notFound.title}</h1>
@@ -28,10 +28,10 @@ export default function GlobalNotFound() {
             {en.notFound.title}. {en.notFound.text}
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/" className="btn btn-primary">
+            <Link prefetch={false} href="/" className="btn btn-primary">
               {sv.notFound.home}
             </Link>
-            <Link href="/en" className="btn btn-secondary" lang="en">
+            <Link prefetch={false} href="/en" className="btn btn-secondary" lang="en">
               {en.notFound.home}
             </Link>
           </div>

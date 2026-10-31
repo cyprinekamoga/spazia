@@ -1,5 +1,5 @@
 import "@fontsource-variable/inter";
-import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/fraunces/opsz.css";
 import "@/app/globals.css";
 import type { ReactNode } from "react";
 import { getDictionary } from "@/content";

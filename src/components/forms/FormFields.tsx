@@ -56,6 +56,7 @@ export function TextField({
         aria-describedby={describedBy}
         className="field-input"
         maxLength={200}
+        enterKeyHint="next"
       />
       {hint && (
         <p id={`${id}-hint`} className="mt-1.5 text-sm text-muted">
@@ -163,7 +164,7 @@ export function ChoiceGroup({
                 className="peer sr-only"
                 {...controlledProps}
               />
-              <span className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-line bg-paper px-3.5 py-2 text-[0.95rem] font-medium text-ink transition-colors peer-hover:border-frost-2 peer-checked:border-night peer-checked:bg-night peer-checked:text-white peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ember-soft">
+              <span className="inline-flex min-h-11 items-center gap-2 rounded-full border-[1.5px] border-line bg-paper px-4 py-2 text-[0.95rem] font-medium text-ink transition-colors peer-hover:border-frost-2 peer-checked:border-night peer-checked:bg-night peer-checked:text-white peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-bright">
                 {o.icon}
                 {o.label}
               </span>
@@ -209,7 +210,7 @@ export function ConsentField({ children, error }: { children: ReactNode; error?:
           value="yes"
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? "f-consent-error" : undefined}
-          className="mt-0.5 h-5 w-5 shrink-0 accent-[#b94e17]"
+          className="mt-0.5 h-5 w-5 shrink-0 accent-[#2f6b75]"
         />
         <span className="text-[0.95rem] leading-relaxed text-ink">{children}</span>
       </label>

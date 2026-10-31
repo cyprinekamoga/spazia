@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Minus, Plus } from "lucide-react";
 import type { Dictionary } from "@/content";
 import { categories, type CategoryId } from "@/content/categories";
 import { hostPayout, renterPrice, roundForDisplay } from "@/content/pricing";
 import { fill, formatNumber, type Lang } from "@/lib/i18n";
 import { categoryIcons } from "./Icons";
+import { publishEstimate } from "./MobileActionBar";
 
 type Counts = Record<CategoryId, number>;
 
@@ -36,6 +37,11 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
     return { hostTotal: roundForDisplay(host), renterTotal: roundForDisplay(renter) };
   }, [counts, heated]);
 
+  // Share the estimate with the sticky action bar on phones.
+  useEffect(() => {
+    publishEstimate(hostTotal > 0 ? formatNumber(hostTotal, lang) : null);
+  }, [hostTotal, lang]);
+
   const change = (id: CategoryId, delta: number, max: number) => {
     setActivePreset(null);
     setCounts((prev) => ({ ...prev, [id]: Math.min(max, Math.max(0, prev[id] + delta)) }));
@@ -51,7 +57,7 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.35fr_1fr]">
-      <div className="card p-5 sm:p-6">
+      <div className="card p-4 sm:p-6">
         <p className="text-sm font-semibold text-muted">{c.presetsLabel}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {presets.map((p) => (
@@ -60,7 +66,7 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
               type="button"
               aria-pressed={activePreset === p.key}
               onClick={() => applyPreset(p)}
-              className="rounded-full border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-night/40 aria-pressed:border-night aria-pressed:bg-night aria-pressed:text-white"
+              className="min-h-10 rounded-full border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-night/40 aria-pressed:border-night aria-pressed:bg-night aria-pressed:text-white"
             >
               {c.presets[p.key]}
             </button>
@@ -75,7 +81,7 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
             return (
               <li key={cat.id} className="flex items-center justify-between gap-3 py-3">
                 <span className="flex min-w-0 items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-glow-soft text-ember">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand">
                     <Icon size={22} />
                   </span>
                   <span className="min-w-0">
@@ -92,7 +98,7 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
                     onClick={() => change(cat.id, -1, cat.maxUnits)}
                     disabled={n === 0}
                     aria-label={fill(c.decrease, { unit: unitLabel })}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-night transition-colors hover:border-night disabled:opacity-35 disabled:hover:border-line"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-night transition-colors hover:border-night disabled:opacity-35 disabled:hover:border-line"
                   >
                     <Minus size={16} aria-hidden="true" />
                   </button>
@@ -104,7 +110,7 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
                     onClick={() => change(cat.id, 1, cat.maxUnits)}
                     disabled={n >= cat.maxUnits}
                     aria-label={fill(c.increase, { unit: unitLabel })}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-night transition-colors hover:border-night disabled:opacity-35 disabled:hover:border-line"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-night transition-colors hover:border-night disabled:opacity-35 disabled:hover:border-line"
                   >
                     <Plus size={16} aria-hidden="true" />
                   </button>
@@ -122,7 +128,7 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
               setHeated(e.target.checked);
               setActivePreset(null);
             }}
-            className="mt-1 h-5 w-5 shrink-0 accent-[#b94e17]"
+            className="mt-1 h-5 w-5 shrink-0 accent-[#2f6b75]"
           />
           <span>
             <span className="block font-semibold text-night">{c.heatedLabel}</span>
@@ -132,7 +138,7 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
       </div>
 
       <div className="relative overflow-hidden rounded-[1.25rem] bg-night p-6 text-white sm:p-8 lg:sticky lg:top-24 lg:self-start">
-        <div aria-hidden="true" className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-[#3ee6b0]/15 blur-3xl" />
+        <div aria-hidden="true" className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-brand-bright/30 blur-3xl" />
         <div className="relative" aria-live="polite">
           <p className="text-frost-2">{c.resultLabel}</p>
           {hostTotal > 0 ? (
@@ -152,7 +158,7 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
             <p className="mt-2 text-lg text-frost">{c.empty}</p>
           )}
           <p className="mt-4 border-t border-white/10 pt-4 text-sm leading-relaxed text-frost-2">{c.feeNote}</p>
-          <Link href={formHref} className="btn btn-primary mt-6 w-full">
+          <Link prefetch={false} href={formHref} className="btn btn-primary mt-6 w-full">
             {c.cta}
             <ArrowRight size={18} aria-hidden="true" />
           </Link>

@@ -68,7 +68,7 @@ export function CookieConsent({ lang, t }: { lang: Lang; t: Dictionary }) {
           <div className="mx-auto flex max-w-3xl flex-col gap-3 rounded-2xl border border-line bg-paper p-4 shadow-[0_10px_40px_-10px_rgb(14_27_51/0.35)] sm:flex-row sm:items-center sm:gap-5 sm:p-5">
             <p className="text-[0.95rem] leading-relaxed text-ink">
               {t.cookie.text}{" "}
-              <Link href={pagePath("privacy", lang)} className="font-medium underline underline-offset-4">
+              <Link prefetch={false} href={pagePath("privacy", lang)} className="font-medium underline underline-offset-4">
                 {t.cookie.readMore}
               </Link>
             </p>

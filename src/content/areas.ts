@@ -1,4 +1,5 @@
 import type { L10n } from "@/lib/i18n";
+import type { PhotoKey } from "./photos";
 
 export type AreaId = "gammelstad" | "bergnaset" | "sunderbyn" | "porson" | "bjorkskatan" | "centrum";
 
@@ -11,6 +12,8 @@ export interface Area {
    * "renter": mostly flats and students – we mainly find renters here.
    */
   focus: "host" | "renter";
+  /** Hero photo – generic Norrbotten/Luleå scenery, not the area itself. */
+  photo: PhotoKey;
   intro: L10n;
   renterPitch: L10n;
   hostPitch: L10n;
@@ -19,6 +22,7 @@ export interface Area {
 export const areas: Area[] = [
   {
     id: "gammelstad",
+    photo: "house-harads",
     slug: "gammelstad",
     name: "Gammelstad",
     focus: "host",
@@ -37,6 +41,7 @@ export const areas: Area[] = [
   },
   {
     id: "bergnaset",
+    photo: "garage-field",
     slug: "bergnaset",
     name: "Bergnäset",
     focus: "host",
@@ -55,6 +60,7 @@ export const areas: Area[] = [
   },
   {
     id: "sunderbyn",
+    photo: "house-harads",
     slug: "sunderbyn",
     name: "Sunderbyn",
     focus: "host",
@@ -73,6 +79,7 @@ export const areas: Area[] = [
   },
   {
     id: "porson",
+    photo: "lulea-sunset",
     slug: "porson",
     name: "Porsön",
     focus: "renter",
@@ -91,6 +98,7 @@ export const areas: Area[] = [
   },
   {
     id: "bjorkskatan",
+    photo: "garage-night",
     slug: "bjorkskatan",
     name: "Björkskatan",
     focus: "renter",
@@ -109,6 +117,7 @@ export const areas: Area[] = [
   },
   {
     id: "centrum",
+    photo: "lulea-sunset",
     slug: "centrum",
     name: "Centrum",
     focus: "renter",

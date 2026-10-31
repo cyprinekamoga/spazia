@@ -18,6 +18,13 @@ Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-
 - **Lead capture:** forms go to Netlify Forms by default, or to Supabase once it is configured (see below). Every lead stores its UTM source, campaign, referrer and landing page.
 - **Meta Pixel:** loads only after cookie consent and fires a `Lead` event (`content_category: host | renter`) on each successful form.
 - **Fully static:** `next build` exports plain HTML to `out/`.
+- **Mobile first:**
+  - Full-bleed photo heroes with the text at thumb height.
+  - Swipeable category and season rows.
+  - Step timelines.
+  - A sticky action bar on phones. It hides while the form is on screen and shows the live calculator estimate on the host page.
+  - Tap targets of at least 44 px.
+  - Responsive WebP photos, so a phone downloads about 600 KB of images for the whole home page.
 
 ## Develop
 
@@ -35,6 +42,27 @@ npm run build      # static export to ./out
 
 ```bash
 npm run lint && npm run typecheck
+```
+
+## Brand
+
+| What | Details |
+|---|---|
+| Logo | Vector recreation of the Spazia mark (house, shield, keyhole; teal `#3f7c86` → slate `#243848`). The "Spazia" wordmark is Poppins SemiBold converted to outlines. Lives in `src/components/Logo.tsx` + `logoPaths.ts`; favicon in `src/app/icon.svg`. |
+| Fonts | The same pairing as Neighbor: an editorial serif for headings and **Inter** for text. Neighbor's heading font, GT Ultra, is a paid font (Grilli Type), so the site uses **Fraunces**, a free look-alike, via `@fontsource-variable/fraunces`. If you buy a GT Ultra licence, add its `@font-face` and put it first in `--font-display` in `src/app/globals.css`. |
+| Colours | Taken from the logo. Tokens are in `src/app/globals.css` (`--color-brand`, `--color-night` …). |
+
+## Photos
+
+- **Licence:** all photos are from [Unsplash](https://unsplash.com/license), free for commercial use. Credits are listed on the About page (`/om-oss#bildkallor`).
+- **Captions and credits:** in `src/content/photos.ts`.
+- **Replace a photo** (e.g. with your own pictures from inspections):
+  1. Put a JPG with the same name in `photos-src/` (git-ignored).
+  2. Run the command below. It writes WebP files in five sizes to `public/images/` and updates `src/content/photo-manifest.json`.
+  3. Update the credit in `src/content/photos.ts`.
+
+```bash
+npm run images
 ```
 
 ## Where to change things
@@ -87,5 +115,5 @@ https://spazia.se/en/find-storage?vad=boxes&utm_source=campus&utm_medium=poster&
 - [ ] Company name and org.nr in `src/lib/site.ts`. They are shown in the privacy policy.
 - [ ] Set up the `hej@spazia.se` mailbox, or change the address in `src/lib/site.ts`.
 - [ ] Point the `spazia.se` DNS to Netlify.
-- [ ] Replace the illustration with real photos of Luleå garages after the first inspections.
+- [ ] Swap stock photos for your own pictures of Luleå garages after the first inspections (see *Photos*).
 - [ ] Have the copy about tax, insurance and the standard agreement reviewed.

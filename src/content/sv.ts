@@ -23,6 +23,13 @@ export const sv = {
     yes: "Ja",
     no: "Nej",
   },
+  actionBar: {
+    find: "Hitta förvaring",
+    host: "Hyr ut din plats",
+    hostForm: "Anmäl utrymme",
+    renterForm: "Anmäl intresse",
+    estimate: "Du får ca",
+  },
   nav: {
     find: "Hitta förvaring",
     host: "Bli värd",
@@ -32,13 +39,13 @@ export const sv = {
   },
   hero: {
     title: "Det finns plats hos grannen.",
-    lead: "Spazia hjälper dig att förvara däck, skidor, skoter och flyttlådor i torra garage och förråd hos villaägare i Luleå. Billigare än förrådsföretagen, närmare än industriområdet och tryggt med BankID, standardavtal och automatisk betalning.",
+    lead: "Förvara däck, skidor, skoter och flyttlådor i torra garage hos villaägare i Luleå. Billigare än förrådsföretagen och tryggt med BankID, avtal och automatisk betalning.",
     ctaFind: "Jag behöver förvaring",
     ctaHost: "Jag har plats över",
     chipsLabel: "Vad vill du förvara?",
     trustline: ["Verifiering med BankID", "Standardavtal", "Ingen bindningstid"],
     illustrationAlt:
-      "Illustration av en röd villa en vinterkväll med öppet, upplyst garage där däck, skidor och lådor förvaras.",
+      "Ett upplyst garage en snöig vinterkväll – Spazia, förvaring hos grannen i Luleå.",
   },
   categoriesSection: {
     title: "Vad vill du förvara?",
@@ -248,6 +255,7 @@ export const sv = {
     contact: "Kontakt",
     privacy: "Integritetspolicy",
     cookies: "Cookieinställningar",
+    credits: "Bildkällor",
     rights: "Alla rättigheter förbehållna.",
   },
   hostPage: {
@@ -404,6 +412,8 @@ export const sv = {
       "I villaområden som Gammelstad, Bergnäset och Sunderbyn finns samtidigt garage, källare och uthus med plats över. Spazia kopplar ihop de två, med BankID, standardavtal och automatisk betalning. Det ska kännas lika tryggt som ett förrådsföretag, men vara närmare och billigare.",
       "Spazia drivs av ett litet team i Luleå. Vi besöker själva varje utrymme innan det publiceras, och vi svarar själva när du hör av dig.",
     ],
+    creditsTitle: "Bildkällor",
+    creditsText: "Fotona kommer från Unsplash och används enligt Unsplash-licensen. Tack till fotograferna:",
     contactTitle: "Hör av dig",
     contactText: "Frågor, idéer eller vill du samarbeta? Mejla oss så svarar vi så snart vi kan.",
   },

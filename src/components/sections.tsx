@@ -4,10 +4,12 @@ import type { ReactNode } from "react";
 import type { Dictionary } from "@/content";
 import { areas, type Area } from "@/content/areas";
 import { categories, type Category } from "@/content/categories";
+import type { PhotoKey } from "@/content/photos";
 import { hostPayout, roundForDisplay } from "@/content/pricing";
 import { fill, formatNumber, type Lang } from "@/lib/i18n";
 import { areaPath, categoryPath, pagePath } from "@/lib/routes";
 import { categoryIcons, seasonIcons, trustIcons, whyIcons } from "./Icons";
+import { Photo } from "./Photo";
 
 /* ---------- Layout helpers ---------- */
 
@@ -26,10 +28,10 @@ export function Section({
     snow: "bg-snow",
     paper: "bg-paper",
     night: "bg-night text-white",
-    frost: "bg-frost/60",
+    frost: "bg-frost/70",
   };
   return (
-    <section id={id} className={`${tones[tone]} py-16 sm:py-20 ${className}`}>
+    <section id={id} className={`${tones[tone]} py-12 sm:py-20 ${className}`}>
       <div className="container-page">{children}</div>
     </section>
   );
@@ -51,36 +53,58 @@ export function SectionHeading({
   return (
     <div className={`max-w-2xl ${align === "center" ? "mx-auto text-center" : ""}`}>
       {eyebrow && <span className={`eyebrow ${onDark ? "!text-glow" : ""}`}>{eyebrow}</span>}
-      <h2 className={`mt-2 text-3xl font-bold sm:text-4xl ${onDark ? "text-white" : "text-night"}`}>{title}</h2>
+      <h2 className={`mt-1.5 text-[1.85rem] leading-tight sm:text-4xl ${onDark ? "text-white" : "text-night"}`}>{title}</h2>
       {lead && (
-        <p className={`mt-4 text-lg leading-relaxed ${onDark ? "text-frost-2" : "text-muted"}`}>{lead}</p>
+        <p className={`mt-3 text-[1.05rem] leading-relaxed sm:mt-4 sm:text-lg ${onDark ? "text-frost-2" : "text-muted"}`}>{lead}</p>
       )}
     </div>
   );
 }
 
-export function PageHero({
+/**
+ * Full-bleed photo hero. On phones the text sits at the bottom of a tall
+ * photo (thumb-friendly); on larger screens it is vertically centred.
+ */
+export function PhotoHero({
+  photo,
+  lang,
   eyebrow,
   title,
   lead,
   children,
+  size = "page",
+  imageClassName = "",
 }: {
-  eyebrow: string;
+  photo: PhotoKey;
+  lang: Lang;
+  eyebrow?: ReactNode;
   title: string;
-  lead: string;
+  lead?: string;
   children?: ReactNode;
+  size?: "home" | "page";
+  /** Extra classes for the photo, e.g. to shift it up on phones. */
+  imageClassName?: string;
 }) {
+  const heights =
+    size === "home"
+      ? "min-h-[calc(100svh-3.5rem)] max-h-[54rem] sm:min-h-[36rem] lg:min-h-[40rem]"
+      : "min-h-[30rem] sm:min-h-[26rem] lg:min-h-[30rem]";
   return (
-    <section className="relative overflow-hidden bg-night text-white">
+    <section className={`relative isolate flex overflow-hidden bg-night text-white ${heights}`}>
+      <Photo name={photo} lang={lang} sizes="100vw" priority className={`absolute inset-0 -z-20 h-full w-full ${imageClassName}`} />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-32 right-[-10%] h-80 w-[60%] rounded-full bg-[#3ee6b0]/15 blur-3xl"
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-night from-30% via-night/60 via-60% to-night/0 sm:bg-gradient-to-r sm:from-night/90 sm:from-0% sm:via-night/55 sm:to-night/5"
       />
-      <div className="container-page relative py-14 sm:py-20">
-        <span className="eyebrow !text-glow">{eyebrow}</span>
-        <h1 className="mt-3 max-w-3xl text-4xl font-bold sm:text-5xl">{title}</h1>
-        <p className="mt-5 max-w-2xl text-lg leading-relaxed text-frost-2">{lead}</p>
-        {children && <div className="mt-8 flex flex-wrap gap-3">{children}</div>}
+      <div className="container-page flex w-full flex-col justify-end pt-24 pb-8 sm:justify-center sm:py-16">
+        <div className="max-w-2xl">
+          {eyebrow && <div className="mb-3">{eyebrow}</div>}
+          <h1 className={`${size === "home" ? "text-[2.6rem] sm:text-6xl" : "text-[2.25rem] sm:text-5xl"} leading-[1.05] text-white`}>
+            {title}
+          </h1>
+          {lead && <p className="mt-4 max-w-xl text-[1.05rem] leading-relaxed text-frost sm:text-lg">{lead}</p>}
+          {children && <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">{children}</div>}
+        </div>
       </div>
     </section>
   );
@@ -95,46 +119,48 @@ export function priceLabel(category: Category, lang: Lang, t: Dictionary) {
 export function CategoryCard({ category, lang, t }: { category: Category; lang: Lang; t: Dictionary }) {
   const Icon = categoryIcons[category.id];
   return (
-    <Link
+    <Link prefetch={false}
       href={categoryPath(category.slug, lang)}
-      className="group card flex h-full flex-col p-5 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-night/30 hover:shadow-[0_12px_30px_-18px_rgb(14_27_51/0.5)]"
+      className="group card flex h-full flex-col overflow-hidden transition-[border-color,box-shadow] hover:border-night/25 hover:shadow-[0_14px_30px_-20px_rgb(29_51_64/0.6)]"
     >
-      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-glow-soft text-ember">
-        <Icon size={26} />
-      </span>
-      <h3 className="mt-4 text-xl font-bold text-night">{category.name[lang]}</h3>
-      <p className="mt-1.5 flex-1 text-[0.95rem] leading-relaxed text-muted">{category.short[lang]}</p>
-      <p className="mt-4 flex items-center justify-between gap-2 border-t border-line pt-4 text-[0.95rem]">
-        <span>
-          <span className="font-semibold text-night">{priceLabel(category, lang, t)}</span>
-          <span className="text-muted">
-            {" "}
-            · {t.categoriesSection.per} {category.unit[lang]}
-          </span>
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <Photo
+          name={category.photo}
+          lang={lang}
+          sizes="(min-width: 1024px) 360px, (min-width: 640px) 46vw, 78vw"
+          className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]"
+        />
+        <span className="absolute top-3 left-3 flex h-9 w-9 items-center justify-center rounded-full bg-paper/95 text-brand shadow-sm">
+          <Icon size={19} />
         </span>
-        <ArrowRight size={18} className="shrink-0 text-ember transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-      </p>
+      </div>
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <h3 className="text-lg text-night">{category.name[lang]}</h3>
+        <p className="mt-1 flex-1 text-[0.95rem] leading-snug text-muted">{category.short[lang]}</p>
+        <p className="mt-3 flex items-center justify-between gap-2 text-[0.95rem]">
+          <span>
+            <span className="font-semibold text-night">{priceLabel(category, lang, t)}</span>
+            <span className="text-muted"> · {category.unit[lang]}</span>
+          </span>
+          <ArrowRight size={18} className="shrink-0 text-brand transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+        </p>
+      </div>
     </Link>
   );
 }
 
-export function CategoryGrid({
-  lang,
-  t,
-  exclude,
-}: {
-  lang: Lang;
-  t: Dictionary;
-  exclude?: string;
-}) {
+/** Swipe row on phones, grid from lg. */
+export function CategoryGrid({ lang, t, exclude }: { lang: Lang; t: Dictionary; exclude?: string }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="swipe-row lg:mx-0 lg:grid lg:grid-flow-row lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:px-0">
       {categories
         .filter((c) => c.id !== exclude)
         .map((c) => (
-          <CategoryCard key={c.id} category={c} lang={lang} t={t} />
+          <li key={c.id}>
+            <CategoryCard category={c} lang={lang} t={t} />
+          </li>
         ))}
-    </div>
+    </ul>
   );
 }
 
@@ -142,16 +168,16 @@ export function CategoryGrid({
 
 export function WhyGrid({ t }: { t: Dictionary }) {
   return (
-    <div className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-x-4 gap-y-7 lg:grid-cols-4 lg:gap-x-8">
       {t.why.items.map((item, i) => {
         const Icon = whyIcons[i];
         return (
           <div key={item.title}>
-            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-night text-glow">
-              <Icon size={22} aria-hidden="true" />
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-brand sm:h-11 sm:w-11">
+              <Icon size={20} aria-hidden="true" />
             </span>
-            <h3 className="mt-4 text-xl font-bold text-night">{item.title}</h3>
-            <p className="mt-2 leading-relaxed text-muted">{item.text}</p>
+            <h3 className="mt-3 text-lg text-night">{item.title}</h3>
+            <p className="mt-1 text-[0.95rem] leading-snug text-muted sm:text-base sm:leading-relaxed">{item.text}</p>
           </div>
         );
       })}
@@ -161,23 +187,23 @@ export function WhyGrid({ t }: { t: Dictionary }) {
 
 export function SeasonsGrid({ t }: { t: Dictionary }) {
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <ul className="swipe-row md:mx-0 md:grid md:grid-flow-row md:grid-cols-3 md:gap-4 md:overflow-visible md:px-0">
       {t.seasons.items.map((s, i) => {
         const Icon = seasonIcons[i];
         return (
-          <div key={s.name} className="rounded-2xl border border-white/10 bg-night-2 p-6">
+          <li key={s.name} className="rounded-2xl border border-white/10 bg-night-2 p-5 sm:p-6">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-2.5">
                 <Icon size={22} className="text-glow" aria-hidden="true" />
-                <h3 className="text-xl font-bold text-white">{s.name}</h3>
+                <h3 className="text-xl text-white">{s.name}</h3>
               </span>
               <span className="rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-frost">{s.months}</span>
             </div>
-            <p className="mt-4 leading-relaxed text-frost-2">{s.text}</p>
-          </div>
+            <p className="mt-3 leading-relaxed text-frost-2">{s.text}</p>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }
 
@@ -192,22 +218,28 @@ export function exampleGarageIncome(): number {
 
 export function HostTeaser({ lang, t }: { lang: Lang; t: Dictionary }) {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-night px-6 py-10 text-white sm:px-10 sm:py-14">
-      <div aria-hidden="true" className="pointer-events-none absolute -right-20 -bottom-24 h-72 w-72 rounded-full bg-[#3ee6b0]/15 blur-3xl" />
-      <div className="relative grid items-center gap-8 lg:grid-cols-[1.5fr_1fr]">
-        <div>
-          <span className="eyebrow !text-glow">{t.hostTeaser.eyebrow}</span>
-          <h2 className="mt-2 text-3xl font-bold sm:text-4xl">{t.hostTeaser.title}</h2>
-          <p className="mt-4 max-w-xl text-lg leading-relaxed text-frost-2">
-            {fill(t.hostTeaser.lead, { amount: formatNumber(exampleGarageIncome(), lang) })}
+    <div className="overflow-hidden rounded-3xl bg-night text-white lg:grid lg:grid-cols-2">
+      <div className="relative aspect-[4/3] lg:order-2 lg:aspect-auto">
+        <Photo name="house-harads" lang={lang} sizes="(min-width: 1024px) 50vw, 100vw" className="absolute inset-0 h-full w-full" />
+        <div className="absolute bottom-3 left-3 rounded-2xl bg-paper px-4 py-3 text-night shadow-lg">
+          <p className="text-xs font-semibold text-muted">{t.calculator.resultLabel}</p>
+          <p className="font-display text-2xl font-bold">
+            {formatNumber(exampleGarageIncome(), lang)} <span className="font-sans text-sm font-semibold text-muted">{t.common.perMonth}</span>
           </p>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row lg:flex-col lg:items-end">
-          <Link href={`${pagePath("host", lang)}#kalkylator`} className="btn btn-primary">
+      </div>
+      <div className="px-5 py-7 sm:px-10 sm:py-12">
+        <span className="eyebrow !text-glow">{t.hostTeaser.eyebrow}</span>
+        <h2 className="mt-1.5 text-[1.85rem] leading-tight text-white sm:text-4xl">{t.hostTeaser.title}</h2>
+        <p className="mt-3 text-[1.05rem] leading-relaxed text-frost-2 sm:text-lg">
+          {fill(t.hostTeaser.lead, { amount: formatNumber(exampleGarageIncome(), lang) })}
+        </p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <Link prefetch={false} href={`${pagePath("host", lang)}#kalkylator`} className="btn btn-light">
             {t.hostTeaser.cta}
             <ArrowRight size={18} aria-hidden="true" />
           </Link>
-          <Link href={`${pagePath("host", lang)}#anmalan`} className="btn btn-on-dark">
+          <Link prefetch={false} href={`${pagePath("host", lang)}#anmalan`} className="btn btn-on-dark">
             {t.hostPage.ctaForm}
           </Link>
         </div>
@@ -218,22 +250,25 @@ export function HostTeaser({ lang, t }: { lang: Lang; t: Dictionary }) {
 
 /* ---------- Trust ---------- */
 
+/** Compact rows on phones, cards from sm. */
 export function TrustGrid({ t }: { t: Dictionary }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="divide-y divide-line rounded-2xl border border-line bg-paper sm:grid sm:grid-cols-2 sm:gap-4 sm:divide-y-0 sm:border-0 sm:bg-transparent lg:grid-cols-3">
       {t.trust.items.map((item) => {
         const Icon = trustIcons[item.icon];
         return (
-          <div key={item.title} className="card p-6">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-pine-soft text-pine">
-              <Icon size={22} aria-hidden="true" />
+          <li key={item.title} className="flex gap-4 p-4 sm:card sm:block sm:p-6">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pine-soft text-pine sm:h-11 sm:w-11">
+              <Icon size={21} aria-hidden="true" />
             </span>
-            <h3 className="mt-4 text-lg font-bold text-night">{item.title}</h3>
-            <p className="mt-2 leading-relaxed text-muted">{item.text}</p>
-          </div>
+            <div className="min-w-0">
+              <h3 className="text-base text-night sm:mt-4 sm:text-lg">{item.title}</h3>
+              <p className="mt-0.5 text-[0.95rem] leading-snug text-muted sm:mt-2 sm:text-base sm:leading-relaxed">{item.text}</p>
+            </div>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }
 
@@ -251,24 +286,24 @@ export function AreaChips({
   showFocus?: boolean;
 }) {
   return (
-    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-3">
       {areas
         .filter((a) => a.id !== exclude)
         .map((a: Area) => (
           <li key={a.id}>
-            <Link
+            <Link prefetch={false}
               href={areaPath(a.slug, lang)}
-              className="group card flex items-center justify-between gap-3 px-5 py-4 transition-colors hover:border-night/30"
+              className="group card flex h-full items-center justify-between gap-2 px-4 py-3.5 transition-colors hover:border-night/30 sm:px-5 sm:py-4"
             >
-              <span>
-                <span className="block text-lg font-bold text-night">{a.name}</span>
+              <span className="min-w-0">
+                <span className="block font-semibold text-night sm:text-lg">{a.name}</span>
                 {showFocus && (
-                  <span className={`text-sm font-medium ${a.focus === "host" ? "text-ember" : "text-pine"}`}>
+                  <span className={`block text-[0.8rem] font-medium sm:text-sm ${a.focus === "host" ? "text-brand" : "text-pine"}`}>
                     {a.focus === "host" ? t.areasSection.hostFocus : t.areasSection.renterFocus}
                   </span>
                 )}
               </span>
-              <ArrowRight size={18} className="text-muted transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+              <ArrowRight size={17} className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
           </li>
         ))}
@@ -282,12 +317,12 @@ export function Faq({ items }: { items: { q: string; a: string }[] }) {
   return (
     <div className="divide-y divide-line rounded-2xl border border-line bg-paper">
       {items.map((item) => (
-        <details key={item.q} className="group px-5 sm:px-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-[1.05rem] font-semibold text-night [&::-webkit-details-marker]:hidden">
+        <details key={item.q} className="group px-4 sm:px-6">
+          <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-4 text-left font-semibold text-night [&::-webkit-details-marker]:hidden">
             {item.q}
             <span
               aria-hidden="true"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-frost/70 text-night transition-transform group-open:rotate-45"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-frost text-night transition-transform group-open:rotate-45"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <path d="M7 1v12M1 7h12" />
@@ -305,19 +340,18 @@ export function Faq({ items }: { items: { q: string; a: string }[] }) {
 
 export function FinalCta({ lang, t }: { lang: Lang; t: Dictionary }) {
   return (
-    <div className="card relative overflow-hidden px-6 py-12 text-center sm:px-10">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 -top-24 mx-auto h-48 w-2/3 rounded-full bg-glow/30 blur-3xl" />
-      <div className="relative">
-        <h2 className="text-3xl font-bold text-night sm:text-4xl">{t.finalCta.title}</h2>
-        <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-muted">{t.finalCta.lead}</p>
-        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link href={pagePath("find", lang)} className="btn btn-primary">
-            {t.hero.ctaFind}
-          </Link>
-          <Link href={pagePath("host", lang)} className="btn btn-secondary">
-            {t.hero.ctaHost}
-          </Link>
-        </div>
+    <div className="relative isolate overflow-hidden rounded-3xl bg-night px-5 py-10 text-center text-white sm:px-10 sm:py-14">
+      <Photo name="garage-field" lang={lang} sizes="100vw" decorative className="absolute inset-0 -z-20 h-full w-full opacity-35" />
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-b from-night/40 to-night/90" />
+      <h2 className="text-[1.85rem] leading-tight sm:text-4xl">{t.finalCta.title}</h2>
+      <p className="mx-auto mt-3 max-w-xl text-[1.05rem] leading-relaxed text-frost sm:text-lg">{t.finalCta.lead}</p>
+      <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+        <Link prefetch={false} href={pagePath("find", lang)} className="btn btn-light">
+          {t.hero.ctaFind}
+        </Link>
+        <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-on-dark">
+          {t.hero.ctaHost}
+        </Link>
       </div>
     </div>
   );
@@ -341,3 +375,5 @@ export function CheckList({ items, onDark = false }: { items: string[]; onDark?:
     </ul>
   );
 }
+
+export { StepList } from "./StepList";

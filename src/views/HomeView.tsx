@@ -2,15 +2,16 @@ import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { getDictionary } from "@/content";
 import { categories } from "@/content/categories";
-import { HeroIllustration } from "@/components/HeroIllustration";
 import { HowItWorks } from "@/components/HowItWorks";
 import { categoryIcons } from "@/components/Icons";
+import { MobileActionBar } from "@/components/MobileActionBar";
 import {
   AreaChips,
   CategoryGrid,
   Faq,
   FinalCta,
   HostTeaser,
+  PhotoHero,
   Section,
   SectionHeading,
   SeasonsGrid,
@@ -26,96 +27,87 @@ export function HomeView({ lang }: { lang: Lang }) {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-40 -right-40 h-[28rem] w-[28rem] rounded-full bg-glow/30 blur-3xl"
-        />
-        <div className="container-page relative grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:py-20">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-3 py-1.5 text-sm font-semibold text-night">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ember-soft opacity-60 motion-reduce:animate-none" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-ember-soft" />
-              </span>
-              {t.common.launchBadge}
+      <PhotoHero
+        photo="garage-night"
+        lang={lang}
+        size="home"
+        imageClassName="max-sm:-translate-y-[17%]"
+        title={t.hero.title}
+        lead={t.hero.lead}
+        eyebrow={
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-sm font-semibold text-white ring-1 ring-white/25 backdrop-blur">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-glow opacity-60 motion-reduce:animate-none" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-glow" />
             </span>
-            <h1 className="mt-5 text-[2.6rem] leading-[1.05] font-extrabold text-night sm:text-6xl">{t.hero.title}</h1>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">{t.hero.lead}</p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href={findPath} className="btn btn-primary">
-                {t.hero.ctaFind}
-                <ArrowRight size={18} aria-hidden="true" />
-              </Link>
-              <Link href={pagePath("host", lang)} className="btn btn-secondary">
-                {t.hero.ctaHost}
-              </Link>
-            </div>
-            <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-[0.95rem] font-medium text-ink/80">
-              {t.hero.trustline.map((item) => (
-                <li key={item} className="flex items-center gap-1.5">
-                  <Check size={17} strokeWidth={3} className="text-pine" aria-hidden="true" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="relative">
-            <div className="overflow-hidden rounded-[28px] shadow-[0_30px_60px_-30px_rgb(14_27_51/0.6)]">
-              <HeroIllustration title={t.hero.illustrationAlt} />
-            </div>
-          </div>
-        </div>
+            {t.common.launchBadge}
+          </span>
+        }
+      >
+        <Link prefetch={false} href={findPath} className="btn btn-light">
+          {t.hero.ctaFind}
+          <ArrowRight size={18} aria-hidden="true" />
+        </Link>
+        <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-on-dark">
+          {t.hero.ctaHost}
+        </Link>
+      </PhotoHero>
 
-        {/* Quick picker */}
-        <div className="container-page relative pb-14">
-          <div className="card p-4 sm:p-5">
-            <p className="px-1 text-sm font-semibold text-muted">{t.hero.chipsLabel}</p>
-            <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-              {categories.map((c) => {
-                const Icon = categoryIcons[c.id];
-                return (
-                  <li key={c.id}>
-                    <Link
-                      href={`${findPath}?${RENTER_PARAMS.item}=${c.id}#anmalan`}
-                      className="flex h-full items-center gap-2.5 rounded-xl border border-line px-3 py-3 font-semibold text-night transition-colors hover:border-night/40 hover:bg-snow"
-                    >
-                      <Icon size={22} className="shrink-0 text-ember" />
-                      <span className="text-[0.95rem] leading-tight">{c.name[lang]}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+      {/* Trust line + quick picker */}
+      <section className="border-b border-line bg-paper">
+        <div className="container-page py-5 sm:py-7">
+          <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[0.9rem] font-medium text-ink/80">
+            {t.hero.trustline.map((item) => (
+              <li key={item} className="flex items-center gap-1.5">
+                <Check size={16} strokeWidth={3} className="text-pine" aria-hidden="true" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-5 text-sm font-semibold text-muted">{t.hero.chipsLabel}</p>
+          <ul className="swipe-row mt-2.5 !auto-cols-max lg:mx-0 lg:flex lg:flex-wrap lg:gap-2 lg:overflow-visible lg:px-0">
+            {categories.map((c) => {
+              const Icon = categoryIcons[c.id];
+              return (
+                <li key={c.id}>
+                  <Link prefetch={false}
+                    href={`${findPath}?${RENTER_PARAMS.item}=${c.id}#anmalan`}
+                    className="flex min-h-11 items-center gap-2 rounded-full border border-line bg-snow px-4 py-2.5 font-semibold whitespace-nowrap text-night transition-colors hover:border-night/40"
+                  >
+                    <Icon size={19} className="shrink-0 text-brand" />
+                    <span className="text-[0.95rem]">{c.name[lang]}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </section>
 
-      <Section tone="paper">
+      <Section>
         <SectionHeading title={t.how.title} />
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <HowItWorks t={t} />
         </div>
       </Section>
 
-      <Section>
+      <Section tone="paper">
         <SectionHeading title={t.categoriesSection.title} lead={t.categoriesSection.lead} />
-        <div className="mt-10">
+        <div className="mt-7 sm:mt-10">
           <CategoryGrid lang={lang} t={t} />
         </div>
       </Section>
 
-      <Section tone="paper">
+      <Section>
         <SectionHeading title={t.why.title} />
-        <div className="mt-10">
+        <div className="mt-7 sm:mt-10">
           <WhyGrid t={t} />
         </div>
       </Section>
 
       <Section tone="night">
         <SectionHeading title={t.seasons.title} lead={t.seasons.lead} onDark />
-        <div className="mt-10">
+        <div className="mt-7 sm:mt-10">
           <SeasonsGrid t={t} />
         </div>
       </Section>
@@ -126,12 +118,12 @@ export function HomeView({ lang }: { lang: Lang }) {
 
       <Section tone="frost">
         <SectionHeading title={t.trust.title} lead={t.trust.lead} />
-        <div className="mt-10">
+        <div className="mt-7 sm:mt-10">
           <TrustGrid t={t} />
         </div>
-        <Link
+        <Link prefetch={false}
           href={pagePath("trust", lang)}
-          className="mt-8 inline-flex items-center gap-2 font-semibold text-night underline decoration-ember-soft decoration-2 underline-offset-6 hover:decoration-night"
+          className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-night underline decoration-brand-bright decoration-2 underline-offset-6 hover:decoration-night"
         >
           {t.trust.link}
           <ArrowRight size={18} aria-hidden="true" />
@@ -140,13 +132,13 @@ export function HomeView({ lang }: { lang: Lang }) {
 
       <Section>
         <SectionHeading title={t.areasSection.title} lead={t.areasSection.lead} />
-        <div className="mt-10">
+        <div className="mt-7 sm:mt-10">
           <AreaChips lang={lang} t={t} />
         </div>
       </Section>
 
       <Section tone="paper">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.6fr]">
+        <div className="grid gap-7 lg:grid-cols-[1fr_1.6fr] lg:gap-10">
           <SectionHeading title={t.faq.title} />
           <Faq items={t.faq.general} />
         </div>
@@ -155,6 +147,11 @@ export function HomeView({ lang }: { lang: Lang }) {
       <Section>
         <FinalCta lang={lang} t={t} />
       </Section>
+
+      <MobileActionBar
+        primary={{ href: findPath, label: t.actionBar.find }}
+        secondary={{ href: pagePath("host", lang), label: t.actionBar.host }}
+      />
     </>
   );
 }

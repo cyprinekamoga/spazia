@@ -1,28 +1,31 @@
 @import "tailwindcss";
 
 @theme {
+  /* Neighbor-style pairing: editorial serif headings + Inter for everything else.
+     Fraunces is a free stand-in for GT Ultra (Neighbor's licensed heading font).
+     To use GT Ultra after buying a licence, add its @font-face and put it first here. */
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Bricolage Grotesque Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces Variable", ui-serif, Georgia, "Times New Roman", serif;
 
-  /* Winter night + warm garage light */
-  --color-night: #0e1b33;
-  --color-night-2: #172a4d;
-  --color-night-3: #22385f;
-  --color-snow: #f7f4ee;
+  /* Palette taken from the Spazia logo (teal → slate) */
+  --color-night: #1d3340;
+  --color-night-2: #26404f;
+  --color-night-3: #31505f;
+  --color-snow: #f6f8f9;
   --color-paper: #ffffff;
-  --color-frost: #e3ebf4;
-  --color-frost-2: #c9d7e8;
-  --color-ink: #13213a;
-  --color-muted: #56627a;
-  --color-line: #e2ddd3;
-  --color-ember: #b94e17; /* buttons – 5:1 with white text */
-  --color-ember-hover: #a24312;
-  --color-ember-soft: #e8702a; /* decorative only */
-  --color-glow: #ffc56e;
-  --color-glow-soft: #fff1d9;
-  --color-falu: #8e2f22;
-  --color-pine: #2f5d50;
-  --color-pine-soft: #e3efe9;
+  --color-frost: #e8eef1;
+  --color-frost-2: #c3d0d7;
+  --color-ink: #1e2a31;
+  --color-muted: #586670;
+  --color-line: #dfe5e8;
+  --color-brand: #2f6b75; /* buttons and links – 6:1 with white text */
+  --color-brand-hover: #255760;
+  --color-brand-bright: #3f7c86; /* logo teal, decorative */
+  --color-brand-soft: #e4f0f1;
+  --color-glow: #ffc56e; /* warm accent, on dark backgrounds */
+  --color-glow-soft: #fff3dc;
+  --color-pine: #2f6a55;
+  --color-pine-soft: #e2f0ea;
 }
 
 @layer base {
@@ -45,17 +48,22 @@
   }
   h1,
   h2,
-  h3,
   .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+  h3 {
+    font-weight: 650;
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
   p {
     text-wrap: pretty;
   }
   :focus-visible {
-    outline: 3px solid var(--color-ember-soft);
+    outline: 3px solid var(--color-brand-bright);
     outline-offset: 2px;
     border-radius: 6px;
   }
@@ -99,11 +107,18 @@
     transform: translateY(1px);
   }
   .btn-primary {
-    background: var(--color-ember);
+    background: var(--color-brand);
     color: #fff;
   }
   .btn-primary:hover {
-    background: var(--color-ember-hover);
+    background: var(--color-brand-hover);
+  }
+  .btn-light {
+    background: #fff;
+    color: var(--color-night);
+  }
+  .btn-light:hover {
+    background: var(--color-frost);
   }
   .btn-secondary {
     background: var(--color-paper);
@@ -129,14 +144,9 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-ember);
+    color: var(--color-brand);
   }
 
-  .card {
-    background: var(--color-paper);
-    border: 1px solid var(--color-line);
-    border-radius: 1.25rem;
-  }
 
   .field-label {
     display: block;
@@ -160,7 +170,7 @@
   .field-input:focus {
     border-color: var(--color-night);
     outline: none;
-    box-shadow: 0 0 0 3px rgb(14 27 51 / 0.12);
+    box-shadow: 0 0 0 3px rgb(47 107 117 / 0.18);
   }
   .field-input[aria-invalid="true"] {
     border-color: #b42318;
@@ -169,4 +179,51 @@
   .prose-spazia p + p {
     margin-top: 1rem;
   }
+
+  /* Horizontal swipe rows on phones (cards peek in from the right). */
+  .swipe-row {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 78%;
+    gap: 0.75rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1rem;
+    padding-inline: 1rem;
+    margin-inline: -1rem;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none;
+  }
+  .swipe-row::-webkit-scrollbar {
+    display: none;
+  }
+  .swipe-row > * {
+    scroll-snap-align: start;
+  }
+  @media (min-width: 640px) {
+    .swipe-row {
+      grid-auto-columns: 46%;
+      scroll-padding-inline: 1.5rem;
+      padding-inline: 1.5rem;
+      margin-inline: -1.5rem;
+    }
+  }
+
+  /* Space for the sticky action bar on phones. */
+  .pb-action-bar {
+    padding-bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 768px) {
+    .pb-action-bar {
+      padding-bottom: 0;
+    }
+  }
+}
+
+/* A utility (not a component class) so it works with breakpoints: sm:card, md:card. */
+@utility card {
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 1.25rem;
 }

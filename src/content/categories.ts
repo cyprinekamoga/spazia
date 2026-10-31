@@ -1,4 +1,5 @@
 import type { L10n } from "@/lib/i18n";
+import type { PhotoKey } from "./photos";
 
 export type CategoryId = "tyres" | "skis" | "snowmobile" | "bikes" | "boxes" | "car";
 
@@ -11,6 +12,7 @@ export interface Category {
   /** Unit the price refers to, singular and plural. */
   unit: L10n;
   unitPlural: L10n;
+  photo: PhotoKey;
   /** Renter price per unit and month (SEK, service fee included), unheated. */
   price: number;
   /** Whether heated space commands a higher price for this category. */
@@ -28,6 +30,7 @@ export interface Category {
 export const categories: Category[] = [
   {
     id: "tyres",
+    photo: "tyres",
     slug: { sv: "dackforvaring", en: "tyre-storage" },
     name: { sv: "Däck", en: "Tyres" },
     short: {
@@ -67,6 +70,7 @@ export const categories: Category[] = [
   },
   {
     id: "skis",
+    photo: "skis",
     slug: { sv: "skidforvaring", en: "ski-storage" },
     name: { sv: "Skidor & snowboard", en: "Skis & snowboards" },
     short: {
@@ -106,6 +110,7 @@ export const categories: Category[] = [
   },
   {
     id: "snowmobile",
+    photo: "snowmobile",
     slug: { sv: "skoterforvaring", en: "snowmobile-storage" },
     name: { sv: "Skoter & släp", en: "Snowmobiles & trailers" },
     short: {
@@ -145,6 +150,7 @@ export const categories: Category[] = [
   },
   {
     id: "bikes",
+    photo: "bikes",
     slug: { sv: "cykelforvaring", en: "bike-storage" },
     name: { sv: "Cyklar", en: "Bikes" },
     short: {
@@ -184,6 +190,7 @@ export const categories: Category[] = [
   },
   {
     id: "boxes",
+    photo: "boxes",
     slug: { sv: "magasinering", en: "boxes-and-furniture" },
     name: { sv: "Flyttlådor & möbler", en: "Boxes & furniture" },
     short: {
@@ -223,6 +230,7 @@ export const categories: Category[] = [
   },
   {
     id: "car",
+    photo: "car",
     slug: { sv: "bilforvaring-inomhus", en: "indoor-car-storage" },
     name: { sv: "Bil inomhus", en: "Indoor car space" },
     short: {

@@ -1,26 +1,76 @@
-export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
+import { BRAND, MARK, WORDMARK_PATH } from "./logoPaths";
+
+type Tone = "color" | "white";
+
+function MarkShapes({ gradientId, tone, strokeWidth = 36, highlight = true }: { gradientId: string; tone: Tone; strokeWidth?: number; highlight?: boolean }) {
+  const stroke = tone === "white" ? "#ffffff" : `url(#${gradientId})`;
   return (
-    <svg viewBox="0 0 32 32" className={className} aria-hidden="true">
-      <rect width="32" height="32" rx="9" fill="#0e1b33" />
-      {/* garage: roof + walls */}
-      <path d="M6.5 14.5 16 7.5l9.5 7V25h-19z" fill="#8e2f22" />
-      <path d="M5.5 15 16 7.2 26.5 15" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      {/* open door with warm light */}
-      <rect x="10.5" y="16" width="11" height="9" rx="1" fill="#ffc56e" />
-      <path d="M10.5 18.5h11" stroke="#e8702a" strokeWidth="1.2" />
+    <>
+      {tone === "color" && (
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="60" x2="0" y2="690" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor={BRAND.tealTop} />
+            <stop offset="1" stopColor={BRAND.slateBottom} />
+          </linearGradient>
+        </defs>
+      )}
+      <g fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <path d={MARK.roof} />
+        <path d={MARK.walls} strokeLinecap="butt" />
+        <path d={MARK.shield} />
+      </g>
+      {highlight && (
+        <path
+          d={MARK.highlight}
+          fill="none"
+          stroke={tone === "white" ? "rgb(255 255 255 / 0.45)" : BRAND.highlight}
+          strokeWidth="18"
+        />
+      )}
+      <g fill={tone === "white" ? "#ffffff" : BRAND.keyhole}>
+        <circle cx="440" cy="452" r="43" />
+        <path d={MARK.keyholeStem} />
+      </g>
+    </>
+  );
+}
+
+/** The house/shield mark on its own. */
+export function LogoMark({
+  className = "h-9 w-auto",
+  tone = "color",
+  id = "spazia-mark",
+}: {
+  className?: string;
+  tone?: Tone;
+  id?: string;
+}) {
+  return (
+    <svg viewBox="40 40 800 660" className={className} aria-hidden="true">
+      <MarkShapes gradientId={id} tone={tone} />
     </svg>
   );
 }
 
-export function Logo({ inverted = false }: { inverted?: boolean }) {
+/** Mark + "Spazia" wordmark, side by side. Height is set by the className. */
+export function Logo({
+  className = "h-8 w-auto sm:h-9",
+  tone = "color",
+  id = "spazia-logo",
+}: {
+  className?: string;
+  tone?: Tone;
+  id?: string;
+}) {
+  const scale = 5;
   return (
-    <span className="inline-flex items-center gap-2">
-      <LogoMark />
-      <span
-        className={`font-display text-[1.45rem] leading-none font-bold tracking-tight ${inverted ? "text-white" : "text-night"}`}
-      >
-        spazia
-      </span>
-    </span>
+    <svg viewBox="40 40 2620 660" className={className} role="img" aria-label="Spazia">
+      <MarkShapes gradientId={id} tone={tone} />
+      <path
+        transform={`translate(960 ${551 - 100 * scale}) scale(${scale})`}
+        d={WORDMARK_PATH}
+        fill={tone === "white" ? "#ffffff" : BRAND.wordmark}
+      />
+    </svg>
   );
 }

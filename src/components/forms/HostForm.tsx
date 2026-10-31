@@ -48,7 +48,7 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
         <CheckCircle2 size={48} className="mx-auto text-pine" aria-hidden="true" />
         <h3 className="mt-4 text-2xl font-bold text-night">{h.successTitle}</h3>
         <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">{h.successText}</p>
-        <Link href={pagePath("trust", lang)} className="btn btn-secondary mt-6">
+        <Link prefetch={false} href={pagePath("trust", lang)} className="btn btn-secondary mt-6">
           {t.trust.link}
         </Link>
       </div>
@@ -138,7 +138,7 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
 
       <ConsentField error={errors.consent}>
         {f.consentBefore}
-        <Link href={pagePath("privacy", lang)} className="font-medium underline underline-offset-4" target="_blank">
+        <Link prefetch={false} href={pagePath("privacy", lang)} className="font-medium underline underline-offset-4" target="_blank">
           {f.consentLink}
         </Link>
         {f.consentAfter}

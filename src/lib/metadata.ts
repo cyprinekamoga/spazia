@@ -30,8 +30,8 @@ export function buildMetadata({
       url: absoluteUrl(paths[lang]),
       title,
       description,
-      images: [{ url: "/og.png", width: 1200, height: 630, alt: t.hero.illustrationAlt }],
+      images: [{ url: "/og.jpg", width: 1200, height: 630, alt: t.hero.illustrationAlt }],
     },
-    twitter: { card: "summary_large_image", title, description, images: ["/og.png"] },
+    twitter: { card: "summary_large_image", title, description, images: ["/og.jpg"] },
   };
 }

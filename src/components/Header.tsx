@@ -29,18 +29,18 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-snow/95 backdrop-blur">
-      <div className="container-page flex h-16 items-center justify-between gap-4">
-        <Link href={pagePath("home", lang)} className="shrink-0" aria-label="Spazia">
-          <Logo />
+      <div className="container-page flex h-14 items-center justify-between gap-4 sm:h-16">
+        <Link prefetch={false} href={pagePath("home", lang)} className="flex h-11 shrink-0 items-center" aria-label="Spazia">
+          <Logo id="logo-header" className="h-7 w-auto sm:h-8" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label={t.common.menu}>
           {links.map((l) => (
-            <Link
+            <Link prefetch={false}
               key={l.href}
               href={l.href}
               aria-current={isActive(l.href) ? "page" : undefined}
-              className="rounded-full px-3 py-2 text-[0.95rem] font-medium text-ink/80 transition-colors hover:bg-frost/70 hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-ember-soft aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8"
+              className="rounded-full px-3 py-2 text-[0.95rem] font-medium text-ink/80 transition-colors hover:bg-frost/70 hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-brand-bright aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8"
             >
               {l.label}
             </Link>
@@ -58,7 +58,7 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
             <Globe size={16} aria-hidden="true" />
             {t.common.switchLanguage}
           </a>
-          <Link href={pagePath("host", lang)} className="btn btn-primary !px-4 !py-2.5 text-[0.95rem]">
+          <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-primary !px-4 !py-2.5 text-[0.95rem]">
             {t.nav.hostCta}
           </Link>
         </div>
@@ -79,11 +79,11 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
         <div id="mobile-menu" className="border-t border-line bg-snow md:hidden">
           <nav className="container-page flex flex-col py-3" aria-label={t.common.menu}>
             {links.map((l) => (
-              <Link
+              <Link prefetch={false}
                 key={l.href}
                 href={l.href}
                 aria-current={isActive(l.href) ? "page" : undefined}
-                className="rounded-xl px-3 py-3 text-lg font-medium text-ink hover:bg-frost/70 aria-[current=page]:bg-frost/70"
+                className="flex min-h-12 items-center rounded-xl px-3 text-lg font-medium text-ink hover:bg-frost/70 aria-[current=page]:bg-frost/70"
               >
                 {l.label}
               </Link>
@@ -97,7 +97,7 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
               <Globe size={18} aria-hidden="true" />
               {t.common.switchLanguage}
             </a>
-            <Link href={pagePath("host", lang)} className="btn btn-primary mt-3 w-full">
+            <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-primary mt-3 w-full">
               {t.nav.hostCta}
             </Link>
           </nav>

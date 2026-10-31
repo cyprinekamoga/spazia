@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import type { Dictionary } from "@/content";
+import { StepList } from "./StepList";
 
 export function HowItWorks({ t, initial = "renter" }: { t: Dictionary; initial?: "renter" | "host" }) {
   const [tab, setTab] = useState<"renter" | "host">(initial);
@@ -32,29 +33,16 @@ export function HowItWorks({ t, initial = "renter" }: { t: Dictionary; initial?:
                 document.getElementById(`${id}-${next}`)?.focus();
               }
             }}
-            className="rounded-full px-4 py-2 text-[0.95rem] font-semibold text-muted transition-colors aria-selected:bg-night aria-selected:text-white sm:px-5"
+            className="min-h-11 rounded-full px-4 py-2 text-[0.95rem] font-semibold text-muted transition-colors aria-selected:bg-night aria-selected:text-white sm:px-5"
           >
             {tb.label}
           </button>
         ))}
       </div>
 
-      <ol
-        id={`${id}-panel`}
-        role="tabpanel"
-        aria-labelledby={`${id}-${tab}`}
-        className="mt-8 grid gap-4 md:grid-cols-3"
-      >
-        {steps.map((step, i) => (
-          <li key={step.title} className="card relative p-6">
-            <span className="font-display flex h-10 w-10 items-center justify-center rounded-full bg-glow-soft text-lg font-bold text-ember">
-              {i + 1}
-            </span>
-            <h3 className="mt-4 text-xl font-bold text-night">{step.title}</h3>
-            <p className="mt-2 leading-relaxed text-muted">{step.text}</p>
-          </li>
-        ))}
-      </ol>
+      <div id={`${id}-panel`} role="tabpanel" aria-labelledby={`${id}-${tab}`} className="mt-7">
+        <StepList steps={steps} />
+      </div>
     </div>
   );
 }

@@ -25,6 +25,13 @@ export const en: Dictionary = {
     yes: "Yes",
     no: "No",
   },
+  actionBar: {
+    find: "Find storage",
+    host: "List your space",
+    hostForm: "Register space",
+    renterForm: "Register interest",
+    estimate: "You get about",
+  },
   nav: {
     find: "Find storage",
     host: "Become a host",
@@ -34,13 +41,13 @@ export const en: Dictionary = {
   },
   hero: {
     title: "There's room at your neighbour's.",
-    lead: "Spazia helps you store tyres, skis, snowmobiles and moving boxes in dry garages and storerooms owned by homeowners in Luleå. Cheaper than storage companies, closer than the industrial estate, and safe with BankID, a standard agreement and automatic payments.",
+    lead: "Store tyres, skis, snowmobiles and boxes in dry garages owned by homeowners in Luleå. Cheaper than storage companies, and safe with BankID, an agreement and automatic payments.",
     ctaFind: "I need storage",
     ctaHost: "I have spare space",
     chipsLabel: "What do you want to store?",
     trustline: ["BankID verification", "Standard agreement", "Cancel any month"],
     illustrationAlt:
-      "Illustration of a red Swedish house on a winter evening with an open, lit garage storing tyres, skis and boxes.",
+      "A lit garage on a snowy winter evening – Spazia, storage with your neighbours in Luleå.",
   },
   categoriesSection: {
     title: "What do you want to store?",
@@ -250,6 +257,7 @@ export const en: Dictionary = {
     contact: "Contact",
     privacy: "Privacy policy",
     cookies: "Cookie settings",
+    credits: "Photo credits",
     rights: "All rights reserved.",
   },
   hostPage: {
@@ -406,6 +414,8 @@ export const en: Dictionary = {
       "At the same time, residential areas like Gammelstad, Bergnäset and Sunderbyn are full of garages, basements and outbuildings with room to spare. Spazia connects the two, with BankID, a standard agreement and automatic payments. It should feel as safe as a storage company, but be closer and cheaper.",
       "Spazia is run by a small team in Luleå. We visit every space ourselves before it is listed, and we answer ourselves when you get in touch.",
     ],
+    creditsTitle: "Photo credits",
+    creditsText: "Photos are from Unsplash and used under the Unsplash License. Thanks to the photographers:",
     contactTitle: "Get in touch",
     contactText: "Questions, ideas, or want to work with us? Email us and we will reply as soon as we can.",
   },
