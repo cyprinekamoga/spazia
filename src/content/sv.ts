@@ -1,0 +1,592 @@
+/** Swedish copy. The English file must have exactly the same shape. */
+export const sv = {
+  meta: {
+    homeTitle: "Spazia – förvaring hos grannen i Luleå",
+    homeDescription:
+      "Förvara däck, skidor, skoter och flyttlådor i torra garage och förråd hos verifierade villaägare i Luleå. Billigare, närmare och utan bindningstid.",
+    titleTemplate: "%s · Spazia",
+    locale: "sv_SE",
+  },
+  common: {
+    skipToContent: "Hoppa till innehållet",
+    perMonth: "kr/mån",
+    from: "från ca",
+    currency: "kr",
+    readMore: "Läs mer",
+    launchBadge: "Startar i Luleå vintern 2026/27",
+    menu: "Meny",
+    close: "Stäng",
+    languageName: "Svenska",
+    switchLanguage: "English",
+    switchLanguageLabel: "Read in English",
+    other: "Annat",
+    yes: "Ja",
+    no: "Nej",
+  },
+  nav: {
+    find: "Hitta förvaring",
+    host: "Bli värd",
+    trust: "Trygghet",
+    about: "Om oss",
+    hostCta: "Hyr ut din plats",
+  },
+  hero: {
+    title: "Det finns plats hos grannen.",
+    lead: "Spazia hjälper dig att förvara däck, skidor, skoter och flyttlådor i torra garage och förråd hos villaägare i Luleå. Billigare än förrådsföretagen, närmare än industriområdet och tryggt med BankID, standardavtal och automatisk betalning.",
+    ctaFind: "Jag behöver förvaring",
+    ctaHost: "Jag har plats över",
+    chipsLabel: "Vad vill du förvara?",
+    trustline: ["Verifiering med BankID", "Standardavtal", "Ingen bindningstid"],
+    illustrationAlt:
+      "Illustration av en röd villa en vinterkväll med öppet, upplyst garage där däck, skidor och lådor förvaras.",
+  },
+  categoriesSection: {
+    title: "Vad vill du förvara?",
+    lead: "Riktpriser per månad inklusive serviceavgift. Värden sätter det slutliga priset.",
+    per: "per",
+  },
+  how: {
+    title: "Så fungerar Spazia",
+    tabRenter: "Hyra förvaring",
+    tabHost: "Hyra ut plats",
+    renterSteps: [
+      {
+        title: "Berätta vad du ska förvara",
+        text: "Däck, skidor, en skoter eller en sommar med flyttlådor. Välj område och hur länge du behöver plats.",
+      },
+      {
+        title: "Välj en verifierad värd",
+        text: "Alla värdar är verifierade med BankID, och vi har besökt och fotograferat varje utrymme.",
+      },
+      {
+        title: "Lämna in och slappna av",
+        text: "Ni signerar standardavtalet digitalt och hyran dras automatiskt varje månad. Säg upp när du vill.",
+      },
+    ],
+    hostSteps: [
+      {
+        title: "Anmäl ditt utrymme",
+        text: "Garage, källare, uthus eller vind. Anmälan tar två minuter.",
+      },
+      {
+        title: "Vi kommer på besök",
+        text: "Vi kontrollerar att det är torrt och låsbart och tar bilder till annonsen. Besöket är gratis.",
+      },
+      {
+        title: "Få betalt varje månad",
+        text: "Du godkänner hyresgästerna och vi sköter avtal och betalning. Pengarna kommer automatiskt.",
+      },
+    ],
+  },
+  why: {
+    title: "Varför förvara hos en granne?",
+    items: [
+      {
+        title: "Närmare",
+        text: "Förvaring i bostadsområden som Gammelstad, Bergnäset och Sunderbyn i stället för i ett industriområde utanför stan.",
+      },
+      {
+        title: "Billigare",
+        text: "Du betalar för den plats du behöver: en däcksats, ett par skidor eller några kvadratmeter, inte ett helt förråd.",
+      },
+      {
+        title: "Flexibelt",
+        text: "Månadsvis och utan bindningstid. Perfekt för säsongsprylar och sommaruppehållet.",
+      },
+      {
+        title: "Lokalt",
+        text: "Pengarna går till grannar i Luleå i stället för till ett förrådsbolag.",
+      },
+    ],
+  },
+  seasons: {
+    title: "Förvaring som följer årstiderna",
+    lead: "I Norrbotten byter prylarna plats två gånger om året. Vi har plats för båda halvorna.",
+    items: [
+      {
+        name: "Höst",
+        months: "okt–nov",
+        text: "Sommardäcken av och vinterdäcken på. Cyklar, utemöbler och sommarprylar behöver ett torrt vinterhem.",
+      },
+      {
+        name: "Vår",
+        months: "apr–maj",
+        text: "Vinterdäck, skidor och skoter ska undan. Snöslungan också.",
+      },
+      {
+        name: "Sommar",
+        months: "jun–aug",
+        text: "Studenter åker hem över sommaren. Lådor och möbler kan stå kvar i Luleå i stället för att fraktas fram och tillbaka.",
+      },
+    ],
+  },
+  hostTeaser: {
+    eyebrow: "För villaägare",
+    title: "Har du ett tomt garage? Låt det tjäna pengar i vinter.",
+    lead: "Ett halvt dubbelgarage med tio däcksatser, några skidpaket och en skoter kan ge omkring {amount} kr i månaden. Du bestämmer vad du tar emot och när hyresgästerna får komma.",
+    cta: "Räkna på ditt garage",
+  },
+  trust: {
+    title: "Tryggt för båda parter",
+    lead: "Vi har byggt in det som gör det tryggt att lämna sina saker hos någon annan, och att släppa in någon i sitt garage.",
+    items: [
+      {
+        icon: "id",
+        title: "Verifierade med BankID",
+        text: "Alla värdar och hyresgäster identifierar sig med BankID. Saknar du svenskt BankID kan du använda Freja eID med pass.",
+      },
+      {
+        icon: "inspect",
+        title: "Besökta utrymmen",
+        text: "Vi besöker varje utrymme innan det publiceras och kontrollerar att det är torrt, låsbart och som beskrivet.",
+      },
+      {
+        icon: "contract",
+        title: "Standardavtal",
+        text: "Ett tydligt avtal som signeras digitalt och reglerar tillträde, uppsägning och ansvar.",
+      },
+      {
+        icon: "camera",
+        title: "Inventarielista med bilder",
+        text: "Ni fotograferar sakerna vid inlämning och hämtning, så att det aldrig råder tvekan om vad som lämnats.",
+      },
+      {
+        icon: "card",
+        title: "Automatisk betalning",
+        text: "Hyran dras från kort varje månad och betalas ut till värden. Inga kontanter och inga Swish-påminnelser.",
+      },
+      {
+        icon: "support",
+        title: "Lokal support",
+        text: "Vi finns i Luleå och hjälper till om något går fel.",
+      },
+    ],
+    link: "Läs mer om trygghet",
+  },
+  areasSection: {
+    title: "Vi startar i Luleå",
+    lead: "Först ut är områden med många villor och garage, och områden där många behöver plats.",
+    hostFocus: "Vi söker värdar",
+    renterFocus: "Stor efterfrågan",
+  },
+  faq: {
+    title: "Vanliga frågor",
+    general: [
+      {
+        q: "Vad är Spazia?",
+        a: "En marknadsplats där privatpersoner i Luleå hyr ut torr förvaringsplats i garage, källare och uthus till den som behöver förvara däck, skidor, flyttlådor eller fordon. Vi sköter verifiering, avtal och betalning.",
+      },
+      {
+        q: "När öppnar ni?",
+        a: "Vi startar i Luleå under vintern 2026/27. Just nu bygger vi upp ett nätverk av besökta och verifierade värdar. Anmäl intresse så hör vi av oss när det finns plats nära dig.",
+      },
+      {
+        q: "Vad kostar det?",
+        a: "Värden sätter priset. Riktpriset för en däcksats är omkring 120 kr i månaden och för flyttlådor omkring 150 kr per kvadratmeter. Serviceavgiften på 15 % ingår i priset du ser, och det finns ingen bindningstid.",
+      },
+      {
+        q: "Är det säkert?",
+        a: "Alla verifieras med BankID eller Freja eID, vi besöker varje utrymme innan det publiceras, ni skriver ett standardavtal och fotograferar sakerna vid inlämning. Betalningen går via Spazia, så ingen behöver hantera kontanter.",
+      },
+      {
+        q: "Är mina saker försäkrade?",
+        a: "Saker som förvaras utanför hemmet omfattas ofta av hemförsäkringen, men många försäkringar har undantag eller beloppsgränser för stöldbegärliga saker i garage och förråd. Kontrollera dina villkor. Vi arbetar på en förvaringsförsäkring tillsammans med ett försäkringsbolag.",
+      },
+      {
+        q: "Jag har inget svenskt BankID. Kan jag ändå hyra?",
+        a: "Ja. Internationella studenter och nyinflyttade kan verifiera sig med Freja eID, som fungerar med pass.",
+      },
+      {
+        q: "Hur kommer jag åt mina saker?",
+        a: "Värden anger när det går att lämna och hämta, och ni bokar tid i förväg. De flesta som förvarar säsongsprylar hämtar dem en eller två gånger om året.",
+      },
+      {
+        q: "Får man bo eller arbeta i utrymmet?",
+        a: "Nej. Utrymmena hyrs bara ut för förvaring.",
+      },
+      {
+        q: "Hur säger jag upp?",
+        a: "Hyran betalas månadsvis och det finns ingen bindningstid. Du säger upp inför nästa månad.",
+      },
+    ],
+    host: [
+      {
+        q: "Vad kostar det att vara värd?",
+        a: "Det är gratis att annonsera. Spazia tar 5 % av varje utbetalning, alltså först när du tjänar pengar.",
+      },
+      {
+        q: "Kan jag välja vem som hyr?",
+        a: "Ja. Du ser varje förfrågan och godkänner den innan något bokas. Du bestämmer också vad du tar emot.",
+      },
+      {
+        q: "Måste jag vara hemma när hyresgästen kommer?",
+        a: "Ni bestämmer tider tillsammans. Många värdar väljer fasta tider, till exempel på helger, och de flesta hyresgäster kommer bara när de lämnar och hämtar.",
+      },
+      {
+        q: "Vem ansvarar om något skadas?",
+        a: "Standardavtalet reglerar ansvaret. Som värd ansvarar du för att utrymmet är torrt och låst som beskrivet. Hyresgästen ansvarar för sina saker och ska ha en hemförsäkring.",
+      },
+      {
+        q: "Måste jag skatta för hyran?",
+        a: "Hyr du ut en del av din privatbostad, till exempel garaget till villan, beskattas hyran som inkomst av kapital. För en villa får du dra av 40 000 kr per år plus 20 % av hyresintäkten, så de flesta värdar betalar ingen skatt alls. Kontrollera alltid med Skatteverket vad som gäller för dig.",
+      },
+      {
+        q: "Vad händer om hyresgästen inte betalar?",
+        a: "Hyran dras automatiskt från hyresgästens kort. Om en betalning misslyckas följer vi upp den, och vi hjälper dig om saker blir kvar när avtalet har gått ut.",
+      },
+    ],
+  },
+  finalCta: {
+    title: "Var med från start",
+    lead: "Vi öppnar i Luleå under vintern 2026/27. Anmäl intresse nu så får du förtur.",
+  },
+  footer: {
+    tagline: "Förvaring hos grannen, i Luleå.",
+    storage: "Förvaring",
+    areas: "Områden",
+    company: "Spazia",
+    contact: "Kontakt",
+    privacy: "Integritetspolicy",
+    cookies: "Cookieinställningar",
+    rights: "Alla rättigheter förbehållna.",
+  },
+  hostPage: {
+    metaTitle: "Hyr ut ditt garage eller förråd i Luleå",
+    metaDescription:
+      "Tjäna pengar på ditt tomma garage, källare eller uthus. Gratis att annonsera, BankID-verifierade hyresgäster, standardavtal och automatisk månadsbetalning.",
+    eyebrow: "Bli värd",
+    title: "Tjäna pengar på ditt tomma garage.",
+    lead: "Hyr ut torr plats i garage, källare eller uthus till studenter och unga yrkesverksamma i Luleå. Vi sköter verifiering, avtal och betalning. Du låser upp dörren några gånger om året.",
+    ctaForm: "Anmäl ditt utrymme",
+    ctaCalc: "Räkna på det",
+    benefitsTitle: "Det här ingår",
+    benefits: [
+      {
+        title: "Gratis att annonsera",
+        text: "Det kostar ingenting att lägga upp ditt utrymme. Vi tar 5 % av utbetalningarna, först när du tjänar pengar.",
+      },
+      {
+        title: "Automatisk betalning",
+        text: "Hyran dras automatiskt från hyresgästens kort och betalas ut till dig varje månad. Vi följer upp om något strular.",
+      },
+      {
+        title: "Standardavtal",
+        text: "Avtalet reglerar tillträde, uppsägning, ansvar och vad som inte får förvaras. Du behöver inte skriva något själv.",
+      },
+      {
+        title: "Du bestämmer",
+        text: "Du väljer vad du tar emot, godkänner varje hyresgäst och bestämmer när de får lämna och hämta.",
+      },
+      {
+        title: "Verifierade hyresgäster",
+        text: "Alla hyresgäster identifierar sig med BankID eller Freja eID innan de kan boka.",
+      },
+      {
+        title: "Gratis besök och bilder",
+        text: "Vi besöker ditt utrymme, tipsar om hur mycket plats du kan hyra ut och tar bilderna till annonsen.",
+      },
+    ],
+    stepsTitle: "Så blir du värd",
+    steps: [
+      { title: "Anmäl intresse", text: "Fyll i formuläret nedan. Det tar två minuter." },
+      { title: "Vi hör av oss", text: "Vi ringer upp och bokar ett besök när det passar dig." },
+      {
+        title: "Besök och annons",
+        text: "Vi kontrollerar utrymmet, tar bilder och skapar annonsen tillsammans med dig.",
+      },
+      {
+        title: "Första hyresgästen",
+        text: "Du godkänner förfrågan, ni signerar avtalet och den första hyran betalas ut.",
+      },
+    ],
+    requirementsTitle: "Vad krävs av utrymmet?",
+    requirements: [
+      { title: "Torrt", text: "Inga läckor och ingen fukt som kan skada saker." },
+      { title: "Låsbart", text: "Det ska gå att låsa, och bara du och hyresgästen ska komma åt sakerna." },
+      { title: "Tillgängligt", text: "Hyresgästen ska kunna lämna och hämta på de tider ni kommer överens om." },
+      { title: "Bara förvaring", text: "Ingen får bo, arbeta eller vistas i utrymmet." },
+    ],
+    taxTitle: "Skatt på hyresintäkter",
+    taxText:
+      "Hyr du ut en del av din privatbostad, till exempel garaget till din villa, beskattas hyran som inkomst av kapital. För en villa får du göra ett schablonavdrag på 40 000 kr per år plus 20 % av hyresintäkten, vilket täcker hela intäkten för de flesta värdar. Som digital plattform kan Spazia vara skyldig att lämna uppgifter om hyresintäkter till Skatteverket. Reglerna beror på din situation, så kontrollera alltid med Skatteverket.",
+    taxLink: "Skatteverket om att hyra ut privatbostad",
+    formTitle: "Anmäl ditt utrymme",
+    formLead: "Vi hör av oss inom några dagar för att boka ett besök. Det är gratis och inte bindande.",
+    faqTitle: "Frågor från värdar",
+  },
+  findPage: {
+    metaTitle: "Hitta förvaring i Luleå – däck, skidor, flyttlådor",
+    metaDescription:
+      "Förvara däck, skidor, cyklar, flyttlådor eller fordon hos en verifierad granne i Luleå. Billigare än förrådsföretagen och utan bindningstid. Anmäl intresse.",
+    eyebrow: "Hitta förvaring",
+    title: "Förvaring nära dig, hos en granne.",
+    lead: "Berätta vad du behöver förvara. När vi öppnar matchar vi dig med en verifierad värd i ditt område, och du som anmäler dig nu får förtur.",
+    pricesTitle: "Riktpriser",
+    pricesLead: "Exempel på månadspris inklusive serviceavgift. Värden sätter det slutliga priset.",
+    heatedNote: "Uppvärmd plats kostar ca 25 % mer för fordon, möbler och lådor.",
+    studentTitle: "Student vid LTU?",
+    studentText:
+      "Lämna lådorna och möblerna i Luleå över sommaren i stället för att frakta hem dem. Saknar du svenskt BankID kan du verifiera dig med Freja eID och ditt pass.",
+    formTitle: "Anmäl intresse",
+    formLead: "Det är gratis och inte bindande.",
+    faqTitle: "Vanliga frågor",
+  },
+  trustPage: {
+    metaTitle: "Trygghet – så skyddar vi värdar och hyresgäster",
+    metaDescription:
+      "BankID-verifiering, besök av varje utrymme, standardavtal, inventarielista med bilder och betalning via plattformen. Så fungerar tryggheten på Spazia.",
+    eyebrow: "Trygghet",
+    title: "Förtroende är grunden.",
+    lead: "Att lämna sina saker hos någon man inte känner, eller släppa in någon i sitt garage, kräver förtroende. Så här bygger vi det.",
+    sections: [
+      {
+        title: "Verifiering med BankID och Freja eID",
+        text: "Alla som hyr ut eller hyr via Spazia identifierar sig med svenskt BankID. Internationella studenter och nyinflyttade utan BankID kan använda Freja eID, som fungerar med pass. Vi vet alltså alltid vem som är vem.",
+        bullets: [] as string[],
+      },
+      {
+        title: "Vi besöker varje utrymme",
+        text: "Innan ett utrymme publiceras besöker vi det. Vi kontrollerar att det är torrt, låsbart och stämmer med beskrivningen, och vi tar bilderna till annonsen själva.",
+        bullets: [] as string[],
+      },
+      {
+        title: "Ett standardavtal för alla",
+        text: "Värd och hyresgäst signerar samma tydliga avtal digitalt. Det reglerar:",
+        bullets: [
+          "vad som förvaras och var",
+          "när det går att lämna och hämta och hur besök bokas",
+          "uppsägning: månadsvis, utan bindningstid",
+          "ansvar för utrymmet och för sakerna",
+          "vad som inte får förvaras",
+        ],
+      },
+      {
+        title: "Inventarielista med bilder",
+        text: "Vid inlämning fotograferar ni sakerna och bekräftar listan tillsammans. Samma sak vid hämtning. Då råder det aldrig tvekan om vad som lämnats in.",
+        bullets: [] as string[],
+      },
+      {
+        title: "Betalning via Spazia",
+        text: "Hyran betalas med kort och dras automatiskt varje månad. Värden får sin utbetalning från oss. Betala aldrig vid sidan av plattformen, för då gäller inte avtalet och vi kan inte hjälpa till om något går fel.",
+        bullets: [] as string[],
+      },
+      {
+        title: "Försäkring",
+        text: "Saker som förvaras utanför hemmet omfattas ofta av hemförsäkringen, men många försäkringar har undantag eller beloppsgränser för stöldbegärliga saker i garage och förråd. Kontrollera dina villkor innan du lämnar in något värdefullt. Vi arbetar på en förvaringsförsäkring tillsammans med ett försäkringsbolag och berättar mer när den är klar.",
+        bullets: [] as string[],
+      },
+      {
+        title: "Det här får inte förvaras",
+        text: "För allas säkerhet är vissa saker inte tillåtna:",
+        bullets: [
+          "brandfarligt, som bensin i dunkar, gasol, färg och lösningsmedel",
+          "livsmedel och annat som drar till sig skadedjur",
+          "djur och växter",
+          "vapen, ammunition och allt som är olagligt",
+          "kontanter, smycken och andra värdesaker",
+        ],
+      },
+      {
+        title: "Om något går fel",
+        text: "Kontakta oss så hjälper vi till. Vi följer upp uteblivna betalningar, hjälper värden om saker blir kvar när avtalet har gått ut och medlar om ni inte är överens.",
+        bullets: [] as string[],
+      },
+    ],
+  },
+  aboutPage: {
+    metaTitle: "Om Spazia",
+    metaDescription:
+      "Spazia är en marknadsplats för förvaring hos grannar. Vi startar i Luleå, där vintern gör förvaring till en större fråga än på de flesta andra platser.",
+    eyebrow: "Om oss",
+    title: "Plats finns. Den är bara på fel ställe.",
+    paragraphs: [
+      "I Luleå äger många av oss saker som bara används halva året: dubbdäck, skidor, skotrar och sommarmöbler. Samtidigt är kön till extra förråd i hyreshusen lång, studentrummen har knappt plats för en resväska och förrådsföretagen ligger ofta i industriområden utanför stan.",
+      "I villaområden som Gammelstad, Bergnäset och Sunderbyn finns samtidigt garage, källare och uthus med plats över. Spazia kopplar ihop de två, med BankID, standardavtal och automatisk betalning. Det ska kännas lika tryggt som ett förrådsföretag, men vara närmare och billigare.",
+      "Spazia drivs av ett litet team i Luleå. Vi besöker själva varje utrymme innan det publiceras, och vi svarar själva när du hör av dig.",
+    ],
+    contactTitle: "Hör av dig",
+    contactText: "Frågor, idéer eller vill du samarbeta? Mejla oss så svarar vi så snart vi kan.",
+  },
+  privacyPage: {
+    metaTitle: "Integritetspolicy",
+    metaDescription: "Så hanterar Spazia dina personuppgifter och cookies.",
+    title: "Integritetspolicy",
+    updated: "Senast uppdaterad: 31 oktober 2026",
+    sections: [
+      {
+        title: "Personuppgiftsansvarig",
+        text: "{legal} är personuppgiftsansvarig för behandlingen av dina personuppgifter. Du når oss på {email}.",
+      },
+      {
+        title: "Vilka uppgifter vi samlar in",
+        text: "När du anmäler intresse sparar vi det du fyller i: namn, e-post, telefonnummer om du anger det, område och uppgifter om förvaringen eller ditt utrymme. Vi sparar också vilken annons eller länk du kom från (så kallade UTM-parametrar) för att veta vilka kanaler som fungerar.",
+      },
+      {
+        title: "Varför vi behandlar uppgifterna",
+        text: "Vi använder uppgifterna för att kontakta dig om förvaring eller om ditt utrymme, för att boka besök och för att förstå efterfrågan inför lanseringen. Den rättsliga grunden är ditt samtycke, som du kan återkalla när som helst.",
+      },
+      {
+        title: "Hur länge vi sparar uppgifterna",
+        text: "Vi raderar uppgifterna senast 12 månader efter din anmälan, eller tidigare om du ber om det. Blir du värd eller hyresgäst gäller villkoren i ditt avtal.",
+      },
+      {
+        title: "Vilka som får tillgång till uppgifterna",
+        text: "Vi säljer aldrig dina uppgifter. De lagras hos våra leverantörer av webbhotell och databas (Netlify och Supabase), som behandlar dem för vår räkning. Om du godkänner marknadsföringscookies delar vi information om ditt besök med Meta för att mäta våra annonser. Vissa leverantörer kan behandla uppgifter utanför EU/EES, och då sker det med stöd av EU-kommissionens standardavtalsklausuler eller EU–US Data Privacy Framework.",
+      },
+      {
+        title: "Cookies",
+        text: "Vi använder bara nödvändig lagring för att sajten ska fungera och för att komma ihåg ditt cookieval. Meta-pixeln, som mäter våra annonser, laddas bara om du väljer ”Acceptera alla”. Du kan ändra ditt val när som helst via länken Cookieinställningar längst ned på sidan.",
+      },
+      {
+        title: "Dina rättigheter",
+        text: "Du har rätt att få veta vilka uppgifter vi har om dig, få dem rättade eller raderade, begränsa behandlingen och återkalla ditt samtycke. Mejla {email}. Du kan också lämna klagomål till Integritetsskyddsmyndigheten (IMY) på imy.se.",
+      },
+    ],
+  },
+  categoryPage: {
+    eyebrow: "Förvaring i Luleå",
+    priceLabel: "Riktpris",
+    seasonLabel: "Säsong",
+    ctaFind: "Anmäl intresse",
+    hostTitle: "Har du plats för {name}?",
+    hostText: "Villaägare i Luleå kan tjäna pengar på plats som annars står tom. Räkna på vad ditt garage kan ge.",
+    otherTitle: "Annan förvaring",
+    areasTitle: "Områden",
+  },
+  areaPage: {
+    eyebrow: "Område",
+    titleRenter: "Förvaring i {name}",
+    hostTitle: "Bor du i {name} och har plats över?",
+    renterTitle: "Behöver du plats i {name}?",
+    categoriesTitle: "Det här kan du förvara",
+    otherAreas: "Andra områden",
+  },
+  forms: {
+    firstName: "Förnamn",
+    email: "E-post",
+    phone: "Telefon",
+    optional: "valfritt",
+    phoneHintHost: "Vi ringer för att boka besök.",
+    area: "Område",
+    areaPlaceholder: "Välj område",
+    otherArea: "Annat område i Luleå",
+    anyArea: "Spelar ingen roll",
+    message: "Något mer vi bör veta?",
+    consentBefore: "Jag godkänner att Spazia sparar mina uppgifter för att kontakta mig, enligt ",
+    consentLink: "integritetspolicyn",
+    consentAfter: ".",
+    sending: "Skickar…",
+    errorGeneric: "Något gick fel. Försök igen eller mejla oss på {email}.",
+    required: "Fyll i det här fältet.",
+    invalidEmail: "Ange en giltig e-postadress.",
+    pickOne: "Välj minst ett alternativ.",
+    consentRequired: "Du behöver godkänna för att vi ska kunna kontakta dig.",
+    host: {
+      spaceType: "Typ av utrymme",
+      spaceTypes: {
+        garage: "Garage",
+        basement: "Källare",
+        outbuilding: "Uthus eller förråd",
+        attic: "Vind",
+        barn: "Lada eller ladugård",
+        other: "Annat",
+      },
+      heated: "Är utrymmet uppvärmt?",
+      heatedOptions: {
+        yes: "Ja, uppvärmt",
+        frostfree: "Frostfritt",
+        no: "Nej, men torrt",
+      },
+      size: "Ungefärlig storlek",
+      sizes: {
+        xs: "Under 5 m²",
+        s: "5–15 m²",
+        m: "15–30 m² (t.ex. enkelgarage)",
+        l: "Över 30 m² (t.ex. dubbelgarage)",
+      },
+      accepts: "Vad kan du ta emot?",
+      messagePlaceholder: "T.ex. när det passar att hyresgäster kommer, eller om utrymmet delas med din egen bil.",
+      submit: "Skicka anmälan",
+      successTitle: "Tack! Vi hör av oss snart.",
+      successText:
+        "Vi kontaktar dig inom några dagar för att boka ett besök. Under tiden kan du läsa mer om hur vi arbetar med trygghet.",
+    },
+    renter: {
+      items: "Vad vill du förvara?",
+      quantity: "Ungefär hur mycket?",
+      quantityPlaceholder: "T.ex. en däcksats och två par skidor",
+      start: "När behöver du plats?",
+      starts: {
+        asap: "Så snart som möjligt",
+        month: "Inom en månad",
+        spring: "Till våren (april–maj)",
+        summer: "Till sommaren (juni)",
+        unsure: "Vet inte än",
+      },
+      duration: "Hur länge?",
+      durations: {
+        short: "1–3 månader",
+        season: "En säsong (ca 6 månader)",
+        long: "Längre än 6 månader",
+        unsure: "Vet inte än",
+      },
+      heated: "Behöver du uppvärmd plats?",
+      heatedOptions: {
+        yes: "Ja",
+        no: "Nej",
+        any: "Spelar ingen roll",
+      },
+      occupation: "Jag är…",
+      occupations: {
+        student: "Student",
+        working: "Yrkesverksam",
+        other: "Annat",
+      },
+      bankid: "Har du svenskt BankID?",
+      bankidOptions: {
+        yes: "Ja",
+        no: "Nej",
+      },
+      messagePlaceholder: "T.ex. om du behöver komma åt sakerna ofta.",
+      submit: "Anmäl intresse",
+      successTitle: "Tack! Du står på listan.",
+      successText:
+        "Vi hör av oss när det finns en verifierad värd nära dig. Du som anmäler dig nu får förtur när vi öppnar.",
+    },
+  },
+  calculator: {
+    title: "Vad kan ditt utrymme ge?",
+    lead: "Välj vad du har plats för. Beräkningen bygger på våra riktpriser och visar vad du får efter Spazias avgift.",
+    presetsLabel: "Snabbval",
+    presets: {
+      corner: "Ett hörn i garaget",
+      halfDouble: "Halvt dubbelgarage",
+      carSpace: "Bilplats inomhus",
+      basement: "Källarförråd 6 m²",
+    },
+    heatedLabel: "Utrymmet är uppvärmt",
+    heatedHint: "Ger högre pris för fordon och möbler.",
+    resultLabel: "Du får ca",
+    perYear: "≈ {amount} kr per år",
+    renterPays: "Hyresgästerna betalar totalt ca {amount} kr/mån inklusive serviceavgift.",
+    feeNote:
+      "Riktpriser. Du bestämmer själv priset. Spazia tar 5 % av utbetalningen och hyresgästen betalar en serviceavgift på 15 %.",
+    decrease: "Färre {unit}",
+    increase: "Fler {unit}",
+    cta: "Anmäl ditt utrymme",
+    empty: "Lägg till något för att se en beräkning.",
+  },
+  cookie: {
+    text: "Vi använder Meta-pixeln för att mäta våra annonser, men bara om du godkänner det. Nödvändig lagring används alltid för att sajten ska fungera.",
+    accept: "Acceptera alla",
+    necessary: "Endast nödvändiga",
+    readMore: "Läs mer",
+  },
+  notFound: {
+    title: "Sidan finns inte",
+    text: "Länken kan vara fel, eller så har sidan flyttat.",
+    home: "Till startsidan",
+  },
+};
+
+export type Dictionary = typeof sv;

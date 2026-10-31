@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>Formulär</title>
+  </head>
+  <body>
+    <!--
+      Netlify Forms detects forms in the deployed HTML. The real forms are
+      rendered by React and submitted with fetch to this file, so these hidden
+      copies declare every field Netlify should store. Keep them in sync with
+      src/components/forms/*.tsx. Not used when Supabase is configured.
+    -->
+    <form name="host-lead" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input name="bot-field" />
+      <input name="first_name" />
+      <input name="email" />
+      <input name="phone" />
+      <input name="area" />
+      <input name="space_type" />
+      <input name="heated" />
+      <input name="size" />
+      <input name="accepts" />
+      <textarea name="message"></textarea>
+      <input name="consent" />
+      <input name="lang" />
+      <input name="utm_source" />
+      <input name="utm_medium" />
+      <input name="utm_campaign" />
+      <input name="utm_content" />
+      <input name="utm_term" />
+      <input name="referrer" />
+      <input name="landing_page" />
+    </form>
+    <form name="renter-lead" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input name="bot-field" />
+      <input name="first_name" />
+      <input name="email" />
+      <input name="phone" />
+      <input name="items" />
+      <input name="quantity" />
+      <input name="area" />
+      <input name="start" />
+      <input name="duration" />
+      <input name="heated" />
+      <input name="occupation" />
+      <input name="has_bankid" />
+      <textarea name="message"></textarea>
+      <input name="consent" />
+      <input name="lang" />
+      <input name="utm_source" />
+      <input name="utm_medium" />
+      <input name="utm_campaign" />
+      <input name="utm_content" />
+      <input name="utm_term" />
+      <input name="referrer" />
+      <input name="landing_page" />
+    </form>
+  </body>
+</html>
