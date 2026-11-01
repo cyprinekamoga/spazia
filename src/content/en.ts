@@ -6,7 +6,7 @@ export const en: Dictionary = {
     homeTitle: "Spazia – storage with your neighbours in Luleå",
     homeDescription:
       "Store tyres, skis, snowmobiles and boxes in dry garages and storerooms with verified homeowners in Luleå. Cheaper, closer and no long-term commitment.",
-    titleTemplate: "%s · Spazia",
+    titleTemplate: "%s | Spazia",
     locale: "en_GB",
   },
   common: {
@@ -53,6 +53,7 @@ export const en: Dictionary = {
     title: "What do you want to store?",
     lead: "Guide prices per month including the service fee. The host sets the final price.",
     per: "per",
+    perUnit: "a month per {unit}",
   },
   how: {
     title: "How Spazia works",
@@ -466,10 +467,10 @@ export const en: Dictionary = {
     areasTitle: "Areas",
   },
   areaPage: {
-    eyebrow: "Area",
-    titleRenter: "Storage in {name}",
-    hostTitle: "Live in {name} and have spare space?",
-    renterTitle: "Need space in {name}?",
+    eyebrow: "Area in Luleå",
+    titleRenter: "Storage {in} {name}",
+    hostTitle: "Live {in} {name} and have spare space?",
+    renterTitle: "Need space {in} {name}?",
     categoriesTitle: "What you can store",
     otherAreas: "Other areas",
   },

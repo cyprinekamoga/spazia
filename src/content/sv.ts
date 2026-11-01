@@ -4,7 +4,7 @@ export const sv = {
     homeTitle: "Spazia – förvaring hos grannen i Luleå",
     homeDescription:
       "Förvara däck, skidor, skoter och flyttlådor i torra garage och förråd hos verifierade villaägare i Luleå. Billigare, närmare och utan bindningstid.",
-    titleTemplate: "%s · Spazia",
+    titleTemplate: "%s | Spazia",
     locale: "sv_SE",
   },
   common: {
@@ -51,6 +51,7 @@ export const sv = {
     title: "Vad vill du förvara?",
     lead: "Riktpriser per månad inklusive serviceavgift. Värden sätter det slutliga priset.",
     per: "per",
+    perUnit: "i månaden per {unit}",
   },
   how: {
     title: "Så fungerar Spazia",
@@ -464,10 +465,10 @@ export const sv = {
     areasTitle: "Områden",
   },
   areaPage: {
-    eyebrow: "Område",
-    titleRenter: "Förvaring i {name}",
-    hostTitle: "Bor du i {name} och har plats över?",
-    renterTitle: "Behöver du plats i {name}?",
+    eyebrow: "Område i Luleå",
+    titleRenter: "Förvaring {in} {name}",
+    hostTitle: "Bor du {in} {name} och har plats över?",
+    renterTitle: "Behöver du plats {in} {name}?",
     categoriesTitle: "Det här kan du förvara",
     otherAreas: "Andra områden",
   },

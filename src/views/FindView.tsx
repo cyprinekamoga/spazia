@@ -1,4 +1,4 @@
-import { ArrowRight, GraduationCap } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { getDictionary } from "@/content";
 import { categories } from "@/content/categories";
 import { renterPrice } from "@/content/pricing";
@@ -23,7 +23,6 @@ export function FindView({ lang }: { lang: Lang }) {
       >
         <a href="#anmalan" className="btn btn-light">
           {p.formTitle}
-          <ArrowRight size={18} aria-hidden="true" />
         </a>
       </PhotoHero>
 
@@ -50,7 +49,7 @@ export function FindView({ lang }: { lang: Lang }) {
                       <Icon size={18} className="text-brand" />
                       <span className="font-medium text-night">{c.name[lang]}</span>
                     </span>
-                    <span className="text-right text-muted">
+                    <span className="text-right text-muted tabular-nums">
                       <span className="font-semibold text-night">
                         {formatNumber(renterPrice(c.price, false, c.heatedMatters), lang)} {t.common.currency}
                       </span>{" "}

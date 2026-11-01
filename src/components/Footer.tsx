@@ -26,7 +26,7 @@ export function Footer({ lang, t }: { lang: Lang; t: Dictionary }) {
         </div>
 
         <nav aria-label={t.footer.storage}>
-          <h2 className="font-sans text-sm font-semibold tracking-wide text-white uppercase">{t.footer.storage}</h2>
+          <h2 className="text-base font-bold text-white">{t.footer.storage}</h2>
           <ul className="mt-4 text-[0.95rem]">
             {categories.map((c) => (
               <li key={c.id}>
@@ -39,7 +39,7 @@ export function Footer({ lang, t }: { lang: Lang; t: Dictionary }) {
         </nav>
 
         <nav aria-label={t.footer.areas}>
-          <h2 className="font-sans text-sm font-semibold tracking-wide text-white uppercase">{t.footer.areas}</h2>
+          <h2 className="text-base font-bold text-white">{t.footer.areas}</h2>
           <ul className="mt-4 text-[0.95rem]">
             {areas.map((a) => (
               <li key={a.id}>
@@ -52,7 +52,7 @@ export function Footer({ lang, t }: { lang: Lang; t: Dictionary }) {
         </nav>
 
         <nav aria-label={t.footer.company} className="col-span-2 sm:col-span-1">
-          <h2 className="font-sans text-sm font-semibold tracking-wide text-white uppercase">{t.footer.company}</h2>
+          <h2 className="text-base font-bold text-white">{t.footer.company}</h2>
           <ul className="mt-4 text-[0.95rem]">
             <li>
               <Link prefetch={false} href={pagePath("find", lang)} className={linkClass}>

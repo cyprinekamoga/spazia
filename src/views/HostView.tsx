@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, BadgeCheck } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 import { getDictionary } from "@/content";
 import { HostCalculator } from "@/components/HostCalculator";
 import { MobileActionBar } from "@/components/MobileActionBar";
@@ -24,7 +24,6 @@ export function HostView({ lang }: { lang: Lang }) {
       >
         <a href="#anmalan" className="btn btn-light">
           {p.ctaForm}
-          <ArrowRight size={18} aria-hidden="true" />
         </a>
         <a href="#kalkylator" className="btn btn-on-dark">
           {p.ctaCalc}
@@ -87,7 +86,6 @@ export function HostView({ lang }: { lang: Lang }) {
                 className="mt-4 inline-flex min-h-11 items-center gap-2 font-semibold text-night underline decoration-brand-bright decoration-2 underline-offset-4"
               >
                 {p.taxLink}
-                <ArrowRight size={16} aria-hidden="true" />
               </a>
             </div>
           </div>

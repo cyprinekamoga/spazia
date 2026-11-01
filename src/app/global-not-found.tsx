@@ -1,4 +1,4 @@
-import "@fontsource-variable/inter";
+import "@fontsource-variable/finlandica/wght.css";
 import "@fontsource-variable/fraunces/opsz.css";
 import "./globals.css";
 import type { Metadata } from "next";
@@ -8,7 +8,7 @@ import { sv } from "@/content/sv";
 import { en } from "@/content/en";
 
 export const metadata: Metadata = {
-  title: "404 · Spazia",
+  title: "404 | Spazia",
   robots: { index: false },
 };
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Tag } from "lucide-react";
+import { CalendarDays, Tag } from "lucide-react";
 import { getDictionary } from "@/content";
 import type { Area } from "@/content/areas";
 import type { Category } from "@/content/categories";
@@ -36,7 +36,6 @@ export function CategoryView({ lang, category }: { lang: Lang; category: Categor
       >
         <Link prefetch={false} href={findHref} className="btn btn-light">
           {p.ctaFind}
-          <ArrowRight size={18} aria-hidden="true" />
         </Link>
       </PhotoHero>
 
@@ -106,21 +105,19 @@ export function AreaView({ lang, area }: { lang: Lang; area: Area }) {
 
   const renterCard = (
     <div className="card flex flex-col p-5 sm:p-8">
-      <h2 className="text-2xl leading-snug text-night">{fill(p.renterTitle, { name: area.name })}</h2>
+      <h2 className="text-2xl leading-snug text-night">{fill(p.renterTitle, { name: area.name, in: lang === "sv" ? area.prep : "in" })}</h2>
       <p className="mt-2 flex-1 leading-relaxed text-muted">{area.renterPitch[lang]}</p>
       <Link prefetch={false} href={findHref} className="btn btn-primary mt-5 sm:self-start">
         {t.hero.ctaFind}
-        <ArrowRight size={18} aria-hidden="true" />
       </Link>
     </div>
   );
   const hostCard = (
     <div className="flex flex-col rounded-[1.25rem] bg-night p-5 text-white sm:p-8">
-      <h2 className="text-2xl leading-snug">{fill(p.hostTitle, { name: area.name })}</h2>
+      <h2 className="text-2xl leading-snug">{fill(p.hostTitle, { name: area.name, in: lang === "sv" ? area.prep : "in" })}</h2>
       <p className="mt-2 flex-1 leading-relaxed text-frost-2">{area.hostPitch[lang]}</p>
       <Link prefetch={false} href={hostHref} className="btn btn-light mt-5 sm:self-start">
         {t.hero.ctaHost}
-        <ArrowRight size={18} aria-hidden="true" />
       </Link>
     </div>
   );
@@ -130,8 +127,8 @@ export function AreaView({ lang, area }: { lang: Lang; area: Area }) {
       <PhotoHero
         photo={area.photo}
         lang={lang}
-        eyebrow={<span className="eyebrow !text-glow">{`${p.eyebrow} · Luleå`}</span>}
-        title={fill(p.titleRenter, { name: area.name })}
+        eyebrow={<span className="eyebrow !text-glow">{p.eyebrow}</span>}
+        title={fill(p.titleRenter, { name: area.name, in: lang === "sv" ? area.prep : "in" })}
         lead={area.intro[lang]}
       />
 

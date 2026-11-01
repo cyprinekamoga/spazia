@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return buildMetadata({
     lang,
     paths: { sv: areaPath(area.slug, "sv"), en: areaPath(area.slug, "en") },
-    title: `${fill(t.areaPage.titleRenter, { name: area.name })}, Luleå`,
+    title: `${fill(t.areaPage.titleRenter, { name: area.name, in: lang === "sv" ? area.prep : "in" })}, Luleå`,
     description: `${area.intro[lang]} ${area.renterPitch[lang]}`,
   });
 }

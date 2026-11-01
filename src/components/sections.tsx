@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Dictionary } from "@/content";
 import { areas, type Area } from "@/content/areas";
@@ -8,7 +8,7 @@ import type { PhotoKey } from "@/content/photos";
 import { hostPayout, roundForDisplay } from "@/content/pricing";
 import { fill, formatNumber, type Lang } from "@/lib/i18n";
 import { areaPath, categoryPath, pagePath } from "@/lib/routes";
-import { categoryIcons, seasonIcons, trustIcons, whyIcons } from "./Icons";
+import { seasonIcons, trustIcons, whyIcons } from "./Icons";
 import { Photo } from "./Photo";
 
 /* ---------- Layout helpers ---------- */
@@ -53,9 +53,9 @@ export function SectionHeading({
   return (
     <div className={`max-w-2xl ${align === "center" ? "mx-auto text-center" : ""}`}>
       {eyebrow && <span className={`eyebrow ${onDark ? "!text-glow" : ""}`}>{eyebrow}</span>}
-      <h2 className={`mt-1.5 text-[1.85rem] leading-tight sm:text-4xl ${onDark ? "text-white" : "text-night"}`}>{title}</h2>
+      <h2 className={`mt-1 text-[2.1rem] leading-[1.08] sm:text-5xl ${onDark ? "text-white" : "text-night"}`}>{title}</h2>
       {lead && (
-        <p className={`mt-3 text-[1.05rem] leading-relaxed sm:mt-4 sm:text-lg ${onDark ? "text-frost-2" : "text-muted"}`}>{lead}</p>
+        <p className={`mt-3 max-w-xl text-lg leading-relaxed sm:mt-4 ${onDark ? "text-frost-2" : "text-muted"}`}>{lead}</p>
       )}
     </div>
   );
@@ -99,10 +99,10 @@ export function PhotoHero({
       <div className="container-page flex w-full flex-col justify-end pt-24 pb-8 sm:justify-center sm:py-16">
         <div className="max-w-2xl">
           {eyebrow && <div className="mb-3">{eyebrow}</div>}
-          <h1 className={`${size === "home" ? "text-[2.6rem] sm:text-6xl" : "text-[2.25rem] sm:text-5xl"} leading-[1.05] text-white`}>
+          <h1 className={`${size === "home" ? "text-[2.9rem] sm:text-6xl lg:text-7xl" : "text-[2.4rem] sm:text-5xl lg:text-6xl"} leading-[1.02] text-white`}>
             {title}
           </h1>
-          {lead && <p className="mt-4 max-w-xl text-[1.05rem] leading-relaxed text-frost sm:text-lg">{lead}</p>}
+          {lead && <p className="mt-4 max-w-xl text-lg leading-relaxed text-frost">{lead}</p>}
           {children && <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">{children}</div>}
         </div>
       </div>
@@ -116,8 +116,12 @@ export function priceLabel(category: Category, lang: Lang, t: Dictionary) {
   return `${t.common.from} ${formatNumber(category.price, lang)} ${t.common.perMonth}`;
 }
 
+/** "120 kr" in Swedish, "SEK 120" in English. */
+export function money(amount: number, lang: Lang) {
+  return lang === "sv" ? `${formatNumber(amount, lang)} kr` : `SEK ${formatNumber(amount, lang)}`;
+}
+
 export function CategoryCard({ category, lang, t }: { category: Category; lang: Lang; t: Dictionary }) {
-  const Icon = categoryIcons[category.id];
   return (
     <Link prefetch={false}
       href={categoryPath(category.slug, lang)}
@@ -130,20 +134,19 @@ export function CategoryCard({ category, lang, t }: { category: Category; lang: 
           sizes="(min-width: 1024px) 360px, (min-width: 640px) 46vw, 78vw"
           className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]"
         />
-        <span className="absolute top-3 left-3 flex h-9 w-9 items-center justify-center rounded-full bg-paper/95 text-brand shadow-sm">
-          <Icon size={19} />
-        </span>
       </div>
       <div className="flex flex-1 flex-col p-4 sm:p-5">
-        <h3 className="text-lg text-night">{category.name[lang]}</h3>
-        <p className="mt-1 flex-1 text-[0.95rem] leading-snug text-muted">{category.short[lang]}</p>
-        <p className="mt-3 flex items-center justify-between gap-2 text-[0.95rem]">
-          <span>
-            <span className="font-semibold text-night">{priceLabel(category, lang, t)}</span>
-            <span className="text-muted"> · {category.unit[lang]}</span>
-          </span>
-          <ArrowRight size={18} className="shrink-0 text-brand transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-        </p>
+        <h3 className="text-[1.2rem] text-night group-hover:underline group-hover:decoration-2 group-hover:underline-offset-4">
+          {category.name[lang]}
+        </h3>
+        <p className="mt-1 flex-1 leading-snug text-muted">{category.short[lang]}</p>
+        <div className="mt-4 border-t border-line pt-3">
+          <p className="leading-tight">
+            <span className="text-muted">{t.common.from} </span>
+            <span className="text-[1.4rem] font-bold text-night">{money(category.price, lang)}</span>
+          </p>
+          <p className="text-[0.95rem] text-muted">{fill(t.categoriesSection.perUnit, { unit: category.unit[lang] })}</p>
+        </div>
       </div>
     </Link>
   );
@@ -230,14 +233,13 @@ export function HostTeaser({ lang, t }: { lang: Lang; t: Dictionary }) {
       </div>
       <div className="px-5 py-7 sm:px-10 sm:py-12">
         <span className="eyebrow !text-glow">{t.hostTeaser.eyebrow}</span>
-        <h2 className="mt-1.5 text-[1.85rem] leading-tight text-white sm:text-4xl">{t.hostTeaser.title}</h2>
-        <p className="mt-3 text-[1.05rem] leading-relaxed text-frost-2 sm:text-lg">
+        <h2 className="mt-1 text-[2.1rem] leading-[1.08] text-white sm:text-5xl">{t.hostTeaser.title}</h2>
+        <p className="mt-3 text-lg leading-relaxed text-frost-2">
           {fill(t.hostTeaser.lead, { amount: formatNumber(exampleGarageIncome(), lang) })}
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link prefetch={false} href={`${pagePath("host", lang)}#kalkylator`} className="btn btn-light">
             {t.hostTeaser.cta}
-            <ArrowRight size={18} aria-hidden="true" />
           </Link>
           <Link prefetch={false} href={`${pagePath("host", lang)}#anmalan`} className="btn btn-on-dark">
             {t.hostPage.ctaForm}
@@ -303,7 +305,6 @@ export function AreaChips({
                   </span>
                 )}
               </span>
-              <ArrowRight size={17} className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
           </li>
         ))}
@@ -343,8 +344,8 @@ export function FinalCta({ lang, t }: { lang: Lang; t: Dictionary }) {
     <div className="relative isolate overflow-hidden rounded-3xl bg-night px-5 py-10 text-center text-white sm:px-10 sm:py-14">
       <Photo name="garage-field" lang={lang} sizes="100vw" decorative className="absolute inset-0 -z-20 h-full w-full opacity-35" />
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-b from-night/40 to-night/90" />
-      <h2 className="text-[1.85rem] leading-tight sm:text-4xl">{t.finalCta.title}</h2>
-      <p className="mx-auto mt-3 max-w-xl text-[1.05rem] leading-relaxed text-frost sm:text-lg">{t.finalCta.lead}</p>
+      <h2 className="text-[2.1rem] leading-[1.08] sm:text-5xl">{t.finalCta.title}</h2>
+      <p className="mx-auto mt-3 max-w-xl text-lg leading-relaxed text-frost">{t.finalCta.lead}</p>
       <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
         <Link prefetch={false} href={pagePath("find", lang)} className="btn btn-light">
           {t.hero.ctaFind}

@@ -49,8 +49,20 @@ npm run lint && npm run typecheck
 | What | Details |
 |---|---|
 | Logo | Vector recreation of the Spazia mark (house, shield, keyhole; teal `#3f7c86` → slate `#243848`). The "Spazia" wordmark is Poppins SemiBold converted to outlines. Lives in `src/components/Logo.tsx` + `logoPaths.ts`; favicon in `src/app/icon.svg`. |
-| Fonts | The same pairing as Neighbor: an editorial serif for headings and **Inter** for text. Neighbor's heading font, GT Ultra, is a paid font (Grilli Type), so the site uses **Fraunces**, a free look-alike, via `@fontsource-variable/fraunces`. If you buy a GT Ultra licence, add its `@font-face` and put it first in `--font-display` in `src/app/globals.css`. |
+| Fonts | Two contrasting families. **Finlandica** by Helsinki Type Studio (free, SIL Open Font License) for all text and interface. **Fraunces**, an editorial serif, for headlines only. To use the studio's paid Allee instead, add its `@font-face` and put it first in `--font-sans` in `src/app/globals.css`. |
 | Colours | Taken from the logo. Tokens are in `src/app/globals.css` (`--color-brand`, `--color-night` …). |
+
+## Avoiding the "template look"
+
+These are deliberate choices; please keep them:
+
+- Never use one font for everything.
+- Keep a real size and weight contrast between headlines and text.
+- No middle-dot metadata (`a · b · c`).
+- No arrows after every link or button.
+- No tracked capital labels.
+- No italic serif words inside sans headlines.
+- Tabular figures are used only where numbers line up (the calculator and the price list).
 
 ## Photos
 

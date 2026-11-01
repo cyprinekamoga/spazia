@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  /* Neighbor-style pairing: editorial serif headings + Inter for everything else.
-     Fraunces is a free stand-in for GT Ultra (Neighbor's licensed heading font).
-     To use GT Ultra after buying a licence, add its @font-face and put it first here. */
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Two contrasting families, nothing else:
+     - Text and interface: Finlandica (Helsinki Type Studio, SIL Open Font License).
+       To switch to the studio's paid Allee, add its @font-face and put it first here.
+     - Headlines: Fraunces, an editorial serif (free stand-in for GT Ultra). */
+  --font-sans: "Finlandica Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "Fraunces Variable", ui-serif, Georgia, "Times New Roman", serif;
 
   /* Palette taken from the Spazia logo (teal → slate) */
@@ -42,7 +43,8 @@
     background: var(--color-snow);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    font-feature-settings: "cv11", "ss01";
+    font-size: 1.0625rem; /* 17px – Finlandica is slightly narrow */
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -55,8 +57,8 @@
     text-wrap: balance;
   }
   h3 {
-    font-weight: 650;
-    letter-spacing: -0.01em;
+    font-weight: 700;
+    line-height: 1.25;
     text-wrap: balance;
   }
   p {
@@ -138,12 +140,11 @@
     background: rgb(255 255 255 / 0.06);
   }
 
+  /* Small lead-in above a headline: sentence case, no tracked capitals. */
   .eyebrow {
     display: inline-block;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--color-brand);
   }
 

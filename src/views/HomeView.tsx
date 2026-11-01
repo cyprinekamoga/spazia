@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { getDictionary } from "@/content";
 import { categories } from "@/content/categories";
 import { HowItWorks } from "@/components/HowItWorks";
@@ -34,19 +34,10 @@ export function HomeView({ lang }: { lang: Lang }) {
         imageClassName="max-sm:-translate-y-[17%]"
         title={t.hero.title}
         lead={t.hero.lead}
-        eyebrow={
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-sm font-semibold text-white ring-1 ring-white/25 backdrop-blur">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-glow opacity-60 motion-reduce:animate-none" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-glow" />
-            </span>
-            {t.common.launchBadge}
-          </span>
-        }
+        eyebrow={<span className="eyebrow !text-glow">{t.common.launchBadge}</span>}
       >
         <Link prefetch={false} href={findPath} className="btn btn-light">
           {t.hero.ctaFind}
-          <ArrowRight size={18} aria-hidden="true" />
         </Link>
         <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-on-dark">
           {t.hero.ctaHost}
@@ -126,7 +117,6 @@ export function HomeView({ lang }: { lang: Lang }) {
           className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-night underline decoration-brand-bright decoration-2 underline-offset-6 hover:decoration-night"
         >
           {t.trust.link}
-          <ArrowRight size={18} aria-hidden="true" />
         </Link>
       </Section>
 

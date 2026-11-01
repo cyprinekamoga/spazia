@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { ArrowRight } from "lucide-react";
+
 
 export const ESTIMATE_EVENT = "spazia:estimate";
 
@@ -83,7 +83,7 @@ export function MobileActionBar({
         {estimateLabel && estimate ? (
           <p className="min-w-0 flex-1 leading-tight">
             <span className="block text-xs text-muted">{estimateLabel}</span>
-            <span className="font-display text-xl font-bold text-night">
+            <span className="font-display text-xl font-bold text-night tabular-nums">
               {estimate} <span className="font-sans text-sm font-semibold text-muted">{perMonth}</span>
             </span>
           </p>
@@ -100,7 +100,6 @@ export function MobileActionBar({
           className={`btn btn-primary !py-3 text-[0.95rem] ${secondary || estimateLabel ? "flex-1 !px-3" : "w-full"}`}
         >
           {primary.label}
-          <ArrowRight size={17} aria-hidden="true" />
         </Link>
       </div>
     </div>

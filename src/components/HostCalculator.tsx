@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Minus, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import type { Dictionary } from "@/content";
 import { categories, type CategoryId } from "@/content/categories";
 import { hostPayout, renterPrice, roundForDisplay } from "@/content/pricing";
@@ -160,7 +160,6 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
           <p className="mt-4 border-t border-white/10 pt-4 text-sm leading-relaxed text-frost-2">{c.feeNote}</p>
           <Link prefetch={false} href={formHref} className="btn btn-primary mt-6 w-full">
             {c.cta}
-            <ArrowRight size={18} aria-hidden="true" />
           </Link>
         </div>
       </div>

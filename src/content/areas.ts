@@ -7,6 +7,8 @@ export interface Area {
   id: AreaId;
   slug: string;
   name: string;
+  /** Swedish preposition used with the name: "i Gammelstad", "på Porsön". */
+  prep: "i" | "på";
   /**
    * "host": mostly houses with garages – we mainly recruit hosts here.
    * "renter": mostly flats and students – we mainly find renters here.
@@ -24,6 +26,7 @@ export const areas: Area[] = [
     id: "gammelstad",
     photo: "house-harads",
     slug: "gammelstad",
+    prep: "i",
     name: "Gammelstad",
     focus: "host",
     intro: {
@@ -43,6 +46,7 @@ export const areas: Area[] = [
     id: "bergnaset",
     photo: "garage-field",
     slug: "bergnaset",
+    prep: "på",
     name: "Bergnäset",
     focus: "host",
     intro: {
@@ -62,6 +66,7 @@ export const areas: Area[] = [
     id: "sunderbyn",
     photo: "house-harads",
     slug: "sunderbyn",
+    prep: "i",
     name: "Sunderbyn",
     focus: "host",
     intro: {
@@ -81,6 +86,7 @@ export const areas: Area[] = [
     id: "porson",
     photo: "lulea-sunset",
     slug: "porson",
+    prep: "på",
     name: "Porsön",
     focus: "renter",
     intro: {
@@ -100,6 +106,7 @@ export const areas: Area[] = [
     id: "bjorkskatan",
     photo: "garage-night",
     slug: "bjorkskatan",
+    prep: "på",
     name: "Björkskatan",
     focus: "renter",
     intro: {
@@ -119,6 +126,7 @@ export const areas: Area[] = [
     id: "centrum",
     photo: "lulea-sunset",
     slug: "centrum",
+    prep: "i",
     name: "Centrum",
     focus: "renter",
     intro: {

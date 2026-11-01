@@ -15,7 +15,7 @@ export function buildMetadata({
   paths: L10n;
   title: string;
   description: string;
-  /** Use the title as-is, without the " · Spazia" suffix. */
+  /** Use the title as-is, without the " | Spazia" suffix. */
   absoluteTitle?: boolean;
 }): Metadata {
   const t = getDictionary(lang);

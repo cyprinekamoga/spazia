@@ -1,4 +1,4 @@
-import "@fontsource-variable/inter";
+import "@fontsource-variable/finlandica/wght.css";
 import "@fontsource-variable/fraunces/opsz.css";
 import "@/app/globals.css";
 import type { ReactNode } from "react";
