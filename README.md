@@ -101,7 +101,7 @@ Set these in Netlify under *Project configuration → Environment variables*. Se
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Turns on cookie-free visitor statistics (Plausible). Also adds a paragraph about it to the privacy policy. |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console verification code ("HTML tag" method). |
 | `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Sends leads to Supabase instead of Netlify Forms. |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO` | Emails on every registration (see below). Mark `SMTP_PASS` as secret. |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO` | Emails on every registration (see below). All are set in Netlify for Strato except `SMTP_PASS`, which only the mailbox owner should enter. |
 
 ## Emails on every registration
 
@@ -114,6 +114,7 @@ The email text lives in `src/lib/lead-emails.ts`. The function uses SMTP, so it 
 
 | Service | `SMTP_HOST` | `SMTP_PORT` | `SMTP_USER` / `SMTP_PASS` |
 |---|---|---|---|
+| **Strato** (used now) | `smtp.strato.de` | 465 | the address and the mailbox password |
 | Google Workspace | `smtp.gmail.com` | 465 | the address and an *app password* |
 | Microsoft 365 | `smtp.office365.com` | 587 | the address and its password (SMTP AUTH must be enabled for the mailbox) |
 | Loopia | `mailcluster.loopia.se` | 587 | the address and its password |
