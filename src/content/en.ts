@@ -424,7 +424,11 @@ export const en: Dictionary = {
     metaTitle: "Privacy policy",
     metaDescription: "How Spazia handles your personal data and cookies.",
     title: "Privacy policy",
-    updated: "Last updated: 31 October 2026",
+    updated: "Last updated: 2 November 2026",
+    analytics: {
+      title: "Visitor statistics",
+      text: "We use Plausible Analytics to count visits and see which pages and ads work. Plausible uses no cookies, stores nothing in your browser and collects no personal data. The statistics are stored in the EU.",
+    },
     sections: [
       {
         title: "Data controller",

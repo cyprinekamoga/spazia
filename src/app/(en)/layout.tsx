@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   description: t.meta.homeDescription,
   applicationName: site.name,
   formatDetection: { telephone: false },
+  ...(site.googleSiteVerification ? { verification: { google: site.googleSiteVerification } } : {}),
 };
 
 export const viewport: Viewport = {

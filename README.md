@@ -93,12 +93,43 @@ When you add a category or area, its pages, footer links, form options and sitem
 
 ## Environment variables
 
-Set these in Netlify under *Project configuration → Environment variables*. All are optional; see `.env.example`.
+Set these in Netlify under *Project configuration → Environment variables*. See `.env.example`. Changes take effect on the next deploy.
 
 | Variable | Effect |
 |---|---|
-| `NEXT_PUBLIC_META_PIXEL_ID` | Enables the cookie banner and the Meta Pixel |
-| `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Sends leads to Supabase instead of Netlify Forms |
+| `NEXT_PUBLIC_META_PIXEL_ID` | Overrides the Meta Pixel ID (default `2604701499980220` in `src/lib/site.ts`). The pixel loads only after cookie consent. |
+| `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Turns on cookie-free visitor statistics (Plausible). Also adds a paragraph about it to the privacy policy. |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console verification code ("HTML tag" method). |
+| `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Sends leads to Supabase instead of Netlify Forms. |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO` | Emails on every registration (see below). Mark `SMTP_PASS` as secret. |
+
+## Emails on every registration
+
+`netlify/functions/lead-emails.mts` runs for every verified Netlify Forms submission and sends:
+
+1. **A notification to the team** (`MAIL_TO`, default info@nordvra.se). It is in Swedish, contains all answers and the ad source, and *Reply-to* is the person who registered.
+2. **A confirmation to the person** in their language, with what they sent. *Reply-to* is the team address. Turn it off with `MAIL_CONFIRMATION=off`.
+
+The email text lives in `src/lib/lead-emails.ts`. The function uses SMTP, so it works with any email service. Common settings:
+
+| Service | `SMTP_HOST` | `SMTP_PORT` | `SMTP_USER` / `SMTP_PASS` |
+|---|---|---|---|
+| Google Workspace | `smtp.gmail.com` | 465 | the address and an *app password* |
+| Microsoft 365 | `smtp.office365.com` | 587 | the address and its password (SMTP AUTH must be enabled for the mailbox) |
+| Loopia | `mailcluster.loopia.se` | 587 | the address and its password |
+| One.com | `send.one.com` | 465 | the address and its password |
+| Brevo | `smtp-relay.brevo.com` | 587 | SMTP login and SMTP key from Brevo |
+| Resend | `smtp.resend.com` | 465 | `resend` and an API key |
+
+Without SMTP settings the function only logs a warning. Submissions are still stored in Netlify Forms. The emails are only sent when leads go through Netlify Forms (not when Supabase is configured).
+
+## Google Search Console
+
+1. In [Search Console](https://search.google.com/search-console), add a property for `spazia.se`.
+2. Verify it, in one of two ways:
+   - **Domain** property: add the TXT record Google gives you at your DNS provider.
+   - **URL prefix** property: choose *HTML tag* and put the `content` value in `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`.
+3. Under *Sitemaps*, submit `https://spazia.se/sitemap.xml`.
 
 ## Leads: Netlify Forms → Supabase
 
@@ -124,8 +155,11 @@ https://spazia.se/en/find-storage?vad=boxes&utm_source=campus&utm_medium=poster&
 
 ## Before launch – fill in
 
-- [ ] Company name and org.nr in `src/lib/site.ts`. They are shown in the privacy policy.
-- [ ] Set up the `hej@spazia.se` mailbox, or change the address in `src/lib/site.ts`.
-- [ ] Point the `spazia.se` DNS to Netlify.
+- [x] Contact address: info@nordvra.se (in `src/lib/site.ts`).
+- [x] Point the `spazia.se` DNS to Netlify.
+- [ ] Org.nr in `src/lib/site.ts`. It is shown in the privacy policy.
+- [ ] SMTP settings in Netlify, so the registration emails are sent.
+- [ ] Plausible account, then set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN=spazia.se`.
+- [ ] Google Search Console verification and sitemap.
 - [ ] Swap stock photos for your own pictures of Luleå garages after the first inspections (see *Photos*).
 - [ ] Have the copy about tax, insurance and the standard agreement reviewed.

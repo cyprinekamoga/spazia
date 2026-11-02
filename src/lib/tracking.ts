@@ -74,9 +74,16 @@ export function writeConsent(value: Consent): void {
 
 type Fbq = (...args: unknown[]) => void;
 
+type Plausible = (event: string, options?: { props?: Record<string, string> }) => void;
+
 export function trackLead(kind: "host" | "renter"): void {
-  const fbq = (window as unknown as { fbq?: Fbq }).fbq;
-  if (typeof fbq === "function") {
-    fbq("track", "Lead", { content_category: kind });
+  const w = window as unknown as { fbq?: Fbq; plausible?: Plausible };
+  // Meta Pixel – only present after the visitor accepted cookies.
+  if (typeof w.fbq === "function") {
+    w.fbq("track", "Lead", { content_category: kind });
+  }
+  // Plausible (cookie-free) – goal "Lead" with property "type".
+  if (typeof w.plausible === "function") {
+    w.plausible("Lead", { props: { type: kind } });
   }
 }

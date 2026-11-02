@@ -1,6 +1,7 @@
 import "@fontsource-variable/finlandica/wght.css";
 import "@fontsource-variable/fraunces/opsz.css";
 import "@/app/globals.css";
+import Script from "next/script";
 import type { ReactNode } from "react";
 import { getDictionary } from "@/content";
 import type { Lang } from "@/lib/i18n";
@@ -37,6 +38,10 @@ export function SiteShell({ lang, children }: { lang: Lang; children: ReactNode 
         </main>
         <Footer lang={lang} t={t} />
         <CookieConsent lang={lang} t={t} />
+        {site.plausibleDomain && (
+          // Cookie-free statistics: stores nothing in the browser, so no consent banner is needed.
+          <Script defer data-domain={site.plausibleDomain} src="https://plausible.io/js/script.js" strategy="afterInteractive" />
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

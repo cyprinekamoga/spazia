@@ -122,7 +122,7 @@ export function PrivacyView({ lang }: { lang: Lang }) {
         <h1 className="text-[2.25rem] leading-tight text-night sm:text-5xl">{p.title}</h1>
         <p className="mt-3 text-muted">{p.updated}</p>
         <div className="mt-8 space-y-7 sm:mt-10 sm:space-y-8">
-          {p.sections.map((s) => (
+          {[...p.sections, ...(site.plausibleDomain ? [p.analytics] : [])].map((s) => (
             <section key={s.title}>
               <h2 className="text-xl text-night sm:text-2xl">{s.title}</h2>
               <p className="mt-2 leading-relaxed text-ink sm:mt-3">{fill(s.text, { legal, email: site.email })}</p>

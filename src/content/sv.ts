@@ -422,7 +422,11 @@ export const sv = {
     metaTitle: "Integritetspolicy",
     metaDescription: "Så hanterar Spazia dina personuppgifter och cookies.",
     title: "Integritetspolicy",
-    updated: "Senast uppdaterad: 31 oktober 2026",
+    updated: "Senast uppdaterad: 2 november 2026",
+    analytics: {
+      title: "Besöksstatistik",
+      text: "Vi använder Plausible Analytics för att räkna besök och se vilka sidor och annonser som fungerar. Plausible använder inga cookies, sparar inget i din webbläsare och samlar inte in personuppgifter. Statistiken lagras inom EU.",
+    },
     sections: [
       {
         title: "Personuppgiftsansvarig",
