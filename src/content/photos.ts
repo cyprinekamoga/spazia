@@ -83,6 +83,15 @@ export const photos: Record<PhotoKey, PhotoInfo> = {
     position: "30% 55%",
     credit: unsplash("Quentin Martinez", "a-red-classic-car-parked-in-a-garage-ojMp1yVlHzQ"),
   },
+  parking: {
+    key: "parking",
+    alt: {
+      sv: "Snötäckta bilar parkerade framför röda trähus",
+      en: "Snow-covered cars parked in front of red wooden houses",
+    },
+    position: "60% 62%",
+    credit: unsplash("Francesco Ungaro", "a-car-is-parked-in-the-snow-in-front-of-a-house-oVxq9GQV1-Q"),
+  },
   moving: {
     key: "moving",
     alt: { sv: "Ett par bär in flyttlådor i sitt nya hem", en: "A couple carrying boxes into their new home" },

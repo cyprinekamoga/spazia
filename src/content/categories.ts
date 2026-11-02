@@ -1,7 +1,7 @@
 import type { L10n } from "@/lib/i18n";
 import type { PhotoKey } from "./photos";
 
-export type CategoryId = "tyres" | "skis" | "snowmobile" | "bikes" | "boxes" | "car";
+export type CategoryId = "tyres" | "skis" | "snowmobile" | "bikes" | "boxes" | "car" | "parking";
 
 export interface Category {
   id: CategoryId;
@@ -266,6 +266,46 @@ export const categories: Category[] = [
     metaDescription: {
       sv: "Hyr en garageplats för sommarbil, motorcykel eller vardagsbil hos en verifierad villaägare i Luleå. Från ca {price} kr/mån.",
       en: "Rent a garage space for a summer car, motorbike or everyday car with a verified homeowner in Luleå. From about SEK {price}/month.",
+    },
+  },
+  {
+    id: "parking",
+    photo: "parking",
+    slug: { sv: "parkering", en: "parking" },
+    name: { sv: "Parkering", en: "Parking" },
+    short: {
+      sv: "En p-plats på uppfarten, gårdsplanen eller under carporten.",
+      en: "A parking space on a driveway, in a yard or under a carport.",
+    },
+    unit: { sv: "p-plats", en: "parking space" },
+    unitPlural: { sv: "p-platser", en: "parking spaces" },
+    price: 350,
+    heatedMatters: false,
+    maxUnits: 4,
+    season: { sv: "Hela året", en: "All year" },
+    intro: {
+      sv: "I många hyreshus går p-platserna först till de boende i området, och nära jobbet eller campus kan det vara ont om platser. Många villaägare har plats för en bil till på uppfarten eller gårdsplanen. Hyr den månadsvis, med eller utan motorvärmaruttag.",
+      en: "In many apartment buildings, parking spaces go to residents of the area first, and spaces near work or campus can be hard to find. Many homeowners have room for one more car on their driveway or yard. Rent it by the month, with or without an engine heater socket.",
+    },
+    points: {
+      sv: [
+        "Månadsvis och utan bindningstid",
+        "Fråga efter motorvärmaruttag inför de kallaste månaderna",
+        "Plats för husvagn, husbil eller släp om värden har utrymme",
+      ],
+      en: [
+        "Monthly, with no long-term commitment",
+        "Ask for an engine heater socket before the coldest months",
+        "Room for a caravan, motorhome or trailer if the host has space",
+      ],
+    },
+    metaTitle: {
+      sv: "Parkering i Luleå – hyr en p-plats hos en granne",
+      en: "Parking in Luleå – rent a space from a neighbour",
+    },
+    metaDescription: {
+      sv: "Hyr en p-plats på en uppfart eller gårdsplan hos en verifierad villaägare i Luleå. Från ca {price} kr/mån, med eller utan motorvärmaruttag.",
+      en: "Rent a parking space on a driveway or yard from a verified homeowner in Luleå. From about SEK {price}/month, with or without an engine heater socket.",
     },
   },
 ];

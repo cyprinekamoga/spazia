@@ -5,6 +5,17 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# Short addresses for ads and posters
+[[redirects]]
+  from = "/parkering"
+  to = "/forvaring/parkering"
+  status = 301
+
+[[redirects]]
+  from = "/en/parking"
+  to = "/en/storage/parking"
+  status = 301
+
 # Long-lived caching for hashed build assets.
 [[headers]]
   for = "/_next/static/*"

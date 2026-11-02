@@ -5,7 +5,7 @@ export const en: Dictionary = {
   meta: {
     homeTitle: "Spazia – storage with your neighbours in Luleå",
     homeDescription:
-      "Store tyres, skis, snowmobiles and boxes in dry garages and storerooms with verified homeowners in Luleå. Cheaper, closer and no long-term commitment.",
+      "Store tyres, skis, snowmobiles and boxes in dry garages, or rent a parking space, from verified homeowners in Luleå. Cheaper, closer and no long-term commitment.",
     titleTemplate: "%s | Spazia",
     locale: "en_GB",
   },
@@ -41,17 +41,17 @@ export const en: Dictionary = {
   },
   hero: {
     title: "There's room at your neighbour's.",
-    lead: "Store tyres, skis, snowmobiles and boxes in dry garages owned by homeowners in Luleå. Cheaper than storage companies, and safe with BankID, an agreement and automatic payments.",
+    lead: "Store tyres, skis and boxes in dry garages, or rent a driveway parking space, from homeowners in Luleå. Cheaper than storage companies, and safe with BankID, an agreement and automatic payments.",
     ctaFind: "I need storage",
     ctaHost: "I have spare space",
-    chipsLabel: "What do you want to store?",
+    chipsLabel: "What do you need space for?",
     trustline: ["BankID verification", "Standard agreement", "Cancel any month"],
     illustrationAlt:
       "A lit garage on a snowy winter evening – Spazia, storage with your neighbours in Luleå.",
   },
   categoriesSection: {
-    title: "What do you want to store?",
-    lead: "Guide prices per month including the service fee. The host sets the final price.",
+    title: "What do you need space for?",
+    lead: "Storage and parking. Guide prices per month including the service fee; the host sets the final price.",
     per: "per",
     perUnit: "a month per {unit}",
   },
@@ -233,6 +233,10 @@ export const en: Dictionary = {
         a: "You agree on times together. Many hosts choose fixed times, such as weekends, and most renters only come to drop off and collect.",
       },
       {
+        q: "Can I rent out a parking space on my driveway?",
+        a: "Yes. You decide how many cars fit, whether an engine heater socket is included and when the space is available. The renter pays a fixed monthly amount, and you keep the space cleared of snow in winter.",
+      },
+      {
         q: "Who is responsible if something is damaged?",
         a: "The standard agreement sets out responsibility. As a host you are responsible for the space being dry and locked as described. The renter is responsible for their things and should have home insurance.",
       },
@@ -252,7 +256,7 @@ export const en: Dictionary = {
   },
   footer: {
     tagline: "Storage with your neighbours, in Luleå.",
-    storage: "Storage",
+    storage: "Storage and parking",
     areas: "Areas",
     company: "Spazia",
     contact: "Contact",
@@ -262,12 +266,12 @@ export const en: Dictionary = {
     rights: "All rights reserved.",
   },
   hostPage: {
-    metaTitle: "Rent out your garage or storeroom in Luleå",
+    metaTitle: "Rent out your garage, storeroom or parking space in Luleå",
     metaDescription:
-      "Earn money from your empty garage, basement or outbuilding. Free to list, BankID-verified renters, a standard agreement and automatic monthly payments.",
+      "Earn money from your empty garage, basement, outbuilding or a driveway parking space. Free to list, BankID-verified renters, a standard agreement and automatic monthly payments.",
     eyebrow: "Become a host",
     title: "Make money from your empty garage.",
-    lead: "Rent out dry space in your garage, basement or outbuilding to students and young professionals in Luleå. We handle verification, the agreement and payments. You unlock the door a few times a year.",
+    lead: "Rent out dry space in your garage, basement or outbuilding, or a parking space on your driveway, to students and young professionals in Luleå. We handle verification, the agreement and payments. You unlock the door a few times a year.",
     ctaForm: "Register your space",
     ctaCalc: "Run the numbers",
     benefitsTitle: "What's included",
@@ -316,6 +320,7 @@ export const en: Dictionary = {
       { title: "Lockable", text: "It must lock, and only you and the renter should have access to their things." },
       { title: "Accessible", text: "The renter must be able to drop off and collect at the times you agree." },
       { title: "Storage only", text: "Nobody may live, work or stay in the space." },
+      { title: "Parking space", text: "The space must be cleared of snow in winter and reachable when the renter needs the car." },
     ],
     taxTitle: "Tax on rental income",
     taxText:
@@ -326,9 +331,9 @@ export const en: Dictionary = {
     faqTitle: "Questions from hosts",
   },
   findPage: {
-    metaTitle: "Find storage in Luleå – tyres, skis, boxes",
+    metaTitle: "Find storage and parking in Luleå",
     metaDescription:
-      "Store tyres, skis, bikes, boxes or vehicles with a verified neighbour in Luleå. Cheaper than storage companies, and cancel any month. Register your interest.",
+      "Store tyres, skis, bikes, boxes or vehicles, or rent a parking space, with a verified neighbour in Luleå. Cheaper than storage companies, and cancel any month. Register your interest.",
     eyebrow: "Find storage",
     title: "Storage near you, at a neighbour's.",
     lead: "Tell us what you need to store. When we launch we will match you with a verified host in your area, and everyone who registers now gets priority.",
@@ -461,7 +466,7 @@ export const en: Dictionary = {
     ],
   },
   categoryPage: {
-    eyebrow: "Storage in Luleå",
+    eyebrow: "With a neighbour in Luleå",
     priceLabel: "Guide price",
     seasonLabel: "Season",
     ctaFind: "Register interest",
@@ -502,6 +507,8 @@ export const en: Dictionary = {
       spaceType: "Type of space",
       spaceTypes: {
         garage: "Garage",
+        carport: "Carport",
+        driveway: "Driveway or yard",
         basement: "Basement",
         outbuilding: "Outbuilding or shed",
         attic: "Attic",
@@ -513,6 +520,11 @@ export const en: Dictionary = {
         yes: "Yes, heated",
         frostfree: "Frost-free",
         no: "No, but dry",
+      },
+      engineHeater: "Is there an engine heater socket at the space?",
+      engineHeaterOptions: {
+        yes: "Yes",
+        no: "No",
       },
       size: "Approximate size",
       sizes: {
@@ -529,7 +541,7 @@ export const en: Dictionary = {
         "We will contact you within a few days to book a visit. In the meantime, read more about how we approach trust and safety.",
     },
     renter: {
-      items: "What do you want to store?",
+      items: "What do you need space for?",
       quantity: "Roughly how much?",
       quantityPlaceholder: "E.g. one set of tyres and two pairs of skis",
       start: "When do you need space?",
@@ -549,6 +561,12 @@ export const en: Dictionary = {
       },
       heated: "Do you need heated space?",
       heatedOptions: {
+        yes: "Yes",
+        no: "No",
+        any: "Doesn't matter",
+      },
+      engineHeater: "Do you need an engine heater socket?",
+      engineHeaterOptions: {
         yes: "Yes",
         no: "No",
         any: "Doesn't matter",
@@ -580,6 +598,7 @@ export const en: Dictionary = {
       halfDouble: "Half a double garage",
       carSpace: "Indoor car space",
       basement: "6 m² basement storeroom",
+      driveway: "Two driveway spaces",
     },
     heatedLabel: "The space is heated",
     heatedHint: "Higher prices for vehicles and furniture.",

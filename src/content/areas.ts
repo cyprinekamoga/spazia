@@ -74,8 +74,8 @@ export const areas: Area[] = [
       en: "Sunderbyn lies between Luleå and Boden, near Sunderby Hospital. It has houses, farms and plenty of garages.",
     },
     renterPitch: {
-      sv: "Jobbar du på sjukhuset eller pendlar mellan Luleå och Boden? Förvara prylarna längs vägen.",
-      en: "Work at the hospital or commute between Luleå and Boden? Store your things along the way.",
+      sv: "Jobbar du på sjukhuset eller pendlar mellan Luleå och Boden? Förvara prylarna eller hyr en p-plats längs vägen.",
+      en: "Work at the hospital or commute between Luleå and Boden? Store your things or rent a parking space along the way.",
     },
     hostPitch: {
       sv: "Har du gård, garage eller uthus i Sunderbyn? Här finns plats för både däck och fordon.",
@@ -134,8 +134,8 @@ export const areas: Area[] = [
       en: "Many people in the city centre live in flats, and the queue for an extra storeroom is often long.",
     },
     renterPitch: {
-      sv: "Bor du centralt men har ont om plats? Förvara säsongsprylarna en kort bit bort.",
-      en: "Live centrally but short on space? Store your seasonal gear a short trip away.",
+      sv: "Bor du centralt men har ont om plats? Förvara säsongsprylarna eller ställ bilen en kort bit bort.",
+      en: "Live centrally but short on space? Store your seasonal gear or park your car a short trip away.",
     },
     hostPitch: {
       sv: "Har du ett garage eller en källare i centrala Luleå? Det finns många som söker plats nära stan.",

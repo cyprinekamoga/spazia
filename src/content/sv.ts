@@ -3,7 +3,7 @@ export const sv = {
   meta: {
     homeTitle: "Spazia – förvaring hos grannen i Luleå",
     homeDescription:
-      "Förvara däck, skidor, skoter och flyttlådor i torra garage och förråd hos verifierade villaägare i Luleå. Billigare, närmare och utan bindningstid.",
+      "Förvara däck, skidor, skoter och flyttlådor i torra garage, eller hyr en p-plats, hos verifierade villaägare i Luleå. Billigare, närmare och utan bindningstid.",
     titleTemplate: "%s | Spazia",
     locale: "sv_SE",
   },
@@ -39,17 +39,17 @@ export const sv = {
   },
   hero: {
     title: "Det finns plats hos grannen.",
-    lead: "Förvara däck, skidor, skoter och flyttlådor i torra garage hos villaägare i Luleå. Billigare än förrådsföretagen och tryggt med BankID, avtal och automatisk betalning.",
+    lead: "Förvara däck, skidor och flyttlådor i torra garage, eller hyr en p-plats på uppfarten, hos villaägare i Luleå. Billigare än förrådsföretagen och tryggt med BankID, avtal och automatisk betalning.",
     ctaFind: "Jag behöver förvaring",
     ctaHost: "Jag har plats över",
-    chipsLabel: "Vad vill du förvara?",
+    chipsLabel: "Vad behöver du plats för?",
     trustline: ["Verifiering med BankID", "Standardavtal", "Ingen bindningstid"],
     illustrationAlt:
       "Ett upplyst garage en snöig vinterkväll – Spazia, förvaring hos grannen i Luleå.",
   },
   categoriesSection: {
-    title: "Vad vill du förvara?",
-    lead: "Riktpriser per månad inklusive serviceavgift. Värden sätter det slutliga priset.",
+    title: "Vad behöver du plats för?",
+    lead: "Förvaring och parkering. Riktpriser per månad inklusive serviceavgift, värden sätter det slutliga priset.",
     per: "per",
     perUnit: "i månaden per {unit}",
   },
@@ -231,6 +231,10 @@ export const sv = {
         a: "Ni bestämmer tider tillsammans. Många värdar väljer fasta tider, till exempel på helger, och de flesta hyresgäster kommer bara när de lämnar och hämtar.",
       },
       {
+        q: "Kan jag hyra ut en p-plats på min uppfart?",
+        a: "Ja. Du bestämmer hur många bilar som får plats, om motorvärmaruttag ingår och vilka tider platsen är ledig. Hyresgästen betalar en fast summa i månaden, och du ser till att platsen är plogad på vintern.",
+      },
+      {
         q: "Vem ansvarar om något skadas?",
         a: "Standardavtalet reglerar ansvaret. Som värd ansvarar du för att utrymmet är torrt och låst som beskrivet. Hyresgästen ansvarar för sina saker och ska ha en hemförsäkring.",
       },
@@ -250,7 +254,7 @@ export const sv = {
   },
   footer: {
     tagline: "Förvaring hos grannen, i Luleå.",
-    storage: "Förvaring",
+    storage: "Förvaring och parkering",
     areas: "Områden",
     company: "Spazia",
     contact: "Kontakt",
@@ -260,12 +264,12 @@ export const sv = {
     rights: "Alla rättigheter förbehållna.",
   },
   hostPage: {
-    metaTitle: "Hyr ut ditt garage eller förråd i Luleå",
+    metaTitle: "Hyr ut ditt garage, förråd eller p-plats i Luleå",
     metaDescription:
-      "Tjäna pengar på ditt tomma garage, källare eller uthus. Gratis att annonsera, BankID-verifierade hyresgäster, standardavtal och automatisk månadsbetalning.",
+      "Tjäna pengar på ditt tomma garage, källare, uthus eller en p-plats på uppfarten. Gratis att annonsera, BankID-verifierade hyresgäster, standardavtal och automatisk månadsbetalning.",
     eyebrow: "Bli värd",
     title: "Tjäna pengar på ditt tomma garage.",
-    lead: "Hyr ut torr plats i garage, källare eller uthus till studenter och unga yrkesverksamma i Luleå. Vi sköter verifiering, avtal och betalning. Du låser upp dörren några gånger om året.",
+    lead: "Hyr ut torr plats i garage, källare eller uthus, eller en p-plats på uppfarten, till studenter och unga yrkesverksamma i Luleå. Vi sköter verifiering, avtal och betalning. Du låser upp dörren några gånger om året.",
     ctaForm: "Anmäl ditt utrymme",
     ctaCalc: "Räkna på det",
     benefitsTitle: "Det här ingår",
@@ -314,6 +318,7 @@ export const sv = {
       { title: "Låsbart", text: "Det ska gå att låsa, och bara du och hyresgästen ska komma åt sakerna." },
       { title: "Tillgängligt", text: "Hyresgästen ska kunna lämna och hämta på de tider ni kommer överens om." },
       { title: "Bara förvaring", text: "Ingen får bo, arbeta eller vistas i utrymmet." },
+      { title: "P-plats", text: "Platsen ska vara plogad på vintern och gå att nå när hyresgästen behöver bilen." },
     ],
     taxTitle: "Skatt på hyresintäkter",
     taxText:
@@ -324,9 +329,9 @@ export const sv = {
     faqTitle: "Frågor från värdar",
   },
   findPage: {
-    metaTitle: "Hitta förvaring i Luleå – däck, skidor, flyttlådor",
+    metaTitle: "Hitta förvaring och parkering i Luleå",
     metaDescription:
-      "Förvara däck, skidor, cyklar, flyttlådor eller fordon hos en verifierad granne i Luleå. Billigare än förrådsföretagen och utan bindningstid. Anmäl intresse.",
+      "Förvara däck, skidor, cyklar, flyttlådor eller fordon, eller hyr en p-plats, hos en verifierad granne i Luleå. Billigare än förrådsföretagen och utan bindningstid. Anmäl intresse.",
     eyebrow: "Hitta förvaring",
     title: "Förvaring nära dig, hos en granne.",
     lead: "Berätta vad du behöver förvara. När vi öppnar matchar vi dig med en verifierad värd i ditt område, och du som anmäler dig nu får förtur.",
@@ -459,7 +464,7 @@ export const sv = {
     ],
   },
   categoryPage: {
-    eyebrow: "Förvaring i Luleå",
+    eyebrow: "Hos en granne i Luleå",
     priceLabel: "Riktpris",
     seasonLabel: "Säsong",
     ctaFind: "Anmäl intresse",
@@ -500,6 +505,8 @@ export const sv = {
       spaceType: "Typ av utrymme",
       spaceTypes: {
         garage: "Garage",
+        carport: "Carport",
+        driveway: "Uppfart eller gårdsplan",
         basement: "Källare",
         outbuilding: "Uthus eller förråd",
         attic: "Vind",
@@ -511,6 +518,11 @@ export const sv = {
         yes: "Ja, uppvärmt",
         frostfree: "Frostfritt",
         no: "Nej, men torrt",
+      },
+      engineHeater: "Finns motorvärmaruttag vid platsen?",
+      engineHeaterOptions: {
+        yes: "Ja",
+        no: "Nej",
       },
       size: "Ungefärlig storlek",
       sizes: {
@@ -527,7 +539,7 @@ export const sv = {
         "Vi kontaktar dig inom några dagar för att boka ett besök. Under tiden kan du läsa mer om hur vi arbetar med trygghet.",
     },
     renter: {
-      items: "Vad vill du förvara?",
+      items: "Vad behöver du plats för?",
       quantity: "Ungefär hur mycket?",
       quantityPlaceholder: "T.ex. en däcksats och två par skidor",
       start: "När behöver du plats?",
@@ -547,6 +559,12 @@ export const sv = {
       },
       heated: "Behöver du uppvärmd plats?",
       heatedOptions: {
+        yes: "Ja",
+        no: "Nej",
+        any: "Spelar ingen roll",
+      },
+      engineHeater: "Behöver du motorvärmaruttag?",
+      engineHeaterOptions: {
         yes: "Ja",
         no: "Nej",
         any: "Spelar ingen roll",
@@ -578,6 +596,7 @@ export const sv = {
       halfDouble: "Halvt dubbelgarage",
       carSpace: "Bilplats inomhus",
       basement: "Källarförråd 6 m²",
+      driveway: "Två platser på uppfarten",
     },
     heatedLabel: "Utrymmet är uppvärmt",
     heatedHint: "Ger högre pris för fordon och möbler.",

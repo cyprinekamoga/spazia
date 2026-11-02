@@ -12,13 +12,14 @@ import { publishEstimate } from "./MobileActionBar";
 
 type Counts = Record<CategoryId, number>;
 
-const empty: Counts = { tyres: 0, skis: 0, snowmobile: 0, bikes: 0, boxes: 0, car: 0 };
+const empty: Counts = { tyres: 0, skis: 0, snowmobile: 0, bikes: 0, boxes: 0, car: 0, parking: 0 };
 
 const presets: { key: keyof Dictionary["calculator"]["presets"]; counts: Partial<Counts>; heated?: boolean }[] = [
   { key: "corner", counts: { tyres: 6, bikes: 2 } },
   { key: "halfDouble", counts: { tyres: 10, skis: 4, snowmobile: 1 } },
   { key: "carSpace", counts: { car: 1 }, heated: true },
   { key: "basement", counts: { boxes: 6 }, heated: true },
+  { key: "driveway", counts: { parking: 2 } },
 ];
 
 export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionary; formHref: string }) {

@@ -121,25 +121,36 @@ export function money(amount: number, lang: Lang) {
   return lang === "sv" ? `${formatNumber(amount, lang)} kr` : `SEK ${formatNumber(amount, lang)}`;
 }
 
-export function CategoryCard({ category, lang, t }: { category: Category; lang: Lang; t: Dictionary }) {
+export function CategoryCard({
+  category,
+  lang,
+  t,
+  wide = false,
+}: {
+  category: Category;
+  lang: Lang;
+  t: Dictionary;
+  /** Full-width, side-by-side layout on desktop (used for a lone last card). */
+  wide?: boolean;
+}) {
   return (
     <Link prefetch={false}
       href={categoryPath(category.slug, lang)}
-      className="group card flex h-full flex-col overflow-hidden transition-[border-color,box-shadow] hover:border-night/25 hover:shadow-[0_14px_30px_-20px_rgb(29_51_64/0.6)]"
+      className={`group card flex h-full flex-col overflow-hidden transition-[border-color,box-shadow] hover:border-night/25 hover:shadow-[0_14px_30px_-20px_rgb(29_51_64/0.6)] ${wide ? "lg:flex-row" : ""}`}
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className={`relative aspect-[4/3] overflow-hidden ${wide ? "lg:aspect-auto lg:min-h-72 lg:w-1/2" : ""}`}>
         <Photo
           name={category.photo}
           lang={lang}
-          sizes="(min-width: 1024px) 360px, (min-width: 640px) 46vw, 78vw"
+          sizes={wide ? "(min-width: 1024px) 560px, (min-width: 640px) 46vw, 78vw" : "(min-width: 1024px) 360px, (min-width: 640px) 46vw, 78vw"}
           className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]"
         />
       </div>
-      <div className="flex flex-1 flex-col p-4 sm:p-5">
+      <div className={`flex flex-1 flex-col p-4 sm:p-5 ${wide ? "lg:justify-center lg:p-10" : ""}`}>
         <h3 className="text-[1.2rem] text-night group-hover:underline group-hover:decoration-2 group-hover:underline-offset-4">
           {category.name[lang]}
         </h3>
-        <p className="mt-1 flex-1 leading-snug text-muted">{category.short[lang]}</p>
+        <p className={`mt-1 leading-snug text-muted ${wide ? "lg:flex-none lg:text-lg" : "flex-1"}`}>{category.short[lang]}</p>
         <div className="mt-4 border-t border-line pt-3">
           <p className="leading-tight">
             <span className="text-muted">{t.common.from} </span>
@@ -154,15 +165,19 @@ export function CategoryCard({ category, lang, t }: { category: Category; lang: 
 
 /** Swipe row on phones, grid from lg. */
 export function CategoryGrid({ lang, t, exclude }: { lang: Lang; t: Dictionary; exclude?: string }) {
+  const list = categories.filter((c) => c.id !== exclude);
+  // With three columns, a lone card on the last row is shown full width instead.
+  const loneLast = list.length % 3 === 1;
   return (
     <ul className="swipe-row lg:mx-0 lg:grid lg:grid-flow-row lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:px-0">
-      {categories
-        .filter((c) => c.id !== exclude)
-        .map((c) => (
-          <li key={c.id}>
-            <CategoryCard category={c} lang={lang} t={t} />
+      {list.map((c, i) => {
+        const wide = loneLast && i === list.length - 1;
+        return (
+          <li key={c.id} className={wide ? "lg:col-span-3" : undefined}>
+            <CategoryCard category={c} lang={lang} t={t} wide={wide} />
           </li>
-        ))}
+        );
+      })}
     </ul>
   );
 }

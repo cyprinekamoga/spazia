@@ -14,7 +14,7 @@ Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-
   - Trygghet
   - Om oss
   - Integritetspolicy
-- **SEO landing pages:** one per storage type (`/forvaring/dackforvaring` …) and one per area (`/omrade/gammelstad` …).
+- **SEO landing pages:** one per storage type, including parking (`/forvaring/dackforvaring`, `/forvaring/parkering` …), and one per area (`/omrade/gammelstad` …). The short address `/parkering` redirects to the parking page.
 - **Lead capture:** forms go to Netlify Forms by default, or to Supabase once it is configured (see below). Every lead stores its UTM source, campaign, referrer and landing page.
 - **Meta Pixel:** loads only after cookie consent and fires a `Lead` event (`content_category: host | renter`) on each successful form.
 - **Fully static:** `next build` exports plain HTML to `out/`.
@@ -139,7 +139,7 @@ Without SMTP settings the function only logs a warning. Submissions are still st
 **Supabase:**
 
 1. Create a project in region `eu-north-1` (Stockholm).
-2. Run `supabase/migrations/20261031000000_lead_tables.sql`, either in the SQL editor or with `supabase db push`. The migration creates `host_leads`, `renter_leads` and a `lead_summary` view. With Row Level Security, the public key can only **insert**; it cannot read, update or delete.
+2. Run the files in `supabase/migrations/` in order, either in the SQL editor or with `supabase db push`. The migration creates `host_leads`, `renter_leads` and a `lead_summary` view. With Row Level Security, the public key can only **insert**; it cannot read, update or delete.
 3. Set the two Supabase env vars in Netlify and redeploy. The `status` and `notes` columns are for your own follow-up in the dashboard.
 
 ## Campaign links
@@ -150,9 +150,10 @@ Tag every ad and post so you can see which channel brings hosts and renters:
 https://spazia.se/bli-vard?utm_source=facebook&utm_medium=paid&utm_campaign=villaagare-okt26
 https://spazia.se/hitta-forvaring?vad=tyres&utm_source=blocket&utm_medium=listing&utm_campaign=dack-okt26
 https://spazia.se/en/find-storage?vad=boxes&utm_source=campus&utm_medium=poster&utm_campaign=ltu-sommar
+https://spazia.se/parkering?utm_source=facebook&utm_medium=paid&utm_campaign=parkering-nov26
 ```
 
-`?vad=<tyres|skis|snowmobile|bikes|boxes|car>` and `?omrade=<area slug>` pre-fill the renter form.
+`?vad=<tyres|skis|snowmobile|bikes|boxes|car|parking>` and `?omrade=<area slug>` pre-fill the renter form.
 
 ## Before launch – fill in
 

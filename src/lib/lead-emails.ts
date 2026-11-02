@@ -71,6 +71,7 @@ function describe(kind: LeadKind, data: Data, lang: "sv" | "en"): [string, strin
           [f.area, areaLabel(data.area, t)],
           [f.host.spaceType, pick(f.host.spaceTypes, data.space_type)],
           [f.host.heated, pick(f.host.heatedOptions, data.heated)],
+          [f.host.engineHeater, pick(f.host.engineHeaterOptions, data.engine_heater)],
           [f.host.size, pick(f.host.sizes, data.size)],
           [f.host.accepts, categoryList(data.accepts, lang)],
         ]
@@ -80,6 +81,7 @@ function describe(kind: LeadKind, data: Data, lang: "sv" | "en"): [string, strin
           [f.area, areaLabel(data.area, t)],
           [f.renter.start, pick(f.renter.starts, data.start)],
           [f.renter.duration, pick(f.renter.durations, data.duration)],
+          [f.renter.engineHeater, pick(f.renter.engineHeaterOptions, data.engine_heater)],
           [f.renter.heated, pick(f.renter.heatedOptions, data.heated)],
           [f.renter.occupation, pick(f.renter.occupations, data.occupation)],
           [f.renter.bankid, pick(f.renter.bankidOptions, data.has_bankid)],

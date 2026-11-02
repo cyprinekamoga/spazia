@@ -64,6 +64,7 @@ export function RenterForm({ lang, t }: { lang: Lang; t: Dictionary }) {
     heated: orNull(str(data, "heated")),
     occupation: orNull(str(data, "occupation")),
     has_bankid: orNull(str(data, "has_bankid")),
+    engine_heater: items.includes("parking") ? orNull(str(data, "engine_heater")) : null,
     message: orNull(str(data, "message")),
     consent: true,
   });
@@ -151,6 +152,14 @@ export function RenterForm({ lang, t }: { lang: Lang; t: Dictionary }) {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
+        {items.includes("parking") && (
+          <ChoiceGroup
+            name="engine_heater"
+            label={r.engineHeater}
+            options={options(r.engineHeaterOptions)}
+            optionalLabel={f.optional}
+          />
+        )}
         <ChoiceGroup name="heated" label={r.heated} options={options(r.heatedOptions)} optionalLabel={f.optional} />
         <ChoiceGroup name="occupation" label={r.occupation} options={options(r.occupations)} optionalLabel={f.optional} />
       </div>

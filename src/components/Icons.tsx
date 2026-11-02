@@ -13,6 +13,7 @@ import {
   MessageCircle,
   Package,
   Sprout,
+  SquareParking,
   Sun,
   Wallet,
   type LucideIcon,
@@ -76,6 +77,7 @@ export const categoryIcons: Record<CategoryId, LucideIcon | typeof TyreIcon> = {
   bikes: Bike,
   boxes: Package,
   car: Car,
+  parking: SquareParking,
 };
 
 export const trustIcons: Record<string, LucideIcon> = {

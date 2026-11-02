@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import type { Dictionary } from "@/content";
 import { areas } from "@/content/areas";
@@ -16,12 +17,21 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
   const f = t.forms;
   const h = f.host;
 
+  // Parking spaces are outdoors: heating doesn't apply, an engine heater socket does.
+  const [spaceType, setSpaceType] = useState("");
+  const [accepts, setAccepts] = useState<string[]>([]);
+  const outdoor = spaceType === "driveway" || spaceType === "carport";
+  const askHeated = !outdoor;
+  const askEngineHeater = outdoor || accepts.includes("parking");
+  const toggleAccept = (value: string) =>
+    setAccepts((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
+
   const validate = (data: FormData): Errors => ({
     first_name: str(data, "first_name") ? undefined : f.required,
     email: !str(data, "email") ? f.required : EMAIL_RE.test(str(data, "email")) ? undefined : f.invalidEmail,
     area: str(data, "area") ? undefined : f.required,
     space_type: str(data, "space_type") ? undefined : f.pickOne,
-    heated: str(data, "heated") ? undefined : f.pickOne,
+    heated: !askHeated || str(data, "heated") ? undefined : f.pickOne,
     size: str(data, "size") ? undefined : f.required,
     accepts: list(data, "accepts").length ? undefined : f.pickOne,
     consent: data.get("consent") === "yes" ? undefined : f.consentRequired,
@@ -33,7 +43,8 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
     phone: orNull(str(data, "phone")),
     area: str(data, "area"),
     space_type: str(data, "space_type"),
-    heated: str(data, "heated"),
+    heated: askHeated ? str(data, "heated") : null,
+    engine_heater: askEngineHeater ? orNull(str(data, "engine_heater")) : null,
     size: str(data, "size"),
     accepts: list(data, "accepts"),
     message: orNull(str(data, "message")),
@@ -103,16 +114,20 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
         name="space_type"
         label={h.spaceType}
         options={Object.entries(h.spaceTypes).map(([value, label]) => ({ value, label }))}
+        selected={spaceType ? [spaceType] : []}
+        onToggle={setSpaceType}
         error={errors.space_type}
       />
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <ChoiceGroup
-          name="heated"
-          label={h.heated}
-          options={Object.entries(h.heatedOptions).map(([value, label]) => ({ value, label }))}
-          error={errors.heated}
-        />
+        {askHeated && (
+          <ChoiceGroup
+            name="heated"
+            label={h.heated}
+            options={Object.entries(h.heatedOptions).map(([value, label]) => ({ value, label }))}
+            error={errors.heated}
+          />
+        )}
         <SelectField
           name="size"
           label={h.size}
@@ -127,12 +142,23 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
         name="accepts"
         label={h.accepts}
         multiple
+        selected={accepts}
+        onToggle={toggleAccept}
         options={categories.map((c) => {
           const Icon = categoryIcons[c.id];
           return { value: c.id, label: c.name[lang], icon: <Icon size={18} /> };
         })}
         error={errors.accepts}
       />
+
+      {askEngineHeater && (
+        <ChoiceGroup
+          name="engine_heater"
+          label={h.engineHeater}
+          options={Object.entries(h.engineHeaterOptions).map(([value, label]) => ({ value, label }))}
+          optionalLabel={f.optional}
+        />
+      )}
 
       <TextArea name="message" label={f.message} placeholder={h.messagePlaceholder} optionalLabel={f.optional} />
 
