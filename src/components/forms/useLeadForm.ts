@@ -1,6 +1,8 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import { areas } from "@/content/areas";
+import { RENTER_PARAMS } from "@/lib/routes";
 import { submitLead, type LeadKind, type LeadPayload } from "@/lib/leads";
 import { getAttribution, trackLead } from "@/lib/tracking";
 import type { Errors } from "./FormFields";
@@ -84,4 +86,20 @@ export function list(data: FormData, key: string): string[] {
 
 export function orNull(value: string): string | null {
   return value === "" ? null : value;
+}
+
+const noopSubscribe = () => () => {};
+
+/** The page's query string (empty while rendering on the server). */
+export function useQueryString(): URLSearchParams {
+  const search = useSyncExternalStore(noopSubscribe, () => window.location.search, () => "");
+  return new URLSearchParams(search);
+}
+
+/** Pre-filled town: ?ort=Göteborg, or Luleå when a Luleå area is given (?omrade=gammelstad). */
+export function townFromQuery(params: URLSearchParams): string {
+  const town = (params.get(RENTER_PARAMS.town) ?? "").trim().slice(0, 80);
+  if (town) return town;
+  const area = params.get(RENTER_PARAMS.area);
+  return area && areas.some((a) => a.slug === area) ? "Luleå" : "";
 }

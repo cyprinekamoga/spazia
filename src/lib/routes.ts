@@ -1,5 +1,6 @@
 import { areas } from "@/content/areas";
 import { categories } from "@/content/categories";
+import { cities } from "@/content/cities";
 import type { L10n, Lang } from "./i18n";
 import { site } from "./site";
 
@@ -14,11 +15,12 @@ export const pagePaths: Record<PageKey, L10n> = {
   privacy: { sv: "/integritetspolicy", en: "/en/privacy" },
 };
 
-/** Query parameters that pre-fill the renter form (from category and area pages). */
-export const RENTER_PARAMS = { item: "vad", area: "omrade" } as const;
+/** Query parameters that pre-fill the forms (from category, city and area pages). */
+export const RENTER_PARAMS = { item: "vad", area: "omrade", town: "ort" } as const;
 
 const categoryBase: L10n = { sv: "/forvaring", en: "/en/storage" };
 const areaBase: L10n = { sv: "/omrade", en: "/en/area" };
+const cityBase: L10n = { sv: "/stad", en: "/en/city" };
 
 export function pagePath(page: PageKey, lang: Lang): string {
   return pagePaths[page][lang];
@@ -32,11 +34,16 @@ export function areaPath(slug: string, lang: Lang): string {
   return `${areaBase[lang]}/${slug}`;
 }
 
+export function cityPath(slug: string, lang: Lang): string {
+  return `${cityBase[lang]}/${slug}`;
+}
+
 /** Every page on the site, with its path in both languages. */
 export function allRoutes(): L10n[] {
   return [
     ...Object.values(pagePaths),
     ...categories.map((c) => ({ sv: categoryPath(c.slug, "sv"), en: categoryPath(c.slug, "en") })),
+    ...cities.map((c) => ({ sv: cityPath(c.slug, "sv"), en: cityPath(c.slug, "en") })),
     ...areas.map((a) => ({ sv: areaPath(a.slug, "sv"), en: areaPath(a.slug, "en") })),
   ];
 }

@@ -3,9 +3,9 @@ import type { Dictionary } from "./sv";
 /** English copy – same shape as the Swedish dictionary. */
 export const en: Dictionary = {
   meta: {
-    homeTitle: "Spazia – storage with your neighbours in Luleå",
+    homeTitle: "Spazia – storage and parking with your neighbours",
     homeDescription:
-      "Store tyres, skis, snowmobiles and boxes in dry garages, or rent a parking space, from verified homeowners in Luleå. Cheaper, closer and no long-term commitment.",
+      "Store tyres, skis, snowmobiles and boxes in a neighbour's garage, or rent a driveway parking space. Verified homeowners, a standard agreement and no long-term commitment. Starting in Luleå, then city by city.",
     titleTemplate: "%s | Spazia",
     locale: "en_GB",
   },
@@ -15,7 +15,7 @@ export const en: Dictionary = {
     from: "from about",
     currency: "SEK",
     readMore: "Read more",
-    launchBadge: "Launching in Luleå, winter 2026/27",
+    launchBadge: "First up: Luleå, winter 2026/27",
     menu: "Menu",
     close: "Close",
     languageName: "English",
@@ -41,17 +41,23 @@ export const en: Dictionary = {
   },
   hero: {
     title: "There's room at your neighbour's.",
-    lead: "Store tyres, skis and boxes in dry garages, or rent a driveway parking space, from homeowners in Luleå. Cheaper than storage companies, and safe with BankID, an agreement and automatic payments.",
+    lead: "Store tyres, skis and boxes in a neighbour's garage, or rent a parking space on their driveway. Cheaper than storage companies.",
+    search: {
+      label: "Where do you need space?",
+      placeholder: "E.g. Gothenburg",
+      button: "Find space",
+      note: "We start in Luleå and open city by city. Register where you live.",
+    },
     ctaFind: "I need storage",
     ctaHost: "I have spare space",
     chipsLabel: "What do you need space for?",
     trustline: ["BankID verification", "Standard agreement", "Cancel any month"],
     illustrationAlt:
-      "A lit garage on a snowy winter evening – Spazia, storage with your neighbours in Luleå.",
+      "A lit garage on a snowy winter evening – Spazia, storage and parking with your neighbours.",
   },
   categoriesSection: {
     title: "What do you need space for?",
-    lead: "Storage and parking. Guide prices per month including the service fee; the host sets the final price.",
+    lead: "Storage and parking. Guide prices in Luleå per month, including the service fee. Big cities are often more expensive, and the host sets the final price.",
     per: "per",
     perUnit: "a month per {unit}",
   },
@@ -93,7 +99,7 @@ export const en: Dictionary = {
     items: [
       {
         title: "Closer",
-        text: "Storage in residential areas like Gammelstad, Bergnäset and Sunderbyn rather than on an industrial estate out of town.",
+        text: "Storage in the residential area near you rather than on an industrial estate out of town.",
       },
       {
         title: "Cheaper",
@@ -105,13 +111,13 @@ export const en: Dictionary = {
       },
       {
         title: "Local",
-        text: "The money goes to neighbours in Luleå instead of a storage company.",
+        text: "The money goes to neighbours instead of a storage company.",
       },
     ],
   },
   seasons: {
     title: "Storage that follows the seasons",
-    lead: "In Norrbotten, your gear swaps places twice a year. We have room for both halves.",
+    lead: "In much of Sweden, your gear swaps places twice a year. We have room for both halves.",
     items: [
       {
         name: "Autumn",
@@ -126,7 +132,7 @@ export const en: Dictionary = {
       {
         name: "Summer",
         months: "Jun–Aug",
-        text: "Students head home for the summer. Boxes and furniture can stay in Luleå instead of travelling back and forth.",
+        text: "Students head home for the summer. Boxes and furniture can stay in the student city instead of travelling back and forth.",
       },
     ],
   },
@@ -148,7 +154,7 @@ export const en: Dictionary = {
       {
         icon: "inspect",
         title: "Visited spaces",
-        text: "We visit every space before it is listed and check that it is dry, lockable and as described.",
+        text: "We visit every space before it is listed and check that it is dry, lockable and as described. For now we only list spaces in Luleå.",
       },
       {
         icon: "contract",
@@ -167,14 +173,24 @@ export const en: Dictionary = {
       },
       {
         icon: "support",
-        title: "Local support",
-        text: "We are based in Luleå and will help if something goes wrong.",
+        title: "Personal support",
+        text: "A small team that answers in person and helps if something goes wrong.",
       },
     ],
     link: "More about trust & safety",
   },
+  citiesSection: {
+    title: "City by city",
+    lead: "We start in Luleå and then open where most people are waiting. Register where you live, and your city counts.",
+    first: "First up, winter 2026/27",
+    firstText: "Here we visit every space before it is listed.",
+    waitlist: "Waitlist",
+    districts: "Areas in Luleå",
+    missing: "Your city not listed? Type it in the form, every town counts.",
+    missingCta: "Register interest",
+  },
   areasSection: {
-    title: "Starting in Luleå",
+    title: "Areas in Luleå",
     lead: "First up are areas with lots of houses and garages, and areas where lots of people need space.",
     hostFocus: "Hosts wanted",
     renterFocus: "High demand",
@@ -184,19 +200,23 @@ export const en: Dictionary = {
     general: [
       {
         q: "What is Spazia?",
-        a: "A marketplace where people in Luleå rent out dry storage space in garages, basements and outbuildings to anyone who needs to store tyres, skis, boxes or vehicles. We handle verification, the agreement and payments.",
+        a: "A marketplace where people rent out dry storage space in garages, basements and outbuildings, or a parking space on their driveway, to anyone who needs room for tyres, skis, boxes or a car. We handle verification, the agreement and payments.",
       },
       {
         q: "When do you launch?",
-        a: "We are launching in Luleå during winter 2026/27. Right now we are building a network of visited, verified hosts. Register your interest and we will get in touch when there is space near you.",
+        a: "We are launching in Luleå during winter 2026/27 and will then open city by city. Right now we are building a network of visited, verified hosts in Luleå.",
+      },
+      {
+        q: "Are you in my city?",
+        a: "If you don't live in Luleå: not yet. Register anyway. We count registrations per town and open first where most people are waiting, and you get priority when we open near you.",
       },
       {
         q: "What does it cost?",
-        a: "The host sets the price. The guide price is about SEK 120 a month for a set of tyres and about SEK 150 per square metre for boxes. The 15% service fee is included in the price you see, and you can cancel any month.",
+        a: "The host sets the price. In Luleå the guide price is about SEK 120 a month for a set of tyres and about SEK 150 per square metre for boxes. Big cities are often more expensive. The 15% service fee is included in the price you see, and you can cancel any month.",
       },
       {
         q: "Is it safe?",
-        a: "Everyone is verified with BankID or Freja eID, we visit every space before it is listed, you sign a standard agreement and photograph your things at drop-off. Payment goes through Spazia, so nobody handles cash.",
+        a: "Everyone is verified with BankID or Freja eID, we visit every space before it is listed (for now only in Luleå), you sign a standard agreement and photograph your things at drop-off. Payment goes through Spazia, so nobody handles cash.",
       },
       {
         q: "Are my things insured?",
@@ -252,12 +272,12 @@ export const en: Dictionary = {
   },
   finalCta: {
     title: "Join from the start",
-    lead: "We launch in Luleå during winter 2026/27. Register your interest now and get priority.",
+    lead: "We launch in Luleå during winter 2026/27 and then city by city. Register your interest now and get priority where you live.",
   },
   footer: {
-    tagline: "Storage with your neighbours, in Luleå.",
+    tagline: "Storage and parking with your neighbours. Luleå first, then more cities.",
     storage: "Storage and parking",
-    areas: "Areas",
+    areas: "Cities",
     company: "Spazia",
     contact: "Contact",
     privacy: "Privacy policy",
@@ -266,12 +286,12 @@ export const en: Dictionary = {
     rights: "All rights reserved.",
   },
   hostPage: {
-    metaTitle: "Rent out your garage, storeroom or parking space in Luleå",
+    metaTitle: "Rent out your garage, storeroom or parking space",
     metaDescription:
       "Earn money from your empty garage, basement, outbuilding or a driveway parking space. Free to list, BankID-verified renters, a standard agreement and automatic monthly payments.",
     eyebrow: "Become a host",
     title: "Make money from your empty garage.",
-    lead: "Rent out dry space in your garage, basement or outbuilding, or a parking space on your driveway, to students and young professionals in Luleå. We handle verification, the agreement and payments. You unlock the door a few times a year.",
+    lead: "Rent out dry space in your garage, basement or outbuilding, or a parking space on your driveway. We handle verification, the agreement and payments, and you unlock the door a few times a year. We start in Luleå, but you can register your space wherever you live.",
     ctaForm: "Register your space",
     ctaCalc: "Run the numbers",
     benefitsTitle: "What's included",
@@ -298,13 +318,13 @@ export const en: Dictionary = {
       },
       {
         title: "Free visit and photos",
-        text: "We visit your space, suggest how much room you could rent out and take the photos for your listing.",
+        text: "We visit your space, suggest how much room you could rent out and take the photos for your listing. Visits happen in Luleå, and in more cities once we open there.",
       },
     ],
     stepsTitle: "How to become a host",
     steps: [
       { title: "Register your interest", text: "Fill in the form below. It takes two minutes." },
-      { title: "We get in touch", text: "We call you and book a visit at a time that suits you." },
+      { title: "We get in touch", text: "In Luleå we call you and book a visit. If you live elsewhere, we get in touch when we open in your city." },
       {
         title: "Visit and listing",
         text: "We check the space, take photos and create the listing together with you.",
@@ -327,22 +347,22 @@ export const en: Dictionary = {
       "If you rent out part of your private home, such as the garage of your house, the rent is taxed as capital income. For a house you can make a standard deduction of SEK 40,000 a year plus 20% of the rental income, which covers all of it for most hosts. As a digital platform, Spazia may be required to report rental income to the Swedish Tax Agency. The rules depend on your situation, so always check with Skatteverket.",
     taxLink: "Skatteverket on renting out a private home (in Swedish)",
     formTitle: "Register your space",
-    formLead: "We will contact you within a few days to book a visit. It is free and non-binding.",
+    formLead: "In Luleå we will contact you within a few days to book a visit. In other cities you join the waitlist and get priority when we open. It is free and non-binding.",
     faqTitle: "Questions from hosts",
   },
   findPage: {
-    metaTitle: "Find storage and parking in Luleå",
+    metaTitle: "Find storage and parking with a neighbour",
     metaDescription:
-      "Store tyres, skis, bikes, boxes or vehicles, or rent a parking space, with a verified neighbour in Luleå. Cheaper than storage companies, and cancel any month. Register your interest.",
+      "Store tyres, skis, bikes, boxes or vehicles, or rent a parking space, with a verified neighbour. We start in Luleå and open city by city. Register where you live.",
     eyebrow: "Find storage",
     title: "Storage near you, at a neighbour's.",
-    lead: "Tell us what you need to store. When we launch we will match you with a verified host in your area, and everyone who registers now gets priority.",
+    lead: "Tell us what you need space for and where. We start in Luleå and open city by city, and everyone who registers now gets priority where they live.",
     pricesTitle: "Guide prices",
-    pricesLead: "Example monthly prices including the service fee. The host sets the final price.",
+    pricesLead: "Guide prices in Luleå per month, including the service fee. Big cities are often more expensive, and the host sets the final price.",
     heatedNote: "Heated space costs about 25% more for vehicles, furniture and boxes.",
-    studentTitle: "Studying at LTU?",
+    studentTitle: "Student?",
     studentText:
-      "Leave your boxes and furniture in Luleå over the summer instead of shipping them home. No Swedish BankID? You can verify with Freja eID and your passport.",
+      "Leave your boxes and furniture in your student city over the summer instead of shipping them home. No Swedish BankID? You can verify with Freja eID and your passport.",
     formTitle: "Register your interest",
     formLead: "It is free and non-binding.",
     faqTitle: "Frequently asked questions",
@@ -362,7 +382,7 @@ export const en: Dictionary = {
       },
       {
         title: "We visit every space",
-        text: "Before a space is listed, we visit it. We check that it is dry, lockable and matches the description, and we take the listing photos ourselves.",
+        text: "Before a space is listed, we visit it. We check that it is dry, lockable and matches the description, and we take the listing photos ourselves. That is why we only list spaces in Luleå for now. When we open in more cities, we will explain how checks work there.",
         bullets: [],
       },
       {
@@ -412,13 +432,14 @@ export const en: Dictionary = {
   aboutPage: {
     metaTitle: "About Spazia",
     metaDescription:
-      "Spazia is a marketplace for storage with your neighbours. We are starting in Luleå, where winter makes storage a bigger deal than almost anywhere else.",
+      "Spazia is a marketplace for storage and parking with your neighbours. We are starting in Luleå, where winter makes storage a bigger deal than almost anywhere else, and will then open city by city.",
     eyebrow: "About",
     title: "The space exists. It's just in the wrong place.",
     paragraphs: [
       "In Luleå, lots of us own things we only use half the year: studded tyres, skis, snowmobiles and summer furniture. Meanwhile the queue for extra storerooms in apartment buildings is long, student rooms barely fit a suitcase, and storage companies are often on industrial estates out of town.",
       "At the same time, residential areas like Gammelstad, Bergnäset and Sunderbyn are full of garages, basements and outbuildings with room to spare. Spazia connects the two, with BankID, a standard agreement and automatic payments. It should feel as safe as a storage company, but be closer and cheaper.",
-      "Spazia is run by a small team in Luleå. We visit every space ourselves before it is listed, and we answer ourselves when you get in touch.",
+      "Spazia is run by a small team in Luleå. Here we visit every space ourselves before it is listed, and we answer ourselves when you get in touch.",
+      "If you register from another city, you join the waitlist. We count registrations per town and open first where most people are waiting.",
     ],
     creditsTitle: "Photo credits",
     creditsText: "Photos are from Unsplash and used under the Unsplash License. Thanks to the photographers:",
@@ -466,14 +487,27 @@ export const en: Dictionary = {
     ],
   },
   categoryPage: {
-    eyebrow: "With a neighbour in Luleå",
+    eyebrow: "With a neighbour",
     priceLabel: "Guide price",
     seasonLabel: "Season",
     ctaFind: "Register interest",
     hostTitle: "Got room for {name}?",
-    hostText: "Homeowners in Luleå can earn money from space that would otherwise sit empty. See what your garage could bring in.",
+    hostText: "Homeowners can earn money from space that would otherwise sit empty. See what your garage could bring in.",
     otherTitle: "Other storage",
-    areasTitle: "Areas",
+    areasTitle: "Cities",
+  },
+  cityPage: {
+    eyebrow: "City",
+    title: "Storage and parking in {name}",
+    metaDescription: "Store tyres, skis or boxes, or rent a parking space, with a verified neighbour in {name}. Register your interest.",
+    statusFirst: "First up",
+    firstText: "We launch here during winter 2026/27. Register now and get priority.",
+    statusWaitlist: "Waitlist",
+    waitlistText: "We haven't opened in {name} yet. Register, and we will open first in the cities where most people are waiting – you get priority.",
+    hostFirstText: "We visit your space before it is listed and help you with the listing. You decide what you accept and when renters can come.",
+    renterCta: "I need space in {name}",
+    hostCta: "I have space in {name}",
+    otherCities: "Other cities",
   },
   areaPage: {
     eyebrow: "Area in Luleå",
@@ -489,7 +523,11 @@ export const en: Dictionary = {
     phone: "Phone",
     optional: "optional",
     phoneHintHost: "We call to book a visit.",
-    area: "Area",
+    town: "Town",
+    townPlaceholder: "E.g. Gothenburg",
+    waitlistNoteRenter: "We open in Luleå first. In {town} you join the waitlist and get priority when we open there.",
+    waitlistNoteHost: "We visit and list spaces in Luleå first. In {town} you join the waitlist, and we get in touch when we open there.",
+    area: "Area in Luleå",
     areaPlaceholder: "Choose an area",
     otherArea: "Another area in Luleå",
     anyArea: "Doesn't matter",
@@ -539,6 +577,8 @@ export const en: Dictionary = {
       successTitle: "Thanks! We'll be in touch soon.",
       successText:
         "We will contact you within a few days to book a visit. In the meantime, read more about how we approach trust and safety.",
+      successTextWaitlist:
+        "You're on the waitlist for {town}. We will get in touch when we open there, and you get priority. In the meantime, read more about trust and safety.",
     },
     renter: {
       items: "What do you need space for?",
@@ -587,11 +627,13 @@ export const en: Dictionary = {
       successTitle: "Thanks! You're on the list.",
       successText:
         "We will get in touch when there is a verified host near you. Everyone who registers now gets priority when we launch.",
+      successTextWaitlist:
+        "You're on the waitlist for {town}. We will get in touch when we open there, and you get priority.",
     },
   },
   calculator: {
     title: "What could your space earn?",
-    lead: "Choose what you have room for. The estimate uses our guide prices and shows what you receive after Spazia's fee.",
+    lead: "Choose what you have room for. The estimate uses our guide prices in Luleå and shows what you receive after Spazia's fee. In big cities you can often charge more.",
     presetsLabel: "Quick picks",
     presets: {
       corner: "A corner of the garage",

@@ -1,6 +1,8 @@
 # Spazia
 
-Förvaring hos grannen i Luleå. A peer-to-peer storage marketplace, starting with **Fas 0**: a validation site that collects host and renter interest for the launch campaign.
+Förvaring och parkering hos grannen. A peer-to-peer storage and parking marketplace for all of Sweden, opening city by city. It starts with **Fas 0**: a validation site that collects host and renter interest.
+
+**City by city:** Luleå opens first (winter 2026/27), and only there do we visit and list spaces. Every other town has a waitlist. Registrations are counted per town, and the next city opens where the most people are waiting.
 
 Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-och-plan.md).
 
@@ -14,7 +16,12 @@ Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-
   - Trygghet
   - Om oss
   - Integritetspolicy
-- **SEO landing pages:** one per storage type, including parking (`/forvaring/dackforvaring`, `/forvaring/parkering` …), and one per area (`/omrade/gammelstad` …). The short address `/parkering` redirects to the parking page.
+- **SEO landing pages:**
+  - One per storage type, including parking (`/forvaring/dackforvaring`, `/forvaring/parkering` …). The short address `/parkering` redirects to the parking page.
+  - One per city (`/stad/lulea`, `/stad/goteborg` …), showing whether the city is open or on the waitlist.
+  - One per Luleå district (`/omrade/gammelstad` …).
+- **Location search** in the home page hero: the visitor types a town and lands on the renter form with the town filled in.
+- **Town field** in both forms (free text with suggestions). In Luleå the form also asks for the district; elsewhere it says the visitor joins the waitlist, and the success message and confirmation email say so too.
 - **Lead capture:** forms go to Netlify Forms by default, or to Supabase once it is configured (see below). Every lead stores its UTM source, campaign, referrer and landing page.
 - **Meta Pixel:** loads only after cookie consent and fires a `Lead` event (`content_category: host | renter`) on each successful form.
 - **Fully static:** `next build` exports plain HTML to `out/`.
@@ -84,12 +91,15 @@ npm run images
 | All Swedish copy | `src/content/sv.ts` |
 | All English copy (same shape) | `src/content/en.ts` |
 | Storage types, guide prices, units, SEO texts | `src/content/categories.ts` |
-| Areas | `src/content/areas.ts` |
+| Cities, their status (first / waitlist) and town suggestions | `src/content/cities.ts` |
+| Luleå districts | `src/content/areas.ts` |
 | Fees (15 % renter / 5 % host) and heated premium | `src/content/pricing.ts` |
 | Contact email, company name, org.nr | `src/lib/site.ts` |
 | URLs per language | `src/lib/routes.ts` |
 
-When you add a category or area, its pages, footer links, form options and sitemap entries are generated automatically.
+When you add a category, city or area, its pages, footer links, form options and sitemap entries are generated automatically.
+
+**Opening a new city:** in `src/content/cities.ts`, set the city's `status` to `"first"` and update the copy that says spaces are only visited and listed in Luleå (search for `Luleå` in `src/content/sv.ts`, `src/content/en.ts` and `src/lib/lead-emails.ts`). The forms ask for the district only in Luleå (`isLulea` in `src/content/cities.ts`).
 
 ## Environment variables
 
@@ -107,7 +117,7 @@ Set these in Netlify under *Project configuration → Environment variables*. Se
 
 `netlify/functions/lead-emails.mts` runs for every verified Netlify Forms submission and sends:
 
-1. **A notification to the team** (`MAIL_TO`, default info@nordvra.se). It is in Swedish, contains all answers and the ad source, and *Reply-to* is the person who registered.
+1. **A notification to the team** (`MAIL_TO`, default info@nordvra.se). It is in Swedish, contains all answers, the town and the ad source, and *Reply-to* is the person who registered. Waitlist sign-ups (outside Luleå) have "(väntelista)" in the subject.
 2. **A confirmation to the person** in their language, with what they sent. *Reply-to* is the team address. Turn it off with `MAIL_CONFIRMATION=off`.
 
 The email text lives in `src/lib/lead-emails.ts`. The function uses SMTP, so it works with any email service. Common settings:
@@ -134,12 +144,12 @@ Without SMTP settings the function only logs a warning. Submissions are still st
 
 ## Leads: Netlify Forms → Supabase
 
-**Netlify Forms (default):** submissions appear in the Netlify dashboard under *Forms* (`host-lead`, `renter-lead`). The hidden form definitions live in `public/__forms.html`; keep them in sync if you add fields.
+**Netlify Forms (default):** submissions appear in the Netlify dashboard under *Forms* (`host-lead`, `renter-lead`). The `city` column shows the town; you can download the submissions as CSV to count them per town. The hidden form definitions live in `public/__forms.html`; keep them in sync if you add fields.
 
 **Supabase:**
 
 1. Create a project in region `eu-north-1` (Stockholm).
-2. Run the files in `supabase/migrations/` in order, either in the SQL editor or with `supabase db push`. The migration creates `host_leads`, `renter_leads` and a `lead_summary` view. With Row Level Security, the public key can only **insert**; it cannot read, update or delete.
+2. Run the files in `supabase/migrations/` in order, either in the SQL editor or with `supabase db push`. The migrations create `host_leads`, `renter_leads`, a `lead_summary` view (leads per day and source) and a `city_demand` view (hosts and renters per town, to decide which city opens next). With Row Level Security, the public key can only **insert**; it cannot read, update or delete.
 3. Set the two Supabase env vars in Netlify and redeploy. The `status` and `notes` columns are for your own follow-up in the dashboard.
 
 ## Campaign links
@@ -151,9 +161,10 @@ https://spazia.se/bli-vard?utm_source=facebook&utm_medium=paid&utm_campaign=vill
 https://spazia.se/hitta-forvaring?vad=tyres&utm_source=blocket&utm_medium=listing&utm_campaign=dack-okt26
 https://spazia.se/en/find-storage?vad=boxes&utm_source=campus&utm_medium=poster&utm_campaign=ltu-sommar
 https://spazia.se/parkering?utm_source=facebook&utm_medium=paid&utm_campaign=parkering-nov26
+https://spazia.se/hitta-forvaring?ort=Uppsala&vad=boxes&utm_source=instagram&utm_medium=paid&utm_campaign=uppsala-flytt
 ```
 
-`?vad=<tyres|skis|snowmobile|bikes|boxes|car|parking>` and `?omrade=<area slug>` pre-fill the renter form.
+`?vad=<tyres|skis|snowmobile|bikes|boxes|car|parking>`, `?ort=<town>` and `?omrade=<Luleå area slug>` pre-fill the renter form. `?ort=` also pre-fills the host form.
 
 ## Before launch – fill in
 

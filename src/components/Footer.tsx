@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { areas } from "@/content/areas";
 import { categories } from "@/content/categories";
+import { cities } from "@/content/cities";
 import type { Dictionary } from "@/content";
 import type { Lang } from "@/lib/i18n";
-import { areaPath, categoryPath, pagePath } from "@/lib/routes";
+import { categoryPath, cityPath, pagePath } from "@/lib/routes";
 import { site } from "@/lib/site";
 import { CookieSettingsLink } from "./CookieConsent";
 import { Logo } from "./Logo";
@@ -41,10 +41,10 @@ export function Footer({ lang, t }: { lang: Lang; t: Dictionary }) {
         <nav aria-label={t.footer.areas}>
           <h2 className="text-base font-bold text-white">{t.footer.areas}</h2>
           <ul className="mt-4 text-[0.95rem]">
-            {areas.map((a) => (
-              <li key={a.id}>
-                <Link prefetch={false} href={areaPath(a.slug, lang)} className={linkClass}>
-                  {a.name}
+            {cities.map((c) => (
+              <li key={c.id}>
+                <Link prefetch={false} href={cityPath(c.slug, lang)} className={linkClass}>
+                  {c.name}
                 </Link>
               </li>
             ))}

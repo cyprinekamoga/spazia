@@ -1,9 +1,9 @@
 /** Swedish copy. The English file must have exactly the same shape. */
 export const sv = {
   meta: {
-    homeTitle: "Spazia – förvaring hos grannen i Luleå",
+    homeTitle: "Spazia – förvaring och parkering hos grannen",
     homeDescription:
-      "Förvara däck, skidor, skoter och flyttlådor i torra garage, eller hyr en p-plats, hos verifierade villaägare i Luleå. Billigare, närmare och utan bindningstid.",
+      "Förvara däck, skidor, skoter och flyttlådor i grannens garage, eller hyr en p-plats på uppfarten. Verifierade villaägare, standardavtal och ingen bindningstid. Vi startar i Luleå och öppnar stad för stad.",
     titleTemplate: "%s | Spazia",
     locale: "sv_SE",
   },
@@ -13,7 +13,7 @@ export const sv = {
     from: "från ca",
     currency: "kr",
     readMore: "Läs mer",
-    launchBadge: "Startar i Luleå vintern 2026/27",
+    launchBadge: "Först ut: Luleå, vintern 2026/27",
     menu: "Meny",
     close: "Stäng",
     languageName: "Svenska",
@@ -39,17 +39,23 @@ export const sv = {
   },
   hero: {
     title: "Det finns plats hos grannen.",
-    lead: "Förvara däck, skidor och flyttlådor i torra garage, eller hyr en p-plats på uppfarten, hos villaägare i Luleå. Billigare än förrådsföretagen och tryggt med BankID, avtal och automatisk betalning.",
+    lead: "Förvara däck, skidor och flyttlådor i grannens garage, eller hyr en p-plats på uppfarten. Billigare än förrådsföretagen.",
+    search: {
+      label: "Var behöver du plats?",
+      placeholder: "T.ex. Göteborg",
+      button: "Hitta plats",
+      note: "Vi startar i Luleå och öppnar stad för stad. Anmäl dig där du bor.",
+    },
     ctaFind: "Jag behöver förvaring",
     ctaHost: "Jag har plats över",
     chipsLabel: "Vad behöver du plats för?",
     trustline: ["Verifiering med BankID", "Standardavtal", "Ingen bindningstid"],
     illustrationAlt:
-      "Ett upplyst garage en snöig vinterkväll – Spazia, förvaring hos grannen i Luleå.",
+      "Ett upplyst garage en snöig vinterkväll – Spazia, förvaring och parkering hos grannen.",
   },
   categoriesSection: {
     title: "Vad behöver du plats för?",
-    lead: "Förvaring och parkering. Riktpriser per månad inklusive serviceavgift, värden sätter det slutliga priset.",
+    lead: "Förvaring och parkering. Riktpriser i Luleå per månad, inklusive serviceavgift. I storstäderna blir det ofta dyrare, och värden sätter det slutliga priset.",
     per: "per",
     perUnit: "i månaden per {unit}",
   },
@@ -91,7 +97,7 @@ export const sv = {
     items: [
       {
         title: "Närmare",
-        text: "Förvaring i bostadsområden som Gammelstad, Bergnäset och Sunderbyn i stället för i ett industriområde utanför stan.",
+        text: "Förvaring i villaområdet nära dig i stället för i ett industriområde utanför stan.",
       },
       {
         title: "Billigare",
@@ -103,13 +109,13 @@ export const sv = {
       },
       {
         title: "Lokalt",
-        text: "Pengarna går till grannar i Luleå i stället för till ett förrådsbolag.",
+        text: "Pengarna går till grannar i stället för till ett förrådsbolag.",
       },
     ],
   },
   seasons: {
     title: "Förvaring som följer årstiderna",
-    lead: "I Norrbotten byter prylarna plats två gånger om året. Vi har plats för båda halvorna.",
+    lead: "I stora delar av Sverige byter prylarna plats två gånger om året. Vi har plats för båda halvorna.",
     items: [
       {
         name: "Höst",
@@ -124,7 +130,7 @@ export const sv = {
       {
         name: "Sommar",
         months: "jun–aug",
-        text: "Studenter åker hem över sommaren. Lådor och möbler kan stå kvar i Luleå i stället för att fraktas fram och tillbaka.",
+        text: "Studenter åker hem över sommaren. Lådor och möbler kan stå kvar i studentstaden i stället för att fraktas fram och tillbaka.",
       },
     ],
   },
@@ -146,7 +152,7 @@ export const sv = {
       {
         icon: "inspect",
         title: "Besökta utrymmen",
-        text: "Vi besöker varje utrymme innan det publiceras och kontrollerar att det är torrt, låsbart och som beskrivet.",
+        text: "Vi besöker varje utrymme innan det publiceras och kontrollerar att det är torrt, låsbart och som beskrivet. Just nu publicerar vi bara utrymmen i Luleå.",
       },
       {
         icon: "contract",
@@ -165,14 +171,24 @@ export const sv = {
       },
       {
         icon: "support",
-        title: "Lokal support",
-        text: "Vi finns i Luleå och hjälper till om något går fel.",
+        title: "Personlig support",
+        text: "Ett litet team som svarar själva och hjälper till om något går fel.",
       },
     ],
     link: "Läs mer om trygghet",
   },
+  citiesSection: {
+    title: "Stad för stad",
+    lead: "Vi startar i Luleå och öppnar sedan där flest väntar. Anmäl dig där du bor, så räknas din stad.",
+    first: "Först ut, vintern 2026/27",
+    firstText: "Här besöker vi varje utrymme innan det publiceras.",
+    waitlist: "Väntelista",
+    districts: "Områden i Luleå",
+    missing: "Saknas din stad? Skriv in den i formuläret, alla orter räknas.",
+    missingCta: "Anmäl intresse",
+  },
   areasSection: {
-    title: "Vi startar i Luleå",
+    title: "Områden i Luleå",
     lead: "Först ut är områden med många villor och garage, och områden där många behöver plats.",
     hostFocus: "Vi söker värdar",
     renterFocus: "Stor efterfrågan",
@@ -182,19 +198,23 @@ export const sv = {
     general: [
       {
         q: "Vad är Spazia?",
-        a: "En marknadsplats där privatpersoner i Luleå hyr ut torr förvaringsplats i garage, källare och uthus till den som behöver förvara däck, skidor, flyttlådor eller fordon. Vi sköter verifiering, avtal och betalning.",
+        a: "En marknadsplats där privatpersoner hyr ut torr förvaringsplats i garage, källare och uthus, eller en p-plats på uppfarten, till den som behöver plats för däck, skidor, flyttlådor eller bilen. Vi sköter verifiering, avtal och betalning.",
       },
       {
         q: "När öppnar ni?",
-        a: "Vi startar i Luleå under vintern 2026/27. Just nu bygger vi upp ett nätverk av besökta och verifierade värdar. Anmäl intresse så hör vi av oss när det finns plats nära dig.",
+        a: "Vi startar i Luleå under vintern 2026/27 och öppnar sedan stad för stad. Just nu bygger vi upp ett nätverk av besökta och verifierade värdar i Luleå.",
+      },
+      {
+        q: "Finns ni i min stad?",
+        a: "Om du inte bor i Luleå: inte än. Anmäl dig ändå. Vi räknar alla anmälningar per ort och öppnar först där flest väntar, och du får förtur när vi öppnar hos dig.",
       },
       {
         q: "Vad kostar det?",
-        a: "Värden sätter priset. Riktpriset för en däcksats är omkring 120 kr i månaden och för flyttlådor omkring 150 kr per kvadratmeter. Serviceavgiften på 15 % ingår i priset du ser, och det finns ingen bindningstid.",
+        a: "Värden sätter priset. I Luleå är riktpriset för en däcksats omkring 120 kr i månaden och för flyttlådor omkring 150 kr per kvadratmeter. I storstäderna blir det ofta dyrare. Serviceavgiften på 15 % ingår i priset du ser, och det finns ingen bindningstid.",
       },
       {
         q: "Är det säkert?",
-        a: "Alla verifieras med BankID eller Freja eID, vi besöker varje utrymme innan det publiceras, ni skriver ett standardavtal och fotograferar sakerna vid inlämning. Betalningen går via Spazia, så ingen behöver hantera kontanter.",
+        a: "Alla verifieras med BankID eller Freja eID, vi besöker varje utrymme innan det publiceras (just nu bara i Luleå), ni skriver ett standardavtal och fotograferar sakerna vid inlämning. Betalningen går via Spazia, så ingen behöver hantera kontanter.",
       },
       {
         q: "Är mina saker försäkrade?",
@@ -250,12 +270,12 @@ export const sv = {
   },
   finalCta: {
     title: "Var med från start",
-    lead: "Vi öppnar i Luleå under vintern 2026/27. Anmäl intresse nu så får du förtur.",
+    lead: "Vi öppnar i Luleå under vintern 2026/27 och sedan stad för stad. Anmäl intresse nu så får du förtur där du bor.",
   },
   footer: {
-    tagline: "Förvaring hos grannen, i Luleå.",
+    tagline: "Förvaring och parkering hos grannen. Först i Luleå, sedan i fler städer.",
     storage: "Förvaring och parkering",
-    areas: "Områden",
+    areas: "Städer",
     company: "Spazia",
     contact: "Kontakt",
     privacy: "Integritetspolicy",
@@ -264,12 +284,12 @@ export const sv = {
     rights: "Alla rättigheter förbehållna.",
   },
   hostPage: {
-    metaTitle: "Hyr ut ditt garage, förråd eller p-plats i Luleå",
+    metaTitle: "Hyr ut ditt garage, förråd eller p-plats",
     metaDescription:
       "Tjäna pengar på ditt tomma garage, källare, uthus eller en p-plats på uppfarten. Gratis att annonsera, BankID-verifierade hyresgäster, standardavtal och automatisk månadsbetalning.",
     eyebrow: "Bli värd",
     title: "Tjäna pengar på ditt tomma garage.",
-    lead: "Hyr ut torr plats i garage, källare eller uthus, eller en p-plats på uppfarten, till studenter och unga yrkesverksamma i Luleå. Vi sköter verifiering, avtal och betalning. Du låser upp dörren några gånger om året.",
+    lead: "Hyr ut torr plats i garage, källare eller uthus, eller en p-plats på uppfarten. Vi sköter verifiering, avtal och betalning, och du låser upp dörren några gånger om året. Vi börjar i Luleå, men du kan anmäla ditt utrymme var du än bor.",
     ctaForm: "Anmäl ditt utrymme",
     ctaCalc: "Räkna på det",
     benefitsTitle: "Det här ingår",
@@ -296,13 +316,13 @@ export const sv = {
       },
       {
         title: "Gratis besök och bilder",
-        text: "Vi besöker ditt utrymme, tipsar om hur mycket plats du kan hyra ut och tar bilderna till annonsen.",
+        text: "Vi besöker ditt utrymme, tipsar om hur mycket plats du kan hyra ut och tar bilderna till annonsen. Besöken görs i Luleå, och i fler städer när vi öppnar där.",
       },
     ],
     stepsTitle: "Så blir du värd",
     steps: [
       { title: "Anmäl intresse", text: "Fyll i formuläret nedan. Det tar två minuter." },
-      { title: "Vi hör av oss", text: "Vi ringer upp och bokar ett besök när det passar dig." },
+      { title: "Vi hör av oss", text: "I Luleå ringer vi upp och bokar ett besök. Bor du någon annanstans hör vi av oss när vi öppnar i din stad." },
       {
         title: "Besök och annons",
         text: "Vi kontrollerar utrymmet, tar bilder och skapar annonsen tillsammans med dig.",
@@ -325,22 +345,22 @@ export const sv = {
       "Hyr du ut en del av din privatbostad, till exempel garaget till din villa, beskattas hyran som inkomst av kapital. För en villa får du göra ett schablonavdrag på 40 000 kr per år plus 20 % av hyresintäkten, vilket täcker hela intäkten för de flesta värdar. Som digital plattform kan Spazia vara skyldig att lämna uppgifter om hyresintäkter till Skatteverket. Reglerna beror på din situation, så kontrollera alltid med Skatteverket.",
     taxLink: "Skatteverket om att hyra ut privatbostad",
     formTitle: "Anmäl ditt utrymme",
-    formLead: "Vi hör av oss inom några dagar för att boka ett besök. Det är gratis och inte bindande.",
+    formLead: "I Luleå hör vi av oss inom några dagar för att boka ett besök. I andra städer står du på väntelistan och får förtur när vi öppnar. Det är gratis och inte bindande.",
     faqTitle: "Frågor från värdar",
   },
   findPage: {
-    metaTitle: "Hitta förvaring och parkering i Luleå",
+    metaTitle: "Hitta förvaring och parkering hos en granne",
     metaDescription:
-      "Förvara däck, skidor, cyklar, flyttlådor eller fordon, eller hyr en p-plats, hos en verifierad granne i Luleå. Billigare än förrådsföretagen och utan bindningstid. Anmäl intresse.",
+      "Förvara däck, skidor, cyklar, flyttlådor eller fordon, eller hyr en p-plats, hos en verifierad granne. Vi startar i Luleå och öppnar stad för stad. Anmäl intresse där du bor.",
     eyebrow: "Hitta förvaring",
     title: "Förvaring nära dig, hos en granne.",
-    lead: "Berätta vad du behöver förvara. När vi öppnar matchar vi dig med en verifierad värd i ditt område, och du som anmäler dig nu får förtur.",
+    lead: "Berätta vad du behöver plats för och var. Vi startar i Luleå och öppnar stad för stad, och du som anmäler dig nu får förtur där du bor.",
     pricesTitle: "Riktpriser",
-    pricesLead: "Exempel på månadspris inklusive serviceavgift. Värden sätter det slutliga priset.",
+    pricesLead: "Riktpriser i Luleå per månad, inklusive serviceavgift. I storstäderna blir det ofta dyrare, och värden sätter det slutliga priset.",
     heatedNote: "Uppvärmd plats kostar ca 25 % mer för fordon, möbler och lådor.",
-    studentTitle: "Student vid LTU?",
+    studentTitle: "Student?",
     studentText:
-      "Lämna lådorna och möblerna i Luleå över sommaren i stället för att frakta hem dem. Saknar du svenskt BankID kan du verifiera dig med Freja eID och ditt pass.",
+      "Lämna lådorna och möblerna i studentstaden över sommaren i stället för att frakta hem dem. Saknar du svenskt BankID kan du verifiera dig med Freja eID och ditt pass.",
     formTitle: "Anmäl intresse",
     formLead: "Det är gratis och inte bindande.",
     faqTitle: "Vanliga frågor",
@@ -360,7 +380,7 @@ export const sv = {
       },
       {
         title: "Vi besöker varje utrymme",
-        text: "Innan ett utrymme publiceras besöker vi det. Vi kontrollerar att det är torrt, låsbart och stämmer med beskrivningen, och vi tar bilderna till annonsen själva.",
+        text: "Innan ett utrymme publiceras besöker vi det. Vi kontrollerar att det är torrt, låsbart och stämmer med beskrivningen, och vi tar bilderna till annonsen själva. Därför publicerar vi just nu bara utrymmen i Luleå. När vi öppnar i fler städer berättar vi hur granskningen går till där.",
         bullets: [] as string[],
       },
       {
@@ -410,13 +430,14 @@ export const sv = {
   aboutPage: {
     metaTitle: "Om Spazia",
     metaDescription:
-      "Spazia är en marknadsplats för förvaring hos grannar. Vi startar i Luleå, där vintern gör förvaring till en större fråga än på de flesta andra platser.",
+      "Spazia är en marknadsplats för förvaring och parkering hos grannar. Vi startar i Luleå, där vintern gör förvaring till en större fråga än på de flesta andra platser, och öppnar sedan stad för stad.",
     eyebrow: "Om oss",
     title: "Plats finns. Den är bara på fel ställe.",
     paragraphs: [
       "I Luleå äger många av oss saker som bara används halva året: dubbdäck, skidor, skotrar och sommarmöbler. Samtidigt är kön till extra förråd i hyreshusen lång, studentrummen har knappt plats för en resväska och förrådsföretagen ligger ofta i industriområden utanför stan.",
       "I villaområden som Gammelstad, Bergnäset och Sunderbyn finns samtidigt garage, källare och uthus med plats över. Spazia kopplar ihop de två, med BankID, standardavtal och automatisk betalning. Det ska kännas lika tryggt som ett förrådsföretag, men vara närmare och billigare.",
-      "Spazia drivs av ett litet team i Luleå. Vi besöker själva varje utrymme innan det publiceras, och vi svarar själva när du hör av dig.",
+      "Spazia drivs av ett litet team i Luleå. Här besöker vi själva varje utrymme innan det publiceras, och vi svarar själva när du hör av dig.",
+      "Anmäler du dig från en annan stad hamnar du på väntelistan. Vi räknar anmälningarna per ort och öppnar först där flest väntar.",
     ],
     creditsTitle: "Bildkällor",
     creditsText: "Fotona kommer från Unsplash och används enligt Unsplash-licensen. Tack till fotograferna:",
@@ -464,14 +485,27 @@ export const sv = {
     ],
   },
   categoryPage: {
-    eyebrow: "Hos en granne i Luleå",
+    eyebrow: "Hos en granne",
     priceLabel: "Riktpris",
     seasonLabel: "Säsong",
     ctaFind: "Anmäl intresse",
     hostTitle: "Har du plats för {name}?",
-    hostText: "Villaägare i Luleå kan tjäna pengar på plats som annars står tom. Räkna på vad ditt garage kan ge.",
+    hostText: "Villaägare kan tjäna pengar på plats som annars står tom. Räkna på vad ditt garage kan ge.",
     otherTitle: "Annan förvaring",
-    areasTitle: "Områden",
+    areasTitle: "Städer",
+  },
+  cityPage: {
+    eyebrow: "Stad",
+    title: "Förvaring och parkering i {name}",
+    metaDescription: "Förvara däck, skidor, flyttlådor eller hyr en p-plats hos en verifierad granne i {name}. Anmäl intresse.",
+    statusFirst: "Först ut",
+    firstText: "Vi startar här under vintern 2026/27. Anmäl dig nu så får du förtur.",
+    statusWaitlist: "Väntelista",
+    waitlistText: "Vi har inte öppnat i {name} än. Anmäl dig, så öppnar vi först i de städer där flest väntar, och du får förtur.",
+    hostFirstText: "Vi besöker ditt utrymme innan det publiceras och hjälper dig med annonsen. Du bestämmer själv vad du tar emot och när hyresgästerna får komma.",
+    renterCta: "Jag behöver plats i {name}",
+    hostCta: "Jag har plats i {name}",
+    otherCities: "Andra städer",
   },
   areaPage: {
     eyebrow: "Område i Luleå",
@@ -487,7 +521,11 @@ export const sv = {
     phone: "Telefon",
     optional: "valfritt",
     phoneHintHost: "Vi ringer för att boka besök.",
-    area: "Område",
+    town: "Ort",
+    townPlaceholder: "T.ex. Göteborg",
+    waitlistNoteRenter: "Vi öppnar först i Luleå. I {town} hamnar du på väntelistan och får förtur när vi öppnar där.",
+    waitlistNoteHost: "Vi besöker och publicerar först utrymmen i Luleå. I {town} står du på väntelistan, och vi hör av oss när vi öppnar där.",
+    area: "Område i Luleå",
     areaPlaceholder: "Välj område",
     otherArea: "Annat område i Luleå",
     anyArea: "Spelar ingen roll",
@@ -537,6 +575,8 @@ export const sv = {
       successTitle: "Tack! Vi hör av oss snart.",
       successText:
         "Vi kontaktar dig inom några dagar för att boka ett besök. Under tiden kan du läsa mer om hur vi arbetar med trygghet.",
+      successTextWaitlist:
+        "Du står på väntelistan för {town}. Vi hör av oss när vi öppnar där, och du får förtur. Under tiden kan du läsa mer om hur vi arbetar med trygghet.",
     },
     renter: {
       items: "Vad behöver du plats för?",
@@ -585,11 +625,13 @@ export const sv = {
       successTitle: "Tack! Du står på listan.",
       successText:
         "Vi hör av oss när det finns en verifierad värd nära dig. Du som anmäler dig nu får förtur när vi öppnar.",
+      successTextWaitlist:
+        "Du står på väntelistan för {town}. Vi hör av oss när vi öppnar där, och du får förtur.",
     },
   },
   calculator: {
     title: "Vad kan ditt utrymme ge?",
-    lead: "Välj vad du har plats för. Beräkningen bygger på våra riktpriser och visar vad du får efter Spazias avgift.",
+    lead: "Välj vad du har plats för. Beräkningen bygger på våra riktpriser i Luleå och visar vad du får efter Spazias avgift. I storstäderna kan du ofta ta mer betalt.",
     presetsLabel: "Snabbval",
     presets: {
       corner: "Ett hörn i garaget",

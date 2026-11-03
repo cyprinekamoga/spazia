@@ -5,9 +5,10 @@ import { categories } from "@/content/categories";
 import { HowItWorks } from "@/components/HowItWorks";
 import { categoryIcons } from "@/components/Icons";
 import { MobileActionBar } from "@/components/MobileActionBar";
+import { LocationSearch } from "@/components/LocationSearch";
 import {
-  AreaChips,
   CategoryGrid,
+  CitiesSection,
   Faq,
   FinalCta,
   HostTeaser,
@@ -36,12 +37,15 @@ export function HomeView({ lang }: { lang: Lang }) {
         lead={t.hero.lead}
         eyebrow={<span className="eyebrow !text-glow">{t.common.launchBadge}</span>}
       >
-        <Link prefetch={false} href={findPath} className="btn btn-light">
-          {t.hero.ctaFind}
-        </Link>
-        <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-on-dark">
-          {t.hero.ctaHost}
-        </Link>
+        <div className="w-full">
+          <LocationSearch action={findPath} {...t.hero.search} />
+          <Link prefetch={false}
+            href={pagePath("host", lang)}
+            className="mt-4 inline-flex min-h-11 items-center font-semibold text-white underline decoration-glow decoration-2 underline-offset-6 hover:decoration-white"
+          >
+            {t.hero.ctaHost}
+          </Link>
+        </div>
       </PhotoHero>
 
       {/* Trust line + quick picker */}
@@ -120,11 +124,8 @@ export function HomeView({ lang }: { lang: Lang }) {
         </Link>
       </Section>
 
-      <Section>
-        <SectionHeading title={t.areasSection.title} lead={t.areasSection.lead} />
-        <div className="mt-7 sm:mt-10">
-          <AreaChips lang={lang} t={t} />
-        </div>
+      <Section id="stader">
+        <CitiesSection lang={lang} t={t} />
       </Section>
 
       <Section tone="paper">

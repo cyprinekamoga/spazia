@@ -9,6 +9,7 @@
  */
 import { areas } from "../content/areas";
 import { categories } from "../content/categories";
+import { isLulea } from "../content/cities";
 import { en } from "../content/en";
 import { sv, type Dictionary } from "../content/sv";
 
@@ -47,6 +48,16 @@ function areaLabel(value: string | undefined, t: Dictionary): string {
   return areas.find((a) => a.slug === value)?.name ?? value;
 }
 
+/**
+ * The town the person typed. Registrations from before the town field
+ * existed were all for Luleå.
+ */
+function townOf(data: Data): { town: string; lulea: boolean } {
+  const town = oneLine(data.city, 80);
+  if (!town) return { town: data.area ? "Luleå" : "", lulea: true };
+  return { town, lulea: isLulea(town) };
+}
+
 function categoryList(value: string | undefined, lang: "sv" | "en"): string {
   return (value ?? "")
     .split(",")
@@ -65,9 +76,11 @@ function pick(record: Record<string, string>, value: string | undefined): string
 function describe(kind: LeadKind, data: Data, lang: "sv" | "en"): [string, string][] {
   const t = lang === "sv" ? sv : en;
   const f = t.forms;
+  const { town } = townOf(data);
   const rows: [string, string][] =
     kind === "host"
       ? [
+          [f.town, town],
           [f.area, areaLabel(data.area, t)],
           [f.host.spaceType, pick(f.host.spaceTypes, data.space_type)],
           [f.host.heated, pick(f.host.heatedOptions, data.heated)],
@@ -78,6 +91,7 @@ function describe(kind: LeadKind, data: Data, lang: "sv" | "en"): [string, strin
       : [
           [f.renter.items, categoryList(data.items, lang)],
           [f.renter.quantity, oneLine(data.quantity)],
+          [f.town, town],
           [f.area, areaLabel(data.area, t)],
           [f.renter.start, pick(f.renter.starts, data.start)],
           [f.renter.duration, pick(f.renter.durations, data.duration)],
@@ -138,16 +152,20 @@ const confirmationCopy = {
   sv: {
     host: {
       subject: "Tack för din anmälan till Spazia",
-      intro: (name: string) => [
+      intro: (name: string, town: string, lulea: boolean) => [
         `Hej ${name}!`,
-        "Tack för att du vill hyra ut plats via Spazia. Vi hör av oss inom några dagar för att boka ett besök. Besöket är gratis och du förbinder dig inte till något.",
+        lulea
+          ? "Tack för att du vill hyra ut plats via Spazia. Vi hör av oss inom några dagar för att boka ett besök. Besöket är gratis och du förbinder dig inte till något."
+          : `Tack för att du vill hyra ut plats via Spazia. Vi öppnar stad för stad och börjar i Luleå. Du står nu på väntelistan för ${town}, och vi hör av oss för att boka ett besök när vi öppnar där.`,
       ],
     },
     renter: {
       subject: "Du står på Spazias lista",
-      intro: (name: string) => [
+      intro: (name: string, town: string, lulea: boolean) => [
         `Hej ${name}!`,
-        "Tack för din intresseanmälan. Du står nu på listan och får förtur när vi öppnar i Luleå. Vi hör av oss när det finns en verifierad värd nära dig.",
+        lulea
+          ? "Tack för din intresseanmälan. Du står nu på listan och får förtur när vi öppnar i Luleå. Vi hör av oss när det finns en verifierad värd nära dig."
+          : `Tack för din intresseanmälan. Du står nu på väntelistan för ${town}. Vi öppnar stad för stad, först där flest väntar, och du får förtur när vi öppnar hos dig.`,
       ],
     },
     summary: "Det här skickade du:",
@@ -158,16 +176,20 @@ const confirmationCopy = {
   en: {
     host: {
       subject: "Thanks for registering with Spazia",
-      intro: (name: string) => [
+      intro: (name: string, town: string, lulea: boolean) => [
         `Hi ${name},`,
-        "Thanks for wanting to rent out space through Spazia. We will get in touch within a few days to book a visit. The visit is free and you are not committing to anything.",
+        lulea
+          ? "Thanks for wanting to rent out space through Spazia. We will get in touch within a few days to book a visit. The visit is free and you are not committing to anything."
+          : `Thanks for wanting to rent out space through Spazia. We are opening city by city, starting with Luleå. You are now on the waitlist for ${town}, and we will get in touch to book a visit when we open there.`,
       ],
     },
     renter: {
       subject: "You're on the Spazia list",
-      intro: (name: string) => [
+      intro: (name: string, town: string, lulea: boolean) => [
         `Hi ${name},`,
-        "Thanks for registering your interest. You are now on the list and get priority when we launch in Luleå. We will get in touch when there is a verified host near you.",
+        lulea
+          ? "Thanks for registering your interest. You are now on the list and get priority when we launch in Luleå. We will get in touch when there is a verified host near you."
+          : `Thanks for registering your interest. You are now on the waitlist for ${town}. We are opening city by city, first where the most people are waiting, and you get priority when we open near you.`,
       ],
     },
     summary: "What you sent us:",
@@ -188,12 +210,14 @@ export function buildLeadEmails(
   const email = oneLine(data.email, 200).toLowerCase();
   const validEmail = EMAIL_RE.test(email);
   const lang: "sv" | "en" = data.lang === "en" ? "en" : "sv";
+  const { town, lulea } = townOf(data);
 
   /* Team notification – Swedish, reply goes straight to the person. */
   const teamRows: [string, string][] = [
     ["Namn", name],
     ["E-post", email],
     ["Telefon", oneLine(data.phone)],
+    ["Status", lulea ? "Luleå (öppnar först)" : `Väntelista (${town || "ort saknas"})`],
     ...describe(kind, data, "sv"),
     ["Meddelande", oneLine(data.message, 1000)],
     ["Språk", lang === "sv" ? "Svenska" : "Engelska"],
@@ -202,11 +226,12 @@ export function buildLeadEmails(
     ["Kom från", oneLine(data.referrer)],
   ].filter(([, v]) => v !== "") as [string, string][];
 
-  const where = areaLabel(data.area, sv);
+  const area = areaLabel(data.area, sv);
+  const where = [town, lulea && area && area !== town ? area : ""].filter(Boolean).join(", ") || "ort saknas";
   const teamSubject =
     kind === "host"
-      ? `Ny värd: ${name}, ${where} (${pick(sv.forms.host.spaceTypes, data.space_type).toLowerCase()})`
-      : `Ny intresseanmälan: ${name}, ${categoryList(data.items, "sv").toLowerCase()} (${where})`;
+      ? `Ny värd${lulea ? "" : " (väntelista)"}: ${name}, ${where} (${pick(sv.forms.host.spaceTypes, data.space_type).toLowerCase()})`
+      : `Ny intresseanmälan${lulea ? "" : " (väntelista)"}: ${name}, ${categoryList(data.items, "sv").toLowerCase()} (${where})`;
 
   const team: MailMessage = {
     to: opts.teamAddress,
@@ -229,7 +254,7 @@ export function buildLeadEmails(
   let confirmation: MailMessage | null = null;
   if (validEmail) {
     const c = confirmationCopy[lang];
-    const intro = c[kind].intro(name);
+    const intro = c[kind].intro(name, town, lulea);
     const rows = describe(kind, data, lang);
     confirmation = {
       to: email,

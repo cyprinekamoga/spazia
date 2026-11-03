@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { townSuggestions } from "@/content/cities";
 
 export type Errors = Record<string, string | undefined>;
 
@@ -63,6 +64,61 @@ export function TextField({
           {hint}
         </p>
       )}
+      <ErrorText id={`${id}-error`} message={error} />
+    </div>
+  );
+}
+
+/**
+ * Town (free text with suggestions). The note under it says whether the
+ * town is open yet or on the waitlist; it is announced when it changes.
+ */
+export function TownField({
+  label,
+  placeholder,
+  value,
+  onChange,
+  error,
+  note,
+}: {
+  label: string;
+  placeholder?: string;
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+  note?: string;
+}) {
+  const id = "f-city";
+  const describedBy = [`${id}-note`, error ? `${id}-error` : null].filter(Boolean).join(" ");
+  return (
+    <div>
+      <label htmlFor={id} className="field-label">
+        {label}
+      </label>
+      <input
+        id={id}
+        name="city"
+        type="text"
+        required
+        list={`${id}-list`}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoComplete="address-level2"
+        placeholder={placeholder}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy}
+        className="field-input [&::-webkit-calendar-picker-indicator]:hidden!"
+        maxLength={80}
+        enterKeyHint="next"
+      />
+      <datalist id={`${id}-list`}>
+        {townSuggestions.map((town) => (
+          <option key={town} value={town} />
+        ))}
+      </datalist>
+      <p id={`${id}-note`} aria-live="polite" className="text-sm leading-snug text-brand empty:hidden [&:not(:empty)]:mt-1.5">
+        {note}
+      </p>
       <ErrorText id={`${id}-error`} message={error} />
     </div>
   );

@@ -17,7 +17,7 @@ const jsonLd = {
   url: site.url,
   email: site.email,
   logo: `${site.url}/icon.svg`,
-  areaServed: { "@type": "City", name: "Luleå" },
+  areaServed: { "@type": "Country", name: "Sverige" },
 };
 
 /** The <html> document shared by the Swedish and English root layouts. */

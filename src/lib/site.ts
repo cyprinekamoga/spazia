@@ -8,7 +8,6 @@ export const site = {
   url: "https://spazia.se",
   /** Shown on the site and used as reply-to address in emails. */
   email: "info@nordvra.se",
-  city: "Luleå",
   /** Shown in the privacy policy. Add the org.nr once the company is registered. */
   legalName: "Spazia",
   orgNumber: "" as string,
