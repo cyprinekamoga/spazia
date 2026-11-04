@@ -3,10 +3,9 @@ import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Dictionary } from "@/content";
 import { areas, type Area } from "@/content/areas";
-import { categories, type Category } from "@/content/categories";
+import { categories, exampleGarageIncome, type Category } from "@/content/categories";
 import { cities } from "@/content/cities";
 import type { PhotoKey } from "@/content/photos";
-import { hostPayout, roundForDisplay } from "@/content/pricing";
 import { fill, formatNumber, type Lang } from "@/lib/i18n";
 import { areaPath, categoryPath, cityPath, pagePath, RENTER_PARAMS } from "@/lib/routes";
 import { seasonIcons, trustIcons, whyIcons } from "./Icons";
@@ -229,11 +228,6 @@ export function SeasonsGrid({ t }: { t: Dictionary }) {
 /* ---------- Host teaser ---------- */
 
 /** Example used in the teaser – matches the "half a double garage" calculator preset. */
-export function exampleGarageIncome(): number {
-  const units: Partial<Record<Category["id"], number>> = { tyres: 10, skis: 4, snowmobile: 1 };
-  const total = categories.reduce((sum, c) => sum + hostPayout(c.price) * (units[c.id] ?? 0), 0);
-  return roundForDisplay(total);
-}
 
 export function HostTeaser({ lang, t }: { lang: Lang; t: Dictionary }) {
   return (

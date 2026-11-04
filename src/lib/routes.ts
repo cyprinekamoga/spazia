@@ -1,10 +1,11 @@
 import { areas } from "@/content/areas";
 import { categories } from "@/content/categories";
 import { cities } from "@/content/cities";
+import { guides } from "@/content/guides";
 import type { L10n, Lang } from "./i18n";
 import { site } from "./site";
 
-export type PageKey = "home" | "host" | "find" | "trust" | "about" | "privacy";
+export type PageKey = "home" | "host" | "find" | "trust" | "about" | "privacy" | "guides";
 
 export const pagePaths: Record<PageKey, L10n> = {
   home: { sv: "/", en: "/en" },
@@ -13,7 +14,11 @@ export const pagePaths: Record<PageKey, L10n> = {
   trust: { sv: "/trygghet", en: "/en/trust-and-safety" },
   about: { sv: "/om-oss", en: "/en/about" },
   privacy: { sv: "/integritetspolicy", en: "/en/privacy" },
+  guides: { sv: "/guider", en: "/en/guides" },
 };
+
+/** Private page where a host books their visit (not in the sitemap). */
+export const bookingPaths: L10n = { sv: "/boka-besok", en: "/en/book-a-visit" };
 
 /** Query parameters that pre-fill the forms (from category, city and area pages). */
 export const RENTER_PARAMS = { item: "vad", area: "omrade", town: "ort" } as const;
@@ -38,12 +43,17 @@ export function cityPath(slug: string, lang: Lang): string {
   return `${cityBase[lang]}/${slug}`;
 }
 
+export function guidePath(slug: L10n, lang: Lang): string {
+  return `${pagePaths.guides[lang]}/${slug[lang]}`;
+}
+
 /** Every page on the site, with its path in both languages. */
 export function allRoutes(): L10n[] {
   return [
     ...Object.values(pagePaths),
     ...categories.map((c) => ({ sv: categoryPath(c.slug, "sv"), en: categoryPath(c.slug, "en") })),
     ...cities.map((c) => ({ sv: cityPath(c.slug, "sv"), en: cityPath(c.slug, "en") })),
+    ...guides.map((g) => ({ sv: guidePath(g.slug, "sv"), en: guidePath(g.slug, "en") })),
     ...areas.map((a) => ({ sv: areaPath(a.slug, "sv"), en: areaPath(a.slug, "en") })),
   ];
 }
@@ -56,7 +66,7 @@ function normalize(pathname: string): string {
 /** The same page in the other language (falls back to that language's home page). */
 export function translatePath(pathname: string, target: Lang): string {
   const current = normalize(pathname);
-  const match = allRoutes().find((r) => r.sv === current || r.en === current);
+  const match = [...allRoutes(), bookingPaths].find((r) => r.sv === current || r.en === current);
   return match ? match[target] : pagePaths.home[target];
 }
 

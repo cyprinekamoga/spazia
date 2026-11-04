@@ -1,5 +1,6 @@
 import type { L10n } from "@/lib/i18n";
 import type { PhotoKey } from "./photos";
+import { hostPayout, roundForDisplay } from "./pricing";
 
 export type CategoryId = "tyres" | "skis" | "snowmobile" | "bikes" | "boxes" | "car" | "parking";
 
@@ -318,4 +319,11 @@ export function getCategory(id: CategoryId): Category {
   const found = categories.find((c) => c.id === id);
   if (!found) throw new Error(`Unknown category ${id}`);
   return found;
+}
+
+/** What a host gets per month for half a double garage (10 tyre sets, 4 ski sets, 1 snowmobile). */
+export function exampleGarageIncome(): number {
+  const units: Partial<Record<CategoryId, number>> = { tyres: 10, skis: 4, snowmobile: 1 };
+  const total = categories.reduce((sum, c) => sum + hostPayout(c.price) * (units[c.id] ?? 0), 0);
+  return roundForDisplay(total);
 }

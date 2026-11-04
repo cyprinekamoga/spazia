@@ -105,7 +105,7 @@ function describe(kind: LeadKind, data: Data, lang: "sv" | "en"): [string, strin
 
 /* ---------- rendering ---------- */
 
-function escapeHtml(value: string): string {
+export function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -115,11 +115,11 @@ function escapeHtml(value: string): string {
 }
 
 /** "Område: Porsön", but "Vad vill du förvara? Däck" for labels that are questions. */
-function labelValue(label: string, value: string): string {
+export function labelValue(label: string, value: string): string {
   return /[?…]$/.test(label) ? `${label} ${value}` : `${label}: ${value}`;
 }
 
-function htmlTable(rows: [string, string][]): string {
+export function htmlTable(rows: [string, string][]): string {
   const cells = rows
     .map(
       ([k, v]) =>
@@ -130,7 +130,7 @@ function htmlTable(rows: [string, string][]): string {
   return `<table role="presentation" style="border-collapse:collapse;font-size:15px;line-height:1.4">${cells}</table>`;
 }
 
-function htmlLayout(body: string, footer: string): string {
+export function htmlLayout(body: string, footer: string): string {
   return `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#f6f8f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1e2a31">
 <div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #dfe5e8;border-radius:16px;padding:28px 24px">
 <p style="margin:0 0 20px;font-size:22px;font-weight:700;color:#2f6b75">Spazia</p>
@@ -140,10 +140,20 @@ ${body}
 </body></html>`;
 }
 
-function paragraphsHtml(paragraphs: string[]): string {
+export function paragraphsHtml(paragraphs: string[]): string {
   return paragraphs
     .map((p) => `<p style="margin:0 0 14px;font-size:16px;line-height:1.55">${escapeHtml(p)}</p>`)
     .join("");
+}
+
+/** A button-style link for HTML emails. */
+export function buttonHtml(href: string, label: string): string {
+  return `<p style="margin:6px 0 18px"><a href="${escapeHtml(href)}" style="display:inline-block;background:#2f6b75;color:#ffffff;text-decoration:none;font-weight:700;font-size:16px;padding:12px 20px;border-radius:999px">${escapeHtml(label)}</a></p>`;
+}
+
+/** Page where a host books, changes or cancels their visit. */
+export function bookingUrl(siteUrl: string, leadId: string, lang: "sv" | "en"): string {
+  return `${siteUrl}${lang === "sv" ? "/boka-besok" : "/en/book-a-visit"}?ref=${encodeURIComponent(leadId)}`;
 }
 
 /* ---------- the two emails ---------- */
@@ -168,6 +178,8 @@ const confirmationCopy = {
           : `Tack för din intresseanmälan. Du står nu på väntelistan för ${town}. Vi öppnar stad för stad, först där flest väntar, och du får förtur när vi öppnar hos dig.`,
       ],
     },
+    bookVisit: "Vill du välja tid själv? Boka besöket här:",
+    bookVisitButton: "Boka en tid för besöket",
     summary: "Det här skickade du:",
     outro: "Har du frågor? Svara bara på det här mejlet.",
     signoff: "Hälsningar\nSpazia",
@@ -192,6 +204,8 @@ const confirmationCopy = {
           : `Thanks for registering your interest. You are now on the waitlist for ${town}. We are opening city by city, first where the most people are waiting, and you get priority when we open near you.`,
       ],
     },
+    bookVisit: "Want to pick a time yourself? Book the visit here:",
+    bookVisitButton: "Book a time for the visit",
     summary: "What you sent us:",
     outro: "Questions? Just reply to this email.",
     signoff: "Best wishes\nSpazia",
@@ -201,7 +215,7 @@ const confirmationCopy = {
 
 export function buildLeadEmails(
   data: Data,
-  opts: { teamAddress: string },
+  opts: { teamAddress: string; leadId?: string; siteUrl?: string },
 ): { kind: LeadKind; team: MailMessage; confirmation: MailMessage | null } | null {
   const kind = detectKind(data);
   if (!kind) return null;
@@ -233,19 +247,24 @@ export function buildLeadEmails(
       ? `Ny värd${lulea ? "" : " (väntelista)"}: ${name}, ${where} (${pick(sv.forms.host.spaceTypes, data.space_type).toLowerCase()})`
       : `Ny intresseanmälan${lulea ? "" : " (väntelista)"}: ${name}, ${categoryList(data.items, "sv").toLowerCase()} (${where})`;
 
+  const siteUrl = opts.siteUrl ?? "https://spazia.se";
+  const adminUrl = opts.leadId ? `${siteUrl}/admin#lead=${opts.leadId}` : "";
+  const adminLine = adminUrl ? `\n\nÖppna i admin: ${adminUrl}` : "";
+  const adminHtml = adminUrl ? buttonHtml(adminUrl, "Öppna i admin") : "";
+
   const team: MailMessage = {
     to: opts.teamAddress,
     replyTo: validEmail ? email : undefined,
     subject: oneLine(teamSubject, 180),
     text: `${kind === "host" ? "Ny värdanmälan" : "Ny intresseanmälan"} på spazia.se\n\n${teamRows
       .map(([k, v]) => labelValue(k, v))
-      .join("\n")}\n\nSvara på mejlet för att kontakta ${name} direkt.`,
+      .join("\n")}\n\nSvara på mejlet för att kontakta ${name} direkt.${adminLine}`,
     html: htmlLayout(
       `<p style="margin:0 0 16px;font-size:18px;font-weight:700">${
         kind === "host" ? "Ny värdanmälan" : "Ny intresseanmälan"
       }</p>${htmlTable(teamRows)}<p style="margin:18px 0 0;font-size:15px;color:#586670">Svara på mejlet för att kontakta ${escapeHtml(
         name,
-      )} direkt.</p>`,
+      )} direkt.</p><div style="margin-top:16px">${adminHtml}</div>`,
       "Skickat automatiskt från formuläret på spazia.se",
     ),
   };
@@ -256,13 +275,17 @@ export function buildLeadEmails(
     const c = confirmationCopy[lang];
     const intro = c[kind].intro(name, town, lulea);
     const rows = describe(kind, data, lang);
+    // Hosts in Luleå can book the visit themselves.
+    const visitUrl = kind === "host" && lulea && opts.leadId ? bookingUrl(siteUrl, opts.leadId, lang) : "";
+    const visitText = visitUrl ? `\n\n${c.bookVisit}\n${visitUrl}` : "";
+    const visitHtml = visitUrl ? `${paragraphsHtml([c.bookVisit])}${buttonHtml(visitUrl, c.bookVisitButton)}` : "";
     confirmation = {
       to: email,
       replyTo: opts.teamAddress,
       subject: c[kind].subject,
-      text: `${intro.join("\n\n")}\n\n${c.summary}\n${rows.map(([k, v]) => labelValue(k, v)).join("\n")}\n\n${c.outro}\n\n${c.signoff}\nspazia.se\n\n${c.footer}`,
+      text: `${intro.join("\n\n")}${visitText}\n\n${c.summary}\n${rows.map(([k, v]) => labelValue(k, v)).join("\n")}\n\n${c.outro}\n\n${c.signoff}\nspazia.se\n\n${c.footer}`,
       html: htmlLayout(
-        `${paragraphsHtml(intro)}<p style="margin:18px 0 8px;font-size:15px;font-weight:700">${escapeHtml(c.summary)}</p>${htmlTable(
+        `${paragraphsHtml(intro)}${visitHtml}<p style="margin:18px 0 8px;font-size:15px;font-weight:700">${escapeHtml(c.summary)}</p>${htmlTable(
           rows,
         )}<div style="margin-top:20px">${paragraphsHtml([c.outro])}</div><p style="margin:0;font-size:16px;line-height:1.55">${escapeHtml(
           c.signoff,

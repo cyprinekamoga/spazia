@@ -1,8 +1,12 @@
+import Link from "next/link";
 import { GraduationCap } from "lucide-react";
 import { getDictionary } from "@/content";
 import { categories } from "@/content/categories";
+import { getGuide } from "@/content/guides";
+import { guidePath } from "@/lib/routes";
 import { renterPrice } from "@/content/pricing";
 import { MobileActionBar } from "@/components/MobileActionBar";
+import { RenterCalculator } from "@/components/RenterCalculator";
 import { RenterForm } from "@/components/forms/RenterForm";
 import { categoryIcons } from "@/components/Icons";
 import { Faq, PhotoHero, Section, SectionHeading } from "@/components/sections";
@@ -68,12 +72,26 @@ export function FindView({ lang }: { lang: Lang }) {
               <h3 className="text-lg text-white">{p.studentTitle}</h3>
             </div>
             <p className="mt-2 leading-relaxed text-frost-2">{p.studentText}</p>
+            <Link
+              prefetch={false}
+              href={guidePath(getGuide("student-summer").slug, lang)}
+              className="mt-3 inline-flex min-h-11 items-center font-semibold text-white underline decoration-glow decoration-2 underline-offset-4 hover:decoration-white"
+            >
+              {getGuide("student-summer").title[lang]}
+            </Link>
           </div>
           </div>
         </div>
       </Section>
 
-      <Section tone="paper">
+      <Section tone="paper" id="pris">
+        <SectionHeading title={t.renterCalc.title} lead={t.renterCalc.lead} />
+        <div className="mt-7 sm:mt-10">
+          <RenterCalculator lang={lang} t={t} formHref="#anmalan" />
+        </div>
+      </Section>
+
+      <Section>
         <div className="grid gap-7 lg:grid-cols-[1fr_1.6fr] lg:gap-10">
           <SectionHeading title={p.faqTitle} />
           <Faq items={t.faq.general.slice(1)} />

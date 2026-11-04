@@ -22,6 +22,14 @@ Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-
   - One per Luleå district (`/omrade/gammelstad` …).
 - **Location search** in the home page hero: the visitor types a town and lands on the renter form with the town filled in.
 - **Town field** in both forms (free text with suggestions). In Luleå the form also asks for the district; elsewhere it says the visitor joins the waitlist, and the success message and confirmation email say so too.
+- **Price comparison for renters** on the find page and every category page: pick what to store and for how long, and see the price next to a tyre hotel or a storage company. The competitor prices and their sources are in `src/content/market-prices.ts`; check them now and then.
+- **Guides** at `/guider` and `/en/guides`: tyre storage costs, renting out your garage, tax, and summer storage for students. Text and sources are in `src/content/guides.ts`.
+- **Visit booking for hosts in Luleå:** right after the host form, and through a private link in the confirmation email (`/boka-besok?ref=…`), a host picks one of the times the team has opened, gives an address and phone number, and can later change or cancel. Both the host and the team get an email with a calendar file. A time can never be booked twice.
+- **Admin page** at `/admin` (password protected):
+  - **Översikt:** sign-ups per city (where to open next), per storage type and per source, plus upcoming visits.
+  - **Anmälningar:** every sign-up with all answers, a status (Ny, Kontaktad, Besökt, Publicerad, Matchad, Inte aktuell) and notes. You can also call, email, download a CSV or delete a sign-up (GDPR). Links in the team emails open the right sign-up.
+  - **Besökstider:** add visit times (e.g. Tuesdays 17–19, every week for a month), see who booked and cancel.
+  - **Mejla en stad:** email everyone in a town, e.g. "now we're opening in Umeå", in Swedish and English, with their name and town filled in. People already emailed about the same town are skipped.
 - **Lead capture:** forms go to Netlify Forms by default, or to Supabase once it is configured (see below). Every lead stores its UTM source, campaign, referrer and landing page.
 - **Meta Pixel:** loads only after cookie consent and fires a `Lead` event (`content_category: host | renter`) on each successful form.
 - **Fully static:** `next build` exports plain HTML to `out/`.
@@ -112,6 +120,7 @@ Set these in Netlify under *Project configuration → Environment variables*. Se
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console verification code ("HTML tag" method). |
 | `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Sends leads to Supabase instead of Netlify Forms. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO` | Emails on every registration (see below). All are set in Netlify for Strato except `SMTP_PASS`, which only the mailbox owner should enter. |
+| `ADMIN_PASSWORD` | Password for `/admin`. Mark it as secret. Changing it logs everyone out. Without it, the admin page says it isn't switched on. |
 
 ## Emails on every registration
 
@@ -141,6 +150,22 @@ Without SMTP settings the function only logs a warning. Submissions are still st
    - **Domain** property: add the TXT record Google gives you at your DNS provider.
    - **URL prefix** property: choose *HTML tag* and put the `content` value in `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`.
 3. Under *Sitemaps*, submit `https://spazia.se/sitemap.xml`.
+
+## Where the data lives
+
+- **Netlify Forms** keeps every submission, as before (`host-lead`, `renter-lead`).
+- **Netlify Blobs** (store `spazia`, EU region `eu-central-1`) holds what the admin page and the visit booking need:
+  - the sign-ups (written by `netlify/functions/lead-emails.mts`)
+  - status, notes and emails sent
+  - visit times and bookings
+
+  You can browse it in Netlify under *Data & Storage → Blobs*. The code is in `src/server/`.
+- Sign-ups made before the admin page existed are only in Netlify Forms.
+
+The three functions are:
+- `lead-emails` (runs on every form submission)
+- `visits` (`/api/visits`, public, for booking)
+- `admin` (`/api/admin/*`, needs the admin login)
 
 ## Leads: Netlify Forms → Supabase
 

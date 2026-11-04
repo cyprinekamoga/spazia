@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BadgeCheck } from "lucide-react";
 import { getDictionary } from "@/content";
+import { guides } from "@/content/guides";
 import { HostCalculator } from "@/components/HostCalculator";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { Photo } from "@/components/Photo";
@@ -8,6 +9,7 @@ import { HostForm } from "@/components/forms/HostForm";
 import { Faq, PhotoHero, Section, SectionHeading, StepList } from "@/components/sections";
 import type { Lang } from "@/lib/i18n";
 import { skatteverketRentalUrl } from "@/lib/site";
+import { RelatedGuides } from "@/views/GuideViews";
 
 export function HostView({ lang }: { lang: Lang }) {
   const t = getDictionary(lang);
@@ -103,6 +105,9 @@ export function HostView({ lang }: { lang: Lang }) {
         <div className="grid gap-7 lg:grid-cols-[1fr_1.6fr] lg:gap-10">
           <SectionHeading title={p.faqTitle} />
           <Faq items={t.faq.host} />
+        </div>
+        <div className="mt-12">
+          <RelatedGuides lang={lang} items={guides.filter((g) => g.audience === "host")} />
         </div>
         <p className="mt-8 hidden text-center md:block">
           <Link prefetch={false} href="#anmalan" className="btn btn-primary">

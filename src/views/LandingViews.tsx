@@ -4,7 +4,9 @@ import { getDictionary } from "@/content";
 import type { Area } from "@/content/areas";
 import type { Category } from "@/content/categories";
 import type { City } from "@/content/cities";
+import { guides } from "@/content/guides";
 import { MobileActionBar } from "@/components/MobileActionBar";
+import { RenterCalculator } from "@/components/RenterCalculator";
 import {
   AreaChips,
   CategoryGrid,
@@ -21,6 +23,7 @@ import {
 } from "@/components/sections";
 import { fill, type Lang } from "@/lib/i18n";
 import { cityPath, pagePath, RENTER_PARAMS } from "@/lib/routes";
+import { RelatedGuides } from "@/views/GuideViews";
 
 /** SEO landing page per storage type, e.g. /forvaring/dackforvaring. */
 export function CategoryView({ lang, category }: { lang: Lang; category: Category }) {
@@ -72,6 +75,19 @@ export function CategoryView({ lang, category }: { lang: Lang; category: Categor
         </div>
       </Section>
 
+      <Section tone="paper">
+        <SectionHeading title={t.renterCalc.title} lead={t.renterCalc.lead} />
+        <div className="mt-7 sm:mt-10">
+          <RenterCalculator
+            lang={lang}
+            t={t}
+            formHref={findHref}
+            initial={{ [category.id]: category.id === "boxes" ? 4 : 1 }}
+            initialMonths={category.id === "boxes" ? 3 : 6}
+          />
+        </div>
+      </Section>
+
       <Section tone="frost">
         <SectionHeading title={t.trust.title} />
         <div className="mt-7 sm:mt-10">
@@ -91,6 +107,9 @@ export function CategoryView({ lang, category }: { lang: Lang; category: Categor
         <h2 className="mt-12 text-2xl text-night">{p.areasTitle}</h2>
         <div className="mt-5">
           <CityChips lang={lang} t={t} />
+        </div>
+        <div className="mt-12">
+          <RelatedGuides lang={lang} items={guides.filter((g) => g.categories.includes(category.id))} />
         </div>
       </Section>
 

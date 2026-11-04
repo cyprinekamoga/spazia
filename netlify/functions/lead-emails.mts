@@ -1,77 +1,46 @@
 /**
- * Sends two emails for every verified form submission (Netlify Forms):
- *  1. a notification to the Spazia team (MAIL_TO, default info@nordvra.se)
- *  2. a confirmation to the person who registered
+ * Runs for every verified form submission (Netlify Forms):
+ *  1. stores the lead in Netlify Blobs, where the admin page reads it
+ *  2. emails the Spazia team (MAIL_TO, default info@nordvra.se)
+ *  3. emails a confirmation to the person who registered; hosts in Luleå
+ *     also get a link to book the visit
  *
- * Works with any email service that offers SMTP. Environment variables
- * (Netlify → Project configuration → Environment variables, scope "Functions"):
- *
- *   SMTP_HOST      e.g. smtp.gmail.com, smtp.office365.com, mailcluster.loopia.se
- *   SMTP_PORT      465 (SSL) or 587 (STARTTLS)
- *   SMTP_USER      usually the full email address
- *   SMTP_PASS      password or app password – mark as secret
- *   MAIL_FROM      sender, e.g. "Spazia <info@nordvra.se>" (defaults to SMTP_USER)
- *   MAIL_TO        who gets the notifications (defaults to info@nordvra.se)
- *   MAIL_CONFIRMATION  set to "off" to stop confirmation emails
+ * SMTP settings (Netlify → Project configuration → Environment variables):
+ *   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS (secret), MAIL_FROM, MAIL_TO,
+ *   MAIL_CONFIRMATION=off to stop confirmation emails.
  *
  * Netlify only runs this for submissions that passed its spam filter and the
- * honeypot, so bots do not trigger emails.
+ * honeypot, so bots do not trigger anything.
  */
 import type { FormSubmittedEvent } from "@netlify/functions";
-import nodemailer from "nodemailer";
 import { buildLeadEmails } from "../../src/lib/lead-emails";
-
-function env(key: string): string {
-  const fromNetlify = typeof Netlify !== "undefined" ? Netlify.env.get(key) : undefined;
-  return (fromNetlify ?? process.env[key] ?? "").trim();
-}
-
-function createTransport() {
-  if (env("MAIL_DRY_RUN") === "1") {
-    return nodemailer.createTransport({ jsonTransport: true });
-  }
-  const host = env("SMTP_HOST");
-  const user = env("SMTP_USER");
-  const pass = env("SMTP_PASS");
-  if (!host || !user || !pass) return null;
-  const port = Number(env("SMTP_PORT") || 587);
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    requireTLS: port !== 465,
-    auth: { user, pass },
-  });
-}
+import { saveLead } from "../../src/server/db";
+import { env, siteUrl } from "../../src/server/env";
+import { sendMail, teamAddress } from "../../src/server/mailer";
 
 export async function handleSubmission(data: Record<string, string>) {
-  const teamAddress = env("MAIL_TO") || "info@nordvra.se";
-  const emails = buildLeadEmails(data, { teamAddress });
+  // Store first: the emails link to the stored lead.
+  let leadId: string | undefined;
+  try {
+    const lead = await saveLead(data);
+    leadId = lead?.id;
+  } catch (err) {
+    // Netlify Forms still has the submission, so carry on with the emails.
+    console.error("lead-emails: could not store the lead:", err);
+  }
+
+  const emails = buildLeadEmails(data, { teamAddress: teamAddress(), leadId, siteUrl: siteUrl() });
   if (!emails) {
     console.log("lead-emails: not a Spazia lead form, skipping");
     return [];
   }
 
-  const transport = createTransport();
-  if (!transport) {
-    console.warn("lead-emails: SMTP_HOST/SMTP_USER/SMTP_PASS not set – no emails sent");
-    return [];
-  }
-
-  const from = env("MAIL_FROM") || `Spazia <${env("SMTP_USER") || teamAddress}>`;
   const messages = [emails.team];
   if (emails.confirmation && env("MAIL_CONFIRMATION") !== "off") messages.push(emails.confirmation);
-
-  const results = [];
+  const results: boolean[] = [];
   for (const message of messages) {
-    try {
-      const info = await transport.sendMail({ from, ...message });
-      console.log(`lead-emails: sent "${message.subject}"`);
-      results.push(info);
-    } catch (error) {
-      // Log and carry on: a failing confirmation must not stop the team notification.
-      console.error(`lead-emails: could not send "${message.subject}":`, error);
-    }
+    // A failing confirmation must not stop the team notification (sendMail logs and returns false).
+    results.push(await sendMail(message));
   }
   return results;
 }

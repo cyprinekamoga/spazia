@@ -11,6 +11,7 @@ import { fill, type Lang } from "@/lib/i18n";
 import { pagePath } from "@/lib/routes";
 import { site } from "@/lib/site";
 import { categoryIcons } from "../Icons";
+import { VisitBooking } from "../VisitBooking";
 import { ChoiceGroup, ConsentField, Honeypot, SelectField, TextArea, TextField, TownField, type Errors } from "./FormFields";
 import { EMAIL_RE, list, orNull, str, townFromQuery, useLeadForm, useQueryString } from "./useLeadForm";
 
@@ -62,7 +63,7 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
     consent: true,
   });
 
-  const { status, errors, onSubmit, successRef } = useLeadForm("host", lang, validate, toPayload);
+  const { status, errors, onSubmit, successRef, ref } = useLeadForm("host", lang, validate, toPayload);
 
   if (status === "success") {
     return (
@@ -70,11 +71,21 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
         <CheckCircle2 size={48} className="mx-auto text-pine" aria-hidden="true" />
         <h3 className="mt-4 text-2xl font-bold text-night">{h.successTitle}</h3>
         <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">
-          {waitlist ? fill(h.successTextWaitlist, { town: tidyTown(town) }) : h.successText}
+          {waitlist ? fill(h.successTextWaitlist, { town: tidyTown(town) }) : inLulea ? h.successTextBooking : h.successText}
         </p>
-        <Link prefetch={false} href={pagePath("trust", lang)} className="btn btn-secondary mt-6">
-          {t.trust.link}
-        </Link>
+        {inLulea && (
+          <div className="mt-6 border-t border-line pt-6 text-left">
+            <h4 className="text-xl font-bold text-night">{t.visitBooking.title}</h4>
+            <div className="mt-4">
+              <VisitBooking lang={lang} t={t} leadRef={ref} />
+            </div>
+          </div>
+        )}
+        {!inLulea && (
+          <Link prefetch={false} href={pagePath("trust", lang)} className="btn btn-secondary mt-6">
+            {t.trust.link}
+          </Link>
+        )}
       </div>
     );
   }

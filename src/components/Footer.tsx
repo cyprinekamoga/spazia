@@ -70,6 +70,11 @@ export function Footer({ lang, t }: { lang: Lang; t: Dictionary }) {
               </Link>
             </li>
             <li>
+              <Link prefetch={false} href={pagePath("guides", lang)} className={linkClass}>
+                {t.nav.guides}
+              </Link>
+            </li>
+            <li>
               <Link prefetch={false} href={pagePath("about", lang)} className={linkClass}>
                 {t.nav.about}
               </Link>

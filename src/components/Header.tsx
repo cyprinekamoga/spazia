@@ -22,6 +22,7 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
     { href: pagePath("find", lang), label: t.nav.find },
     { href: pagePath("host", lang), label: t.nav.host },
     { href: pagePath("trust", lang), label: t.nav.trust },
+    { href: pagePath("guides", lang), label: t.nav.guides },
     { href: pagePath("about", lang), label: t.nav.about },
   ];
 
