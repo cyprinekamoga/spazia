@@ -2,10 +2,8 @@
 
 import { ChevronDown, Download, Mail, Phone } from "lucide-react";
 import { useMemo, useState } from "react";
-import { formatSlot } from "@/lib/time";
 import {
   api,
-  areaName,
   describeLead,
   download,
   formatDate,
@@ -124,12 +122,6 @@ function LeadCard({ lead, startOpen, onChange }: { lead: AdminLead; startOpen: b
     }
   }
 
-  async function cancelVisit() {
-    if (!window.confirm(`Avboka besöket för ${d.first_name}? Värden får ett mejl om att välja en ny tid.`)) return;
-    await api(`/bookings/${lead.id}?notify=1`, { method: "DELETE" });
-    await onChange();
-  }
-
   async function remove() {
     if (!window.confirm(`Radera ${d.first_name ?? "anmälan"} permanent? Det går inte att ångra. Anmälan finns kvar i Netlify Forms och behöver raderas där också.`)) return;
     await api(`/leads/${lead.id}`, { method: "DELETE" });
@@ -147,12 +139,8 @@ function LeadCard({ lead, startOpen, onChange }: { lead: AdminLead; startOpen: b
               <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${lead.kind === "host" ? "bg-brand-soft text-brand" : "bg-frost text-night"}`}>
                 {lead.kind === "host" ? "Värd" : "Hyresgäst"}
               </span>
-              {lead.booking && <span className="rounded-full bg-[#e7f4ec] px-2.5 py-0.5 text-xs font-semibold text-pine">Besök bokat</span>}
             </span>
-            <span className="mt-0.5 block text-[0.95rem] text-ink">
-              {town}
-              {d.area ? `, ${areaName(d.area)}` : ""}
-            </span>
+            <span className="mt-0.5 block text-[0.95rem] text-ink">{town}</span>
             <span className="block truncate text-sm text-muted">{summaryOf(lead)}</span>
             <span className="block text-sm text-muted">{formatDate(lead.createdAt)}</span>
           </span>
@@ -224,17 +212,6 @@ function LeadCard({ lead, startOpen, onChange }: { lead: AdminLead; startOpen: b
             )}
           </div>
           <div className="space-y-4">
-            {lead.booking && (
-              <div className="rounded-xl bg-[#e7f4ec] p-4">
-                <p className="font-bold text-night first-letter:uppercase">{formatSlot(lead.booking.start, "sv")}</p>
-                <p className="text-[0.95rem] text-ink">{lead.booking.address}</p>
-                <p className="text-[0.95rem] text-ink">{lead.booking.phone}</p>
-                {lead.booking.note && <p className="mt-1 text-[0.95rem] text-muted">{lead.booking.note}</p>}
-                <button type="button" className="mt-3 text-sm font-semibold text-[#b42318] underline underline-offset-4" onClick={cancelVisit}>
-                  Avboka besöket
-                </button>
-              </div>
-            )}
             <div>
               <label htmlFor={`notes-${lead.id}`} className="field-label">
                 Anteckningar
@@ -246,7 +223,7 @@ function LeadCard({ lead, startOpen, onChange }: { lead: AdminLead; startOpen: b
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 onBlur={() => notes !== lead.meta.notes && save({ notes })}
-                placeholder="T.ex. ringde 4/11, vill ha besök på helgen"
+                placeholder="T.ex. ringde 4/11, kan hyra ut från december"
               />
               <p className="mt-1 text-sm text-muted">Sparas när du lämnar fältet.</p>
             </div>

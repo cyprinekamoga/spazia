@@ -1,4 +1,3 @@
-import { areas } from "@/content/areas";
 import { categories } from "@/content/categories";
 import { cities } from "@/content/cities";
 import { guides } from "@/content/guides";
@@ -17,14 +16,10 @@ export const pagePaths: Record<PageKey, L10n> = {
   guides: { sv: "/guider", en: "/en/guides" },
 };
 
-/** Private page where a host books their visit (not in the sitemap). */
-export const bookingPaths: L10n = { sv: "/boka-besok", en: "/en/book-a-visit" };
-
-/** Query parameters that pre-fill the forms (from category, city and area pages). */
-export const RENTER_PARAMS = { item: "vad", area: "omrade", town: "ort" } as const;
+/** Query parameters that pre-fill the forms (from the hero search, category and city pages). */
+export const RENTER_PARAMS = { item: "vad", town: "ort" } as const;
 
 const categoryBase: L10n = { sv: "/forvaring", en: "/en/storage" };
-const areaBase: L10n = { sv: "/omrade", en: "/en/area" };
 const cityBase: L10n = { sv: "/stad", en: "/en/city" };
 
 export function pagePath(page: PageKey, lang: Lang): string {
@@ -33,10 +28,6 @@ export function pagePath(page: PageKey, lang: Lang): string {
 
 export function categoryPath(slug: L10n, lang: Lang): string {
   return `${categoryBase[lang]}/${slug[lang]}`;
-}
-
-export function areaPath(slug: string, lang: Lang): string {
-  return `${areaBase[lang]}/${slug}`;
 }
 
 export function cityPath(slug: string, lang: Lang): string {
@@ -54,7 +45,6 @@ export function allRoutes(): L10n[] {
     ...categories.map((c) => ({ sv: categoryPath(c.slug, "sv"), en: categoryPath(c.slug, "en") })),
     ...cities.map((c) => ({ sv: cityPath(c.slug, "sv"), en: cityPath(c.slug, "en") })),
     ...guides.map((g) => ({ sv: guidePath(g.slug, "sv"), en: guidePath(g.slug, "en") })),
-    ...areas.map((a) => ({ sv: areaPath(a.slug, "sv"), en: areaPath(a.slug, "en") })),
   ];
 }
 
@@ -66,7 +56,7 @@ function normalize(pathname: string): string {
 /** The same page in the other language (falls back to that language's home page). */
 export function translatePath(pathname: string, target: Lang): string {
   const current = normalize(pathname);
-  const match = [...allRoutes(), bookingPaths].find((r) => r.sv === current || r.en === current);
+  const match = allRoutes().find((r) => r.sv === current || r.en === current);
   return match ? match[target] : pagePaths.home[target];
 }
 

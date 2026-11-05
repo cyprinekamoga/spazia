@@ -87,10 +87,3 @@ export function trackLead(kind: "host" | "renter"): void {
     w.plausible("Lead", { props: { type: kind } });
   }
 }
-
-/** A host booked an inspection visit (Meta standard event "Schedule"). */
-export function trackVisitBooked(): void {
-  const w = window as unknown as { fbq?: Fbq; plausible?: Plausible };
-  if (typeof w.fbq === "function") w.fbq("track", "Schedule");
-  if (typeof w.plausible === "function") w.plausible("Visit booked");
-}

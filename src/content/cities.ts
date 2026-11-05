@@ -2,38 +2,23 @@ import type { L10n } from "@/lib/i18n";
 import type { PhotoKey } from "./photos";
 
 /**
- * Spazia opens city by city. Luleå is first (spaces are visited and
- * published there); every other city has a waitlist until enough people
- * have registered. Add a city here and its page, footer link and sitemap
+ * Cities with their own page. Spazia works all over Sweden; these are the
+ * cities we feature. Add a city here and its page, footer link and sitemap
  * entry appear automatically.
  */
 export interface City {
   id: string;
   slug: string;
   name: string;
-  /** "first": open/launching now. "waitlist": registrations only. */
-  status: "first" | "waitlist";
   photo: PhotoKey;
   intro: L10n;
 }
 
 export const cities: City[] = [
   {
-    id: "lulea",
-    slug: "lulea",
-    name: "Luleå",
-    status: "first",
-    photo: "lulea-sunset",
-    intro: {
-      sv: "Luleå är först ut. Här besöker vi varje utrymme innan det publiceras, och vi startar under vintern 2026/27 i bland annat Gammelstad, Bergnäset och Sunderbyn.",
-      en: "Luleå comes first. Here we visit every space before it is listed, and we launch during winter 2026/27 in areas such as Gammelstad, Bergnäset and Sunderbyn.",
-    },
-  },
-  {
     id: "stockholm",
     slug: "stockholm",
     name: "Stockholm",
-    status: "waitlist",
     photo: "moving",
     intro: {
       sv: "I Stockholm är lägenhetsförråden ofta små och det kan vara lång kö till en p-plats. Samtidigt har villorna i förorterna garage, källare och uppfarter med plats över.",
@@ -44,7 +29,6 @@ export const cities: City[] = [
     id: "goteborg",
     slug: "goteborg",
     name: "Göteborg",
-    status: "waitlist",
     photo: "garage-field",
     intro: {
       sv: "Sveriges näst största stad, med tusentals studenter vid Göteborgs universitet och Chalmers, och villaområden med garage runt om stan.",
@@ -55,7 +39,6 @@ export const cities: City[] = [
     id: "malmo",
     slug: "malmo",
     name: "Malmö",
-    status: "waitlist",
     photo: "bikes",
     intro: {
       sv: "Sveriges tredje största stad. Vintrarna är milda, men däcken, cyklarna och flyttlådorna behöver plats ändå, och många villor har garage med plats över.",
@@ -66,7 +49,6 @@ export const cities: City[] = [
     id: "uppsala",
     slug: "uppsala",
     name: "Uppsala",
-    status: "waitlist",
     photo: "boxes",
     intro: {
       sv: "En av Sveriges största studentstäder. Varje sommar flyttar studenter vid Uppsala universitet ut, och lådorna och cyklarna behöver ett ställe att stå.",
@@ -77,7 +59,6 @@ export const cities: City[] = [
     id: "linkoping",
     slug: "linkoping",
     name: "Linköping",
-    status: "waitlist",
     photo: "garage-clutter",
     intro: {
       sv: "Universitetsstad med Linköpings universitet och gott om villaområden med garage, källare och uppfarter.",
@@ -88,7 +69,6 @@ export const cities: City[] = [
     id: "orebro",
     slug: "orebro",
     name: "Örebro",
-    status: "waitlist",
     photo: "keys",
     intro: {
       sv: "Mitt i Sverige, med Örebro universitet och många villor med garage och uppfarter.",
@@ -99,7 +79,6 @@ export const cities: City[] = [
     id: "vasteras",
     slug: "vasteras",
     name: "Västerås",
-    status: "waitlist",
     photo: "car",
     intro: {
       sv: "Mälarstad med Mälardalens universitet och stora villaområden där garage och förråd ofta har plats över.",
@@ -110,7 +89,6 @@ export const cities: City[] = [
     id: "jonkoping",
     slug: "jonkoping",
     name: "Jönköping",
-    status: "waitlist",
     photo: "parking",
     intro: {
       sv: "Jönköping University lockar studenter från hela världen, och runt Vättern finns gott om villor med garage.",
@@ -121,7 +99,6 @@ export const cities: City[] = [
     id: "umea",
     slug: "umea",
     name: "Umeå",
-    status: "waitlist",
     photo: "tyres",
     intro: {
       sv: "Norrlands största stad och en stor studentstad med Umeå universitet. Vintrarna är långa, så däck, skidor och skotrar behöver plats.",
@@ -132,11 +109,20 @@ export const cities: City[] = [
     id: "lund",
     slug: "lund",
     name: "Lund",
-    status: "waitlist",
     photo: "bikes",
     intro: {
       sv: "Studentstaden Lund med Lunds universitet. Varje sommar behöver studenter plats för lådor, möbler och cyklar.",
       en: "The student city of Lund with Lund University. Every summer, students need space for boxes, furniture and bikes.",
+    },
+  },
+  {
+    id: "lulea",
+    slug: "lulea",
+    name: "Luleå",
+    photo: "lulea-sunset",
+    intro: {
+      sv: "Vintrarna är långa i Luleå, så däck, skidor och skotrar behöver plats halva året. Samtidigt studerar tusentals vid Luleå tekniska universitet, och villaområdena runt stan har gott om garage.",
+      en: "Winters are long in Luleå, so tyres, skis and snowmobiles need space half the year. Meanwhile thousands study at Luleå University of Technology, and the residential areas around town have plenty of garages.",
     },
   },
 ];
@@ -204,8 +190,4 @@ export function tidyTown(value: string): string {
   const known = townSuggestions.find((t) => townKey(t) === townKey(town));
   if (known) return known;
   return town.charAt(0).toLocaleUpperCase("sv-SE") + town.slice(1);
-}
-
-export function isLulea(value: string | undefined | null): boolean {
-  return townKey(value ?? "") === "lulea";
 }

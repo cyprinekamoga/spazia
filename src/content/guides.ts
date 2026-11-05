@@ -89,7 +89,7 @@ export const guides: Guide[] = [
         { type: "h2", text: "Hos en granne: billigare än däckhotell" },
         {
           type: "p",
-          text: `Med Spazia förvarar du däcken i en villaägares garage eller förråd nära dig. Riktpriset i Luleå är omkring ${price("tyres")} kr i månaden per däcksats, alltså cirka ${kr(tyreSeason, "sv")} kr för en säsong på sex månader. Hjulskifte ingår inte, så du byter själv eller låter en verkstad göra det. Räkna på ditt eget behov i [priskalkylatorn](page:find#pris).`,
+          text: `Med Spazia förvarar du däcken i en villaägares garage eller förråd nära dig. Riktpriset är omkring ${price("tyres")} kr i månaden per däcksats, alltså cirka ${kr(tyreSeason, "sv")} kr för en säsong på sex månader. Hjulskifte ingår inte, så du byter själv eller låter en verkstad göra det. Räkna på ditt eget behov i [priskalkylatorn](page:find#pris).`,
         },
         {
           type: "table",
@@ -143,7 +143,7 @@ export const guides: Guide[] = [
         { type: "h2", text: "With a neighbour: cheaper than a tyre hotel" },
         {
           type: "p",
-          text: `With Spazia you store your tyres in a homeowner's garage or storeroom near you. The guide price in Luleå is about SEK ${price("tyres")} a month per set, so around SEK ${kr(tyreSeason, "en")} for a six-month season. A wheel change isn't included: you change them yourself or have a workshop do it. Work out your own cost in the [price calculator](page:find#pris).`,
+          text: `With Spazia you store your tyres in a homeowner's garage or storeroom near you. The guide price is about SEK ${price("tyres")} a month per set, so around SEK ${kr(tyreSeason, "en")} for a six-month season. A wheel change isn't included: you change them yourself or have a workshop do it. Work out your own cost in the [price calculator](page:find#pris).`,
         },
         {
           type: "table",
@@ -198,7 +198,7 @@ export const guides: Guide[] = [
         { type: "h2", text: "Vad kan du tjäna?" },
         {
           type: "p",
-          text: "Det beror på vad du har plats för. Så här ser våra riktpriser i Luleå ut, alltså vad hyresgästen betalar per månad inklusive serviceavgift:",
+          text: "Det beror på vad du har plats för. Så här ser våra riktpriser ut, alltså vad hyresgästen betalar per månad inklusive serviceavgift:",
         },
         {
           type: "table",
@@ -224,7 +224,7 @@ export const guides: Guide[] = [
           type: "ol",
           items: [
             "Du anmäler ditt utrymme. Det är gratis och inte bindande.",
-            "Vi besöker utrymmet, hjälper dig att räkna ut hur mycket plats du kan hyra ut och tar bilderna till annonsen. Just nu gör vi besök i Luleå.",
+            "Vi hör av oss och hjälper dig att räkna ut hur mycket plats du kan hyra ut. Du fotograferar utrymmet själv, och vi hjälper dig med annonsen.",
             "Du bestämmer vad du tar emot och när hyresgästerna får komma.",
             "Hyresgästen verifieras med BankID, ni skriver ett standardavtal och hyran betalas automatiskt varje månad.",
           ],
@@ -248,7 +248,7 @@ export const guides: Guide[] = [
         { type: "h2", text: "What can you earn?" },
         {
           type: "p",
-          text: "It depends on what you have room for. These are our guide prices in Luleå, what the renter pays per month including the service fee:",
+          text: "It depends on what you have room for. These are our guide prices, what the renter pays per month including the service fee:",
         },
         {
           type: "table",
@@ -274,7 +274,7 @@ export const guides: Guide[] = [
           type: "ol",
           items: [
             "You register your space. It's free and non-binding.",
-            "We visit the space, help you work out how much you can rent out and take the photos for the listing. Right now we visit in Luleå.",
+            "We get in touch and help you work out how much you can rent out. You photograph the space yourself, and we help you with the listing.",
             "You decide what you accept and when renters can come.",
             "The renter is verified with BankID, you sign a standard agreement and the rent is paid automatically every month.",
           ],
@@ -470,7 +470,7 @@ export const guides: Guide[] = [
         { type: "h2", text: "Vad kostar det?" },
         {
           type: "p",
-          text: `Hos förrådsföretagen kostar magasinering ofta ${selfStorage.minPerM2}–${selfStorage.maxPerM2} kr per kvadratmeter och månad, och ett litet förråd på 1–3 m² ofta 300–1 200 kr i månaden. Hos en granne via Spazia är riktpriset i Luleå omkring ${price("boxes")} kr per kvadratmeter och ${price("bikes")} kr per cykel i månaden.`,
+          text: `Hos förrådsföretagen kostar magasinering ofta ${selfStorage.minPerM2}–${selfStorage.maxPerM2} kr per kvadratmeter och månad, och ett litet förråd på 1–3 m² ofta 300–1 200 kr i månaden. Hos en granne via Spazia är riktpriset omkring ${price("boxes")} kr per kvadratmeter och ${price("bikes")} kr per cykel i månaden.`,
         },
         {
           type: "table",
@@ -524,7 +524,7 @@ export const guides: Guide[] = [
         { type: "h2", text: "What does it cost?" },
         {
           type: "p",
-          text: `Storage companies often charge SEK ${selfStorage.minPerM2}–${selfStorage.maxPerM2} per square metre and month, and a small unit of 1–3 m² often costs SEK 300–1,200 a month. With a neighbour through Spazia, the guide price in Luleå is about SEK ${price("boxes")} per square metre and SEK ${price("bikes")} per bike a month.`,
+          text: `Storage companies often charge SEK ${selfStorage.minPerM2}–${selfStorage.maxPerM2} per square metre and month, and a small unit of 1–3 m² often costs SEK 300–1,200 a month. With a neighbour through Spazia, the guide price is about SEK ${price("boxes")} per square metre and SEK ${price("bikes")} per bike a month.`,
         },
         {
           type: "table",

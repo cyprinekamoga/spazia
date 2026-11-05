@@ -61,7 +61,7 @@ export function AboutView({ lang }: { lang: Lang }) {
   return (
     <>
       <PhotoHero
-        photo="lulea-sunset"
+        photo="garage-clutter"
         lang={lang}
         eyebrow={<span className="eyebrow !text-glow">{p.eyebrow}</span>}
         title={p.title}

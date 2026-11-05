@@ -8,14 +8,12 @@ import { api, ApiError, type AdminData } from "./api";
 import { LeadsTab } from "./LeadsTab";
 import { MailTab } from "./MailTab";
 import { OverviewTab } from "./OverviewTab";
-import { SlotsTab } from "./SlotsTab";
 
-type Tab = "overview" | "leads" | "slots" | "mail";
+type Tab = "overview" | "leads" | "mail";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "overview", label: "Översikt" },
   { id: "leads", label: "Anmälningar" },
-  { id: "slots", label: "Besökstider" },
   { id: "mail", label: "Mejla en stad" },
 ];
 
@@ -144,7 +142,6 @@ export function AdminApp() {
       <main className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
         {tab === "overview" && <OverviewTab data={data} />}
         {tab === "leads" && <LeadsTab data={data} focusLead={focusLead} onChange={load} />}
-        {tab === "slots" && <SlotsTab data={data} onChange={load} />}
         {tab === "mail" && <MailTab data={data} onChange={load} />}
       </main>
     </div>

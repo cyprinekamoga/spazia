@@ -16,6 +16,17 @@
   to = "/en/storage/parking"
   status = 301
 
+# The Luleå district pages were removed when Spazia opened in all of Sweden.
+[[redirects]]
+  from = "/omrade/*"
+  to = "/stad/lulea"
+  status = 301
+
+[[redirects]]
+  from = "/en/area/*"
+  to = "/en/city/lulea"
+  status = 301
+
 # Long-lived caching for hashed build assets.
 [[headers]]
   for = "/_next/static/*"

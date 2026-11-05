@@ -7,12 +7,12 @@ const BATCH = 20;
 
 const templates = {
   sv: {
-    subject: "Nu öppnar Spazia i {ort}",
-    body: "Hej {namn}!\n\nDu anmälde intresse hos Spazia, och nu öppnar vi i {ort}.\n\nVi hör av oss inom kort med nästa steg. Har du frågor redan nu går det bra att svara på det här mejlet.\n\nHälsningar\nSpazia",
+    subject: "Nytt från Spazia i {ort}",
+    body: "Hej {namn}!\n\nDu hörde av dig till Spazia om {ort}. Skriv här vad som är nytt, till exempel att det finns värdar med plats över nära dig.\n\nSvara på det här mejlet så hjälper vi dig vidare.\n\nHälsningar\nSpazia",
   },
   en: {
-    subject: "Spazia is opening in {town}",
-    body: "Hi {name},\n\nYou registered your interest with Spazia, and we're now opening in {town}.\n\nWe'll be in touch soon with the next steps. If you have any questions, just reply to this email.\n\nBest wishes\nSpazia",
+    subject: "News from Spazia in {town}",
+    body: "Hi {name},\n\nYou got in touch with Spazia about {town}. Write what's new here, for example that there are hosts with room to spare near you.\n\nJust reply to this email and we'll help you from there.\n\nBest wishes\nSpazia",
   },
 };
 

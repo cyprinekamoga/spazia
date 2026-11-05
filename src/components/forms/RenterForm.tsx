@@ -4,9 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import type { Dictionary } from "@/content";
-import { areas } from "@/content/areas";
 import { categories, type CategoryId } from "@/content/categories";
-import { isLulea, tidyTown } from "@/content/cities";
+import { tidyTown } from "@/content/cities";
 import { fill, type Lang } from "@/lib/i18n";
 import { pagePath, RENTER_PARAMS } from "@/lib/routes";
 import { site } from "@/lib/site";
@@ -16,12 +15,10 @@ import { EMAIL_RE, list, orNull, str, townFromQuery, useLeadForm, useQueryString
 
 const categoryIds = categories.map((c) => c.id) as string[];
 
-function parsePrefill(params: URLSearchParams): { items: string[]; area: string; town: string } {
+function parsePrefill(params: URLSearchParams): { items: string[]; town: string } {
   const item = params.get(RENTER_PARAMS.item);
-  const area = params.get(RENTER_PARAMS.area);
   return {
     items: item && categoryIds.includes(item) ? [item] : [],
-    area: area && areas.some((a) => a.slug === area) ? area : "",
     town: townFromQuery(params),
   };
 }
@@ -29,19 +26,13 @@ function parsePrefill(params: URLSearchParams): { items: string[]; area: string;
 export function RenterForm({ lang, t }: { lang: Lang; t: Dictionary }) {
   const f = t.forms;
   const r = f.renter;
-  // Pre-fill from ?vad=tyres&ort=Göteborg&omrade=gammelstad (links from the
-  // hero search and the category, city and area pages) until the visitor
-  // changes the field themselves.
+  // Pre-fill from ?vad=tyres&ort=Göteborg (links from the hero search and the
+  // category and city pages) until the visitor changes the field themselves.
   const prefill = parsePrefill(useQueryString());
   const [chosenItems, setChosenItems] = useState<string[] | null>(null);
-  const [chosenArea, setChosenArea] = useState<string | null>(null);
   const [chosenTown, setChosenTown] = useState<string | null>(null);
   const items = chosenItems ?? prefill.items;
-  const area = chosenArea ?? prefill.area;
   const town = chosenTown ?? prefill.town;
-  // Spaces are only visited and listed in Luleå so far; elsewhere it's a waitlist.
-  const inLulea = isLulea(town);
-  const waitlist = town.trim() !== "" && !inLulea;
 
   const toggle = (value: string) =>
     setChosenItems(items.includes(value) ? items.filter((v) => v !== value) : [...items, value]);
@@ -51,7 +42,6 @@ export function RenterForm({ lang, t }: { lang: Lang; t: Dictionary }) {
     email: !str(data, "email") ? f.required : EMAIL_RE.test(str(data, "email")) ? undefined : f.invalidEmail,
     items: list(data, "items").length ? undefined : f.pickOne,
     city: str(data, "city") ? undefined : f.required,
-    area: !inLulea || str(data, "area") ? undefined : f.required,
     start: str(data, "start") ? undefined : f.required,
     duration: str(data, "duration") ? undefined : f.required,
     consent: data.get("consent") === "yes" ? undefined : f.consentRequired,
@@ -64,7 +54,6 @@ export function RenterForm({ lang, t }: { lang: Lang; t: Dictionary }) {
     items: list(data, "items") as CategoryId[],
     quantity: orNull(str(data, "quantity")),
     city: tidyTown(str(data, "city")),
-    area: inLulea ? str(data, "area") : null,
     start: str(data, "start"),
     duration: str(data, "duration"),
     heated: orNull(str(data, "heated")),
@@ -82,9 +71,7 @@ export function RenterForm({ lang, t }: { lang: Lang; t: Dictionary }) {
       <div ref={successRef} tabIndex={-1} className="card p-6 text-center outline-none sm:p-10" role="status">
         <CheckCircle2 size={48} className="mx-auto text-pine" aria-hidden="true" />
         <h3 className="mt-4 text-2xl font-bold text-night">{r.successTitle}</h3>
-        <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">
-          {waitlist ? fill(r.successTextWaitlist, { town: tidyTown(town) }) : r.successText}
-        </p>
+        <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">{r.successText}</p>
         <Link prefetch={false} href={pagePath("trust", lang)} className="btn btn-secondary mt-6">
           {t.trust.link}
         </Link>
@@ -92,11 +79,6 @@ export function RenterForm({ lang, t }: { lang: Lang; t: Dictionary }) {
     );
   }
 
-  const areaOptions = [
-    { value: "any", label: f.anyArea },
-    ...areas.map((a) => ({ value: a.slug, label: a.name })),
-    { value: "other", label: f.otherArea },
-  ];
   const options = (record: Record<string, string>) =>
     Object.entries(record).map(([value, label]) => ({ value, label }));
 
@@ -130,30 +112,8 @@ export function RenterForm({ lang, t }: { lang: Lang; t: Dictionary }) {
         optionalLabel={f.optional}
       />
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <TownField
-          label={f.town}
-          placeholder={f.townPlaceholder}
-          value={town}
-          onChange={setChosenTown}
-          error={errors.city}
-          note={waitlist ? fill(f.waitlistNoteRenter, { town: town.trim() }) : undefined}
-        />
-        {inLulea && (
-          <SelectField
-            name="area"
-            label={f.area}
-            placeholder={f.areaPlaceholder}
-            options={areaOptions}
-            required
-            error={errors.area}
-            value={area}
-            onChange={setChosenArea}
-          />
-        )}
-      </div>
-
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-3">
+        <TownField label={f.town} placeholder={f.townPlaceholder} value={town} onChange={setChosenTown} error={errors.city} />
         <SelectField
           name="start"
           label={r.start}

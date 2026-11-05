@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
-import { areas } from "@/content/areas";
 import { RENTER_PARAMS } from "@/lib/routes";
 import { submitLead, type LeadKind, type LeadPayload } from "@/lib/leads";
 import { getAttribution, trackLead } from "@/lib/tracking";
@@ -21,7 +20,7 @@ export function useLeadForm(
 ) {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Errors>({});
-  // Random id for this registration. It ties the lead to the visit booking.
+  // Random id for this registration, used as its id on the admin page.
   const [ref, setRef] = useState<string | null>(null);
   const successRef = useRef<HTMLDivElement>(null);
 
@@ -110,10 +109,7 @@ export function useQueryString(): URLSearchParams {
   return new URLSearchParams(search);
 }
 
-/** Pre-filled town: ?ort=Göteborg, or Luleå when a Luleå area is given (?omrade=gammelstad). */
+/** Pre-filled town from ?ort=Göteborg (hero search and city pages). */
 export function townFromQuery(params: URLSearchParams): string {
-  const town = (params.get(RENTER_PARAMS.town) ?? "").trim().slice(0, 80);
-  if (town) return town;
-  const area = params.get(RENTER_PARAMS.area);
-  return area && areas.some((a) => a.slug === area) ? "Luleå" : "";
+  return (params.get(RENTER_PARAMS.town) ?? "").trim().slice(0, 80);
 }

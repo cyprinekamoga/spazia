@@ -2,8 +2,7 @@
  * Runs for every verified form submission (Netlify Forms):
  *  1. stores the lead in Netlify Blobs, where the admin page reads it
  *  2. emails the Spazia team (MAIL_TO, default info@nordvra.se)
- *  3. emails a confirmation to the person who registered; hosts in Luleå
- *     also get a link to book the visit
+ *  3. emails a confirmation to the person who registered
  *
  * SMTP settings (Netlify → Project configuration → Environment variables):
  *   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS (secret), MAIL_FROM, MAIL_TO,

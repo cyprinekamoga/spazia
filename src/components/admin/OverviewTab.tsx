@@ -1,7 +1,6 @@
 "use client";
 
 import { categories } from "@/content/categories";
-import { formatSlot } from "@/lib/time";
 import type { AdminData } from "./api";
 import { townOf } from "./api";
 
@@ -19,7 +18,6 @@ export function OverviewTab({ data }: { data: AdminData }) {
   const now = data.now;
   const weekAgo = now - 7 * 86400_000;
   const hosts = leads.filter((l) => l.kind === "host").length;
-  const upcoming = data.slots.filter((s) => s.booking && Date.parse(s.start) > now).sort((a, b) => a.start.localeCompare(b.start));
 
   const byCity = new Map<string, { hosts: number; renters: number; week: number }>();
   for (const l of leads) {
@@ -48,34 +46,17 @@ export function OverviewTab({ data }: { data: AdminData }) {
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Anmälningar" value={leads.length} />
         <Stat label="Värdar" value={hosts} />
         <Stat label="Hyresgäster" value={leads.length - hosts} />
         <Stat label="Senaste 7 dagarna" value={leads.filter((l) => Date.parse(l.createdAt) > weekAgo).length} />
-        <Stat label="Bokade besök" value={upcoming.length} />
       </div>
 
       {leads.length === 0 && (
         <p className="card p-5 leading-relaxed text-muted">
           Inga anmälningar här än. Nya anmälningar från formulären dyker upp här automatiskt. Anmälningar från före admin byggdes finns kvar i Netlify under Forms.
         </p>
-      )}
-
-      {upcoming.length > 0 && (
-        <section>
-          <h2 className="text-2xl text-night">Kommande besök</h2>
-          <ul className="mt-3 divide-y divide-line rounded-2xl border border-line bg-paper">
-            {upcoming.slice(0, 8).map((s) => (
-              <li key={s.id} className="flex flex-col gap-0.5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                <span className="font-semibold text-night first-letter:uppercase">{formatSlot(s.start, "sv")}</span>
-                <span className="text-muted">
-                  {s.booking?.name}, {s.booking?.address}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
       )}
 
       <section>

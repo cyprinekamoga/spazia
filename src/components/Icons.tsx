@@ -3,7 +3,7 @@ import {
   Calendar,
   Camera,
   Car,
-  ClipboardCheck,
+  Images,
   CreditCard,
   FileSignature,
   House,
@@ -82,7 +82,7 @@ export const categoryIcons: Record<CategoryId, LucideIcon | typeof TyreIcon> = {
 
 export const trustIcons: Record<string, LucideIcon> = {
   id: IdCard,
-  inspect: ClipboardCheck,
+  photos: Images,
   contract: FileSignature,
   camera: Camera,
   card: CreditCard,

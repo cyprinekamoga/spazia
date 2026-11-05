@@ -4,14 +4,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import type { Dictionary } from "@/content";
-import { areas } from "@/content/areas";
 import { categories } from "@/content/categories";
-import { isLulea, tidyTown } from "@/content/cities";
+import { tidyTown } from "@/content/cities";
 import { fill, type Lang } from "@/lib/i18n";
 import { pagePath } from "@/lib/routes";
 import { site } from "@/lib/site";
 import { categoryIcons } from "../Icons";
-import { VisitBooking } from "../VisitBooking";
 import { ChoiceGroup, ConsentField, Honeypot, SelectField, TextArea, TextField, TownField, type Errors } from "./FormFields";
 import { EMAIL_RE, list, orNull, str, townFromQuery, useLeadForm, useQueryString } from "./useLeadForm";
 
@@ -20,12 +18,9 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
   const h = f.host;
 
   // Town, pre-filled from ?ort= (city pages) until the visitor changes it.
-  // Spaces are only visited and listed in Luleå so far; elsewhere it's a waitlist.
   const prefillTown = townFromQuery(useQueryString());
   const [chosenTown, setChosenTown] = useState<string | null>(null);
   const town = chosenTown ?? prefillTown;
-  const inLulea = isLulea(town);
-  const waitlist = town.trim() !== "" && !inLulea;
 
   // Parking spaces are outdoors: heating doesn't apply, an engine heater socket does.
   const [spaceType, setSpaceType] = useState("");
@@ -40,7 +35,6 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
     first_name: str(data, "first_name") ? undefined : f.required,
     email: !str(data, "email") ? f.required : EMAIL_RE.test(str(data, "email")) ? undefined : f.invalidEmail,
     city: str(data, "city") ? undefined : f.required,
-    area: !inLulea || str(data, "area") ? undefined : f.required,
     space_type: str(data, "space_type") ? undefined : f.pickOne,
     heated: !askHeated || str(data, "heated") ? undefined : f.pickOne,
     size: str(data, "size") ? undefined : f.required,
@@ -53,7 +47,6 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
     email: str(data, "email").toLowerCase(),
     phone: orNull(str(data, "phone")),
     city: tidyTown(str(data, "city")),
-    area: inLulea ? str(data, "area") : null,
     space_type: str(data, "space_type"),
     heated: askHeated ? str(data, "heated") : null,
     engine_heater: askEngineHeater ? orNull(str(data, "engine_heater")) : null,
@@ -63,37 +56,21 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
     consent: true,
   });
 
-  const { status, errors, onSubmit, successRef, ref } = useLeadForm("host", lang, validate, toPayload);
+  const { status, errors, onSubmit, successRef } = useLeadForm("host", lang, validate, toPayload);
 
   if (status === "success") {
     return (
       <div ref={successRef} tabIndex={-1} className="card p-6 text-center outline-none sm:p-10" role="status">
         <CheckCircle2 size={48} className="mx-auto text-pine" aria-hidden="true" />
         <h3 className="mt-4 text-2xl font-bold text-night">{h.successTitle}</h3>
-        <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">
-          {waitlist ? fill(h.successTextWaitlist, { town: tidyTown(town) }) : inLulea ? h.successTextBooking : h.successText}
-        </p>
-        {inLulea && (
-          <div className="mt-6 border-t border-line pt-6 text-left">
-            <h4 className="text-xl font-bold text-night">{t.visitBooking.title}</h4>
-            <div className="mt-4">
-              <VisitBooking lang={lang} t={t} leadRef={ref} />
-            </div>
-          </div>
-        )}
-        {!inLulea && (
-          <Link prefetch={false} href={pagePath("trust", lang)} className="btn btn-secondary mt-6">
-            {t.trust.link}
-          </Link>
-        )}
+        <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">{h.successText}</p>
+        <Link prefetch={false} href={pagePath("trust", lang)} className="btn btn-secondary mt-6">
+          {t.trust.link}
+        </Link>
       </div>
     );
   }
 
-  const areaOptions = [
-    ...areas.map((a) => ({ value: a.slug, label: a.name })),
-    { value: "other", label: f.otherArea },
-  ];
 
   return (
     <form
@@ -124,27 +101,7 @@ export function HostForm({ lang, t }: { lang: Lang; t: Dictionary }) {
           optionalLabel={f.optional}
           hint={f.phoneHintHost}
         />
-      </div>
-
-      <div className="grid gap-5 sm:grid-cols-2">
-        <TownField
-          label={f.town}
-          placeholder={f.townPlaceholder}
-          value={town}
-          onChange={setChosenTown}
-          error={errors.city}
-          note={waitlist ? fill(f.waitlistNoteHost, { town: town.trim() }) : undefined}
-        />
-        {inLulea && (
-          <SelectField
-            name="area"
-            label={f.area}
-            placeholder={f.areaPlaceholder}
-            options={areaOptions}
-            required
-            error={errors.area}
-          />
-        )}
+        <TownField label={f.town} placeholder={f.townPlaceholder} value={town} onChange={setChosenTown} error={errors.city} />
       </div>
 
       <ChoiceGroup

@@ -70,8 +70,8 @@ export function TextField({
 }
 
 /**
- * Town (free text with suggestions). The note under it says whether the
- * town is open yet or on the waitlist; it is announced when it changes.
+ * Town (free text with suggestions). An optional note under it is
+ * announced when it changes.
  */
 export function TownField({
   label,

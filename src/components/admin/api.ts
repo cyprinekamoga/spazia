@@ -1,22 +1,10 @@
 import { categories } from "@/content/categories";
-import { cities, tidyTown } from "@/content/cities";
-import { areas } from "@/content/areas";
+import { tidyTown } from "@/content/cities";
 import { sv } from "@/content/sv";
 
 /* ---------- Types (mirror src/server/db.ts) ---------- */
 
-export type LeadStatus = "new" | "contacted" | "visited" | "listed" | "matched" | "declined";
-
-export interface AdminBooking {
-  slotId: string;
-  leadId: string;
-  address: string;
-  phone: string;
-  note: string;
-  bookedAt: string;
-  start: string;
-  end: string;
-}
+export type LeadStatus = "new" | "contacted" | "listed" | "matched" | "declined";
 
 export interface AdminLead {
   id: string;
@@ -24,20 +12,10 @@ export interface AdminLead {
   createdAt: string;
   data: Record<string, string>;
   meta: { status: LeadStatus; notes: string; updatedAt: string | null; mailings: { at: string; subject: string; tag: string }[] };
-  booking: AdminBooking | null;
-}
-
-export interface AdminSlot {
-  id: string;
-  start: string;
-  end: string;
-  createdAt: string;
-  booking: (Omit<AdminBooking, "start" | "end"> & { name: string; email: string }) | null;
 }
 
 export interface AdminData {
   leads: AdminLead[];
-  slots: AdminSlot[];
   mailConfigured: boolean;
   /** Server time when the data was loaded (keeps rendering pure). */
   now: number;
@@ -80,14 +58,13 @@ const renter = sv.forms.renter;
 export const STATUS_LABELS: Record<LeadStatus, string> = {
   new: "Ny",
   contacted: "Kontaktad",
-  visited: "Besökt",
   listed: "Publicerad",
   matched: "Matchad",
   declined: "Inte aktuell",
 };
 
 export function statusesFor(kind: AdminLead["kind"]): LeadStatus[] {
-  return kind === "host" ? ["new", "contacted", "visited", "listed", "declined"] : ["new", "contacted", "matched", "declined"];
+  return kind === "host" ? ["new", "contacted", "listed", "declined"] : ["new", "contacted", "matched", "declined"];
 }
 
 function pick(record: Record<string, string>, value: string | undefined): string {
@@ -103,17 +80,9 @@ function categoryNames(value: string | undefined): string {
     .join(", ");
 }
 
-export function areaName(slug: string | undefined): string {
-  if (!slug) return "";
-  if (slug === "any") return sv.forms.anyArea;
-  if (slug === "other") return sv.forms.otherArea;
-  return areas.find((a) => a.slug === slug)?.name ?? slug;
-}
-
-/** Town of a lead. Registrations from before the town field were all Luleå. */
+/** Town of a lead, in its usual spelling. */
 export function townOf(lead: AdminLead): string {
-  if (lead.data.city) return tidyTown(lead.data.city);
-  return lead.data.area ? "Luleå" : "(ingen ort)";
+  return lead.data.city ? tidyTown(lead.data.city) : "(ingen ort)";
 }
 
 /** All answers as label/value rows, in Swedish. */
@@ -140,7 +109,6 @@ export function describeLead(lead: AdminLead): [string, string][] {
         ];
   return [
     ...rows,
-    ["Område", areaName(d.area)],
     ["Meddelande", d.message ?? ""],
     ["Språk", d.lang === "en" ? "Engelska" : "Svenska"],
     ["Källa", [d.utm_source, d.utm_medium, d.utm_campaign].filter(Boolean).join(" / ") || "Direkt"],
@@ -157,12 +125,6 @@ export function summaryOf(lead: AdminLead): string {
     : [categoryNames(d.items), pick(renter.starts, d.start)].filter(Boolean).join(", ");
 }
 
-export function isLuleaTown(town: string): boolean {
-  return town === "Luleå";
-}
-
-export const knownCities = cities.map((c) => c.name);
-
 /* ---------- Dates ---------- */
 
 export function formatDate(iso: string): string {
@@ -178,7 +140,7 @@ function csvCell(value: string): string {
 /** Semicolon-separated with BOM, so Swedish Excel opens it correctly. */
 export function leadsCsv(leads: AdminLead[]): string {
   const head = [
-    "Datum", "Typ", "Namn", "E-post", "Telefon", "Ort", "Område", "Status", "Anteckningar", "Besök", "Besöksadress",
+    "Datum", "Typ", "Namn", "E-post", "Telefon", "Ort", "Status", "Anteckningar",
     "Typ av utrymme", "Tar emot", "Storlek", "Vill förvara", "Mängd", "När", "Hur länge", "Uppvärmt", "Motorvärmaruttag",
     "Sysselsättning", "BankID", "Meddelande", "Språk", "utm_source", "utm_medium", "utm_campaign", "Första sida",
   ];
@@ -186,8 +148,7 @@ export function leadsCsv(leads: AdminLead[]): string {
     const d = l.data;
     return [
       formatDate(l.createdAt), l.kind === "host" ? "Värd" : "Hyresgäst", d.first_name ?? "", d.email ?? "", d.phone ?? "",
-      townOf(l), areaName(d.area), STATUS_LABELS[l.meta.status], l.meta.notes,
-      l.booking ? formatDate(l.booking.start) : "", l.booking?.address ?? "",
+      townOf(l), STATUS_LABELS[l.meta.status], l.meta.notes,
       pick(host.spaceTypes, d.space_type), categoryNames(d.accepts), pick(host.sizes, d.size), categoryNames(d.items), d.quantity ?? "",
       pick(renter.starts, d.start), pick(renter.durations, d.duration), d.heated ?? "", d.engine_heater ?? "",
       pick(renter.occupations, d.occupation), d.has_bankid ?? "", d.message ?? "", d.lang ?? "",

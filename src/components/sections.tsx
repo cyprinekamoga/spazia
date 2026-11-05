@@ -2,12 +2,11 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Dictionary } from "@/content";
-import { areas, type Area } from "@/content/areas";
 import { categories, exampleGarageIncome, type Category } from "@/content/categories";
 import { cities } from "@/content/cities";
 import type { PhotoKey } from "@/content/photos";
 import { fill, formatNumber, type Lang } from "@/lib/i18n";
-import { areaPath, categoryPath, cityPath, pagePath, RENTER_PARAMS } from "@/lib/routes";
+import { categoryPath, cityPath, pagePath, RENTER_PARAMS } from "@/lib/routes";
 import { seasonIcons, trustIcons, whyIcons } from "./Icons";
 import { Photo } from "./Photo";
 
@@ -284,62 +283,21 @@ export function TrustGrid({ t }: { t: Dictionary }) {
   );
 }
 
-/* ---------- Areas ---------- */
-
-export function AreaChips({
-  lang,
-  t,
-  exclude,
-  showFocus = true,
-}: {
-  lang: Lang;
-  t: Dictionary;
-  exclude?: string;
-  showFocus?: boolean;
-}) {
-  return (
-    <ul className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-3">
-      {areas
-        .filter((a) => a.id !== exclude)
-        .map((a: Area) => (
-          <li key={a.id}>
-            <Link prefetch={false}
-              href={areaPath(a.slug, lang)}
-              className="group card flex h-full items-center justify-between gap-2 px-4 py-3.5 transition-colors hover:border-night/30 sm:px-5 sm:py-4"
-            >
-              <span className="min-w-0">
-                <span className="block font-semibold text-night sm:text-lg">{a.name}</span>
-                {showFocus && (
-                  <span className={`block text-[0.8rem] font-medium sm:text-sm ${a.focus === "host" ? "text-brand" : "text-pine"}`}>
-                    {a.focus === "host" ? t.areasSection.hostFocus : t.areasSection.renterFocus}
-                  </span>
-                )}
-              </span>
-            </Link>
-          </li>
-        ))}
-    </ul>
-  );
-}
-
 /* ---------- Cities ---------- */
 
-/** Links to every city page, with its status (first city or waitlist). */
-export function CityChips({ lang, t, exclude }: { lang: Lang; t: Dictionary; exclude?: string }) {
+/** Links to the city pages. */
+export function CityChips({ lang, exclude }: { lang: Lang; exclude?: string }) {
   return (
-    <ul className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
+    <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
       {cities
         .filter((c) => c.id !== exclude)
         .map((c) => (
           <li key={c.id}>
             <Link prefetch={false}
               href={cityPath(c.slug, lang)}
-              className="card flex h-full flex-col justify-center px-4 py-3.5 transition-colors hover:border-night/30 sm:px-5 sm:py-4"
+              className="card flex h-full min-h-14 items-center px-4 py-3 font-semibold text-night transition-colors hover:border-night/30 sm:px-5 sm:text-lg"
             >
-              <span className="block font-semibold text-night sm:text-lg">{c.name}</span>
-              <span className={`block text-[0.8rem] font-medium sm:text-sm ${c.status === "first" ? "text-pine" : "text-muted"}`}>
-                {c.status === "first" ? t.cityPage.statusFirst : t.citiesSection.waitlist}
-              </span>
+              {c.name}
             </Link>
           </li>
         ))}
@@ -347,42 +305,14 @@ export function CityChips({ lang, t, exclude }: { lang: Lang; t: Dictionary; exc
   );
 }
 
-/** Home page block: Luleå first (with its districts), then the waitlist cities. */
+/** Home page block: Spazia works all over Sweden; the featured cities link to their pages. */
 export function CitiesSection({ lang, t }: { lang: Lang; t: Dictionary }) {
-  const first = cities.find((c) => c.status === "first");
   const s = t.citiesSection;
   return (
     <>
       <SectionHeading title={s.title} lead={s.lead} />
-      {first && (
-        <div className="mt-7 grid overflow-hidden rounded-[1.25rem] bg-night text-white sm:mt-10 md:grid-cols-[1fr_1.3fr]">
-          <Photo name={first.photo} lang={lang} sizes="(min-width: 768px) 40vw, 100vw" className="h-44 w-full sm:h-56 md:h-full" />
-          <div className="p-5 sm:p-8">
-            <p className="text-sm font-semibold text-glow">{s.first}</p>
-            <h3 className="mt-1 text-3xl text-white sm:text-4xl">
-              <Link prefetch={false} href={cityPath(first.slug, lang)} className="hover:underline hover:decoration-glow hover:underline-offset-6">
-                {first.name}
-              </Link>
-            </h3>
-            <p className="mt-2 leading-relaxed text-frost-2">{s.firstText}</p>
-            <p className="mt-5 text-sm font-semibold text-frost">{s.districts}</p>
-            <ul className="mt-2.5 flex flex-wrap gap-2">
-              {areas.map((a) => (
-                <li key={a.id}>
-                  <Link prefetch={false}
-                    href={areaPath(a.slug, lang)}
-                    className="flex min-h-11 items-center rounded-full border border-white/25 px-4 py-2 text-[0.95rem] font-semibold text-white transition-colors hover:border-white/60"
-                  >
-                    {a.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
-      <div className="mt-6">
-        <CityChips lang={lang} t={t} exclude={first?.id} />
+      <div className="mt-7 sm:mt-10">
+        <CityChips lang={lang} />
       </div>
       <p className="mt-6 max-w-xl leading-relaxed text-muted">
         {s.missing}{" "}
