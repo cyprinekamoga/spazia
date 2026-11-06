@@ -39,6 +39,7 @@ export const en: Dictionary = {
     guides: "Guides",
     about: "About",
     hostCta: "List your space",
+    login: "Log in",
   },
   hero: {
     title: "There's room at your neighbour's.",

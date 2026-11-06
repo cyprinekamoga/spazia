@@ -15,6 +15,13 @@ export const site = {
   /* Integrations. Public IDs, so they can live in the code; each can be
      overridden with an environment variable in Netlify. */
 
+  /**
+   * The app (accounts, listings, requests). Public values: the publishable
+   * key only allows what the database's access rules allow.
+   */
+  appSupabaseUrl: env(process.env.NEXT_PUBLIC_APP_SUPABASE_URL, "https://mtyhnfsceahvovauckkj.supabase.co"),
+  appSupabaseKey: env(process.env.NEXT_PUBLIC_APP_SUPABASE_KEY, "sb_publishable_nsP78clPf6bC9c3IWh3B3g__3BwGF23"),
+
   /** Leads go to Supabase when both are set, otherwise to Netlify Forms. */
   supabaseUrl: env(process.env.NEXT_PUBLIC_SUPABASE_URL),
   supabaseKey: env(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY),

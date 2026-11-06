@@ -37,6 +37,7 @@ export const sv = {
     guides: "Guider",
     about: "Om oss",
     hostCta: "Hyr ut din plats",
+    login: "Logga in",
   },
   hero: {
     title: "Det finns plats hos grannen.",

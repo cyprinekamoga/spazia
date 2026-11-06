@@ -108,6 +108,11 @@
   .btn:active {
     transform: translateY(1px);
   }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
   .btn-primary {
     background: var(--color-brand);
     color: #fff;

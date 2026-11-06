@@ -59,6 +59,9 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
             <Globe size={16} aria-hidden="true" />
             {t.common.switchLanguage}
           </a>
+          <Link prefetch={false} href="/logga-in" className="rounded-full px-3 py-2 text-sm font-semibold text-ink/80 hover:bg-frost/70 hover:text-ink">
+            {t.nav.login}
+          </Link>
           <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-primary !px-4 !py-2.5 text-[0.95rem]">
             {t.nav.hostCta}
           </Link>
@@ -98,7 +101,10 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
               <Globe size={18} aria-hidden="true" />
               {t.common.switchLanguage}
             </a>
-            <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-primary mt-3 w-full">
+            <Link prefetch={false} href="/logga-in" className="btn btn-secondary mt-3 w-full">
+              {t.nav.login}
+            </Link>
+            <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-primary mt-2 w-full">
               {t.nav.hostCta}
             </Link>
           </nav>

@@ -39,6 +39,35 @@ Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-
   - Tap targets of at least 44 px.
   - Responsive WebP photos, so a phone downloads about 600 KB of images for the whole home page.
 
+## The app (host side)
+
+Logged-in pages, built on Supabase (project `spazia`, region Stockholm). They are static pages that load their data in the browser, so the site stays a static export.
+
+| Page | What it does |
+|---|---|
+| `/logga-in` | Log in or create an account: Google, email (link or 6-digit code), and Apple once it's switched on in Supabase |
+| `/vard` | **Idag:** things to do, requests waiting for an answer (24 h), current and upcoming rentals, monthly income |
+| `/vard/annons` | Listing wizard in 8 steps: type, address, about the space, what it takes (capacity and price), photos, title, access and terms, review and publish. Each step is saved, so the host can stop and continue later. |
+| `/vard/annonser` | The host's listings: continue a draft, edit, preview, pause |
+| `/vard/forhandsvisning` | The listing as renters will see it |
+| `/vard/forfragan` | A request: accept or decline (with a reason), cancel |
+| `/vard/kalender` | Month view per listing: bookings, how full each day is, closing days or periods |
+| `/vard/meddelanden` | Inbox and threads, one per renter and listing |
+| `/vard/meny` | Profile (photo, name, phone, about), account, log out |
+
+**How renting works:**
+- Renters never book directly. They send a request, and the host accepts or declines within 24 hours.
+- A rental can be any length, from a few days to "until further notice". Hosts can set a minimum period.
+- The street address and access instructions are shown only after the host accepts.
+- There are no inspection visits: hosts photograph their own space.
+
+**Where things are:**
+- Database and access rules: `supabase/migrations/20261105000000_host_app.sql` and later files.
+- App code: `src/components/app/`, `src/lib/app/`.
+- App copy: `src/content/app.ts`. It is Swedish only for now.
+
+**Switching on login:** [`docs/supabase-setup.md`](docs/supabase-setup.md) lists what to do in Supabase and Google (redirect URLs, SMTP, the email template with the code, the Google key).
+
 ## Develop
 
 ```bash
