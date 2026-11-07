@@ -10,6 +10,7 @@ import { fill } from "@/lib/i18n";
 import { must, useLoad, useSession } from "@/lib/app/session";
 import { effectiveStatus, todayIso, type AppMode, type RequestRow } from "@/lib/app/model";
 import { lastMode, MODE_HOME } from "@/lib/app/mode";
+import { site } from "@/lib/site";
 import { supabase } from "@/lib/supabase";
 import { Spinner } from "./AppShell";
 
@@ -79,7 +80,7 @@ function Chooser({ uid }: { uid: string }) {
 
   async function logout() {
     await supabase().auth.signOut();
-    router.replace("/");
+    router.replace("/sok");
   }
 
   if (loading) return <Spinner />;
@@ -122,9 +123,9 @@ export function ModeChooser() {
   return (
     <div className="min-h-dvh">
       <header className="mx-auto flex h-16 max-w-xl items-center px-4 sm:px-6">
-        <Link prefetch={false} href="/" aria-label="Spazia">
+        <a href={site.url} aria-label="Spazia">
           <LogoMark className="h-9 w-auto" id="chooser-logo" />
-        </Link>
+        </a>
       </header>
       <main className="px-4 pt-6 pb-16 sm:px-6 sm:pt-12">{session.status === "signedIn" ? <Chooser uid={session.session.user.id} /> : <Spinner />}</main>
     </div>

@@ -9,6 +9,7 @@ import { fetchMyProfile } from "@/lib/app/data";
 import type { AppMode } from "@/lib/app/model";
 import { MODE_HOME } from "@/lib/app/mode";
 import { useLoad } from "@/lib/app/session";
+import { site } from "@/lib/site";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "./AppShell";
 import { Avatar } from "./ui";
@@ -80,7 +81,7 @@ export function MenuPage({ mode }: { mode: AppMode }) {
 
   async function logout() {
     await supabase().auth.signOut();
-    router.replace("/");
+    router.replace("/sok");
   }
 
   if (loading) return <Spinner />;
@@ -169,10 +170,10 @@ export function MenuPage({ mode }: { mode: AppMode }) {
           </Link>
         </li>
         <li>
-          <Link prefetch={false} href="/trygghet" className="flex min-h-14 items-center justify-between px-5 font-semibold text-night">
+          <a href={`${site.url}/trygghet`} className="flex min-h-14 items-center justify-between px-5 font-semibold text-night">
             {t.help}
             <ChevronRight size={18} className="text-muted" aria-hidden="true" />
-          </Link>
+          </a>
         </li>
         <li>
           <button type="button" onClick={logout} className="flex min-h-14 w-full items-center gap-2 px-5 font-semibold text-[#b42318]">

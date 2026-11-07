@@ -41,7 +41,9 @@ Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-
 
 ## The app
 
-Logged-in pages, built on Supabase (project `spazia`, region Stockholm). They are static pages that load their data in the browser, so the site stays a static export. One account works for both sides: after login, `/konto` asks whether you want to rent a space (`/kund`) or host (`/vard`), and both sides have a switch to the other.
+The app runs on **app.spazia.se**, as its own Netlify project (`spazia-app`) built from this repository. Landing pages use `page.tsx`, app pages use `page.app.tsx`, and `next.config.ts` builds one or the other. See [`docs/app-subdomain.md`](docs/app-subdomain.md). Search (`/sok`) and listings (`/annons`) are open to everyone; logging in is needed to send a request.
+
+The pages are built on Supabase (project `spazia`, region Stockholm). They are static pages that load their data in the browser, so both projects stay static exports. One account works for both sides: after login, `/konto` asks whether you want to rent a space (`/kund`) or host (`/vard`), and both sides have a switch to the other.
 
 ### Host side
 
@@ -63,8 +65,8 @@ Logged-in pages, built on Supabase (project `spazia`, region Stockholm). They ar
 |---|---|
 | `/konto` | After login: choose "Hyra plats" or "Hyra ut", with what's waiting on each side |
 | `/kund` | **Hem:** search box and categories, requests waiting for an answer, current and upcoming rentals |
-| `/kund/sok` | Published listings by town or area and by what they take (`?ort=`, `?typ=`) |
-| `/kund/annons` | A listing with "Skicka förfrågan" |
+| `/sok` | Published listings by town or area and by what they take (`?ort=`, `?typ=`). Open to everyone. |
+| `/annons` | A listing with "Skicka förfrågan" (asks visitors to log in first). Open to everyone. |
 | `/kund/skicka` | The request: start date, until further notice or an end date, how many of each thing (with free places for the period), a greeting to the host, and the monthly price including the service fee |
 | `/kund/bokningar` | Current and upcoming, waiting for an answer, earlier |
 | `/kund/bokning` | One request or rental: status, and after acceptance the address, how to get in and the host's phone. Withdraw or cancel. |
@@ -86,6 +88,10 @@ Logged-in pages, built on Supabase (project `spazia`, region Stockholm). They ar
 **Switching on login:** [`docs/supabase-setup.md`](docs/supabase-setup.md) lists what to do in Supabase and Google (redirect URLs, SMTP, the email template with the code, the Google key).
 
 ## Develop
+
+- `npm run dev`: landing site on port 3000 (links to the app on port 3001)
+- `npm run dev:app`: the app on port 3001
+- `npm run build` / `npm run build:app`: static exports to `out/`
 
 ```bash
 npm install

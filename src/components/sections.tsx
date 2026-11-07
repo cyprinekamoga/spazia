@@ -86,7 +86,7 @@ export function PhotoHero({
 }) {
   const heights =
     size === "home"
-      ? "min-h-[calc(100svh-3.5rem)] max-h-[54rem] sm:min-h-[36rem] lg:min-h-[40rem]"
+      ? "min-h-[min(calc(100svh-3.5rem),34rem)] sm:min-h-[36rem] lg:min-h-[40rem]"
       : "min-h-[30rem] sm:min-h-[26rem] lg:min-h-[30rem]";
   return (
     <section className={`relative isolate flex overflow-hidden bg-night text-white ${heights}`}>

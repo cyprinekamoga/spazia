@@ -1,6 +1,6 @@
 # Slå på inloggningen (Supabase och Google)
 
-Appen (`/logga-in` och värdläget på `/vard`) använder Supabase-projektet **spazia** (`mtyhnfsceahvovauckkj`, region Stockholm). Databasen, åtkomstreglerna och bildlagringen är redan på plats. Det här är stegen som bara ni kan göra, eftersom de kräver inloggning i Supabase och Google.
+Appen på app.spazia.se (inloggning, sök, hyresgäst- och värdläget) använder Supabase-projektet **spazia** (`mtyhnfsceahvovauckkj`, region Stockholm). Databasen, åtkomstreglerna och bildlagringen är redan på plats. Det här är stegen som bara ni kan göra, eftersom de kräver inloggning i Supabase och Google.
 
 Gör steg 1–3 först. Steg 4 (Google) kan göras när som helst. Tills dess visar knappen "Fortsätt med Google" att Google inte är påslaget än.
 
@@ -8,10 +8,11 @@ Gör steg 1–3 först. Steg 4 (Google) kan göras när som helst. Tills dess vi
 
 [Authentication → URL Configuration](https://supabase.com/dashboard/project/mtyhnfsceahvovauckkj/auth/url-configuration)
 
-- **Site URL:** `https://spazia.se`
+- **Site URL:** `https://app.spazia.se` (appen ligger där, se [app-subdomain.md](app-subdomain.md))
 - **Redirect URLs**, lägg till:
+  - `https://app.spazia.se/**`
   - `https://spazia.se/**`
-  - `https://*--spazia.netlify.app/**` (förhandsversioner hos Netlify)
+  - `https://*--spazia-app.netlify.app/**` (förhandsversioner av appen hos Netlify)
 
 ## 2. Mejl via Strato (Supabase)
 

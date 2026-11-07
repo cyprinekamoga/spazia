@@ -38,7 +38,7 @@ export function BookingsPage() {
       {groups.length === 0 ? (
         <div>
           <p className="text-muted">{t.empty}</p>
-          <Link prefetch={false} href="/kund/sok" className="btn btn-primary mt-4">
+          <Link prefetch={false} href="/sok" className="btn btn-primary mt-4">
             {t.find}
           </Link>
         </div>

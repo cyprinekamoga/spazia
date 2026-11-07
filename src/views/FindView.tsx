@@ -11,6 +11,7 @@ import { RenterForm } from "@/components/forms/RenterForm";
 import { categoryIcons } from "@/components/Icons";
 import { Faq, PhotoHero, Section, SectionHeading } from "@/components/sections";
 import { formatNumber, type Lang } from "@/lib/i18n";
+import { appSearchUrl } from "@/lib/site";
 
 export function FindView({ lang }: { lang: Lang }) {
   const t = getDictionary(lang);
@@ -25,7 +26,12 @@ export function FindView({ lang }: { lang: Lang }) {
         title={p.title}
         lead={p.lead}
       >
-        <a href="#anmalan" className="btn btn-light">
+        {lang === "sv" && (
+          <a href={appSearchUrl()} className="btn btn-light">
+            {t.common.seeSpaces}
+          </a>
+        )}
+        <a href="#anmalan" className={lang === "sv" ? "btn btn-on-dark" : "btn btn-light"}>
           {p.formTitle}
         </a>
       </PhotoHero>

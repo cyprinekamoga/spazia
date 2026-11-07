@@ -10,6 +10,7 @@ import { appText } from "@/content/app";
 import type { AppMode } from "@/lib/app/model";
 import { MODE_HOME, rememberMode } from "@/lib/app/mode";
 import { useSession } from "@/lib/app/session";
+import { site } from "@/lib/site";
 
 const t = appText.nav;
 
@@ -25,7 +26,7 @@ const TABS: Record<AppMode, Tab[]> = {
   ],
   renter: [
     { href: "/kund", label: t.home, icon: House },
-    { href: "/kund/sok", label: t.search, icon: Search, also: ["/kund/annons", "/kund/skicka"] },
+    { href: "/sok", label: t.search, icon: Search, also: ["/annons", "/kund/skicka"] },
     { href: "/kund/bokningar", label: t.bookings, icon: Tickets, also: ["/kund/bokning"] },
     { href: "/kund/meddelanden", label: t.messages, icon: MessageSquare },
     { href: "/kund/meny", label: t.menu, icon: Menu },
@@ -39,6 +40,11 @@ export function useAppSession(): Session {
   const s = useContext(SessionContext);
   if (!s) throw new Error("useAppSession outside AppShell");
   return s;
+}
+
+/** The session on pages that are open to everyone (null when not logged in). */
+export function useOptionalSession(): Session | null {
+  return useContext(SessionContext);
 }
 
 export function Spinner() {
@@ -68,12 +74,35 @@ export function ModeSwitchLink({ mode, className = "" }: { mode: AppMode; classN
   );
 }
 
+/** Header for visitors who aren't logged in, on the pages open to everyone. */
+function PublicHeader() {
+  const here = typeof window === "undefined" ? "/sok" : `${window.location.pathname}${window.location.search}`;
+  return (
+    <header className="sticky top-0 z-30 border-b border-line bg-snow/95 backdrop-blur">
+      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
+        <a href={site.url} className="flex items-center" aria-label="Spazia">
+          <LogoMark className="h-8 w-auto" id="public-logo" />
+        </a>
+        <nav aria-label="Spazia" className="flex items-center gap-1 sm:gap-2">
+          <a href={`${site.url}/bli-vard`} className="hidden min-h-11 items-center rounded-full px-3.5 text-[0.95rem] font-semibold text-muted hover:bg-frost hover:text-night sm:flex">
+            {t.rentOut}
+          </a>
+          <Link prefetch={false} href={`/logga-in?next=${encodeURIComponent(here)}`} className="btn btn-primary !min-h-11 !py-2 text-[0.95rem]">
+            {t.login}
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
 /**
  * Frame for every app page: requires a login and shows the tabs for the mode
  * (bottom bar on phones, top bar on larger screens). `bare` hides the frame,
- * for full-screen pages such as the listing wizard or a listing.
+ * for full-screen pages such as the listing wizard or a listing. `open` pages
+ * (search, listings) are also shown to visitors who aren't logged in.
  */
-export function AppShell({ mode, children, bare = false }: { mode: AppMode; children: ReactNode; bare?: boolean }) {
+export function AppShell({ mode, children, bare = false, open = false }: { mode: AppMode; children: ReactNode; bare?: boolean; open?: boolean }) {
   const session = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -81,14 +110,24 @@ export function AppShell({ mode, children, bare = false }: { mode: AppMode; chil
   const label = mode === "host" ? t.hostingFor : t.renting;
 
   useEffect(() => {
-    if (session.status === "signedOut") {
+    if (session.status === "signedOut" && !open) {
       const here = `${window.location.pathname}${window.location.search}`;
       router.replace(`/logga-in?next=${encodeURIComponent(here)}`);
     }
-  }, [session.status, router]);
+  }, [session.status, router, open]);
 
-  useEffect(() => rememberMode(mode), [mode]);
+  useEffect(() => {
+    if (session.status === "signedIn") rememberMode(mode);
+  }, [mode, session.status]);
 
+  if (session.status === "signedOut" && open) {
+    return (
+      <SessionContext.Provider value={null}>
+        {!bare && <PublicHeader />}
+        {bare ? children : <main className="mx-auto max-w-5xl px-4 pt-6 pb-16 sm:px-6">{children}</main>}
+      </SessionContext.Provider>
+    );
+  }
   if (session.status !== "signedIn") return <Spinner />;
 
   if (bare) return <SessionContext.Provider value={session.session}>{children}</SessionContext.Provider>;
@@ -157,6 +196,6 @@ export function HostShell(props: { children: ReactNode; bare?: boolean }) {
   return <AppShell mode="host" {...props} />;
 }
 
-export function RenterShell(props: { children: ReactNode; bare?: boolean }) {
+export function RenterShell(props: { children: ReactNode; bare?: boolean; open?: boolean }) {
   return <AppShell mode="renter" {...props} />;
 }

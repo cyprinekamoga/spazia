@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { RenterShell, Spinner } from "@/components/app/AppShell";
-import { SearchPage } from "@/components/app/renter/SearchPage";
+import { RenterListingPage } from "@/components/app/renter/ListingPage";
 
-export const metadata: Metadata = { title: "Hitta plats" };
+export const metadata: Metadata = { title: "Annons" };
 
 export default function Page() {
   return (
-    <RenterShell>
+    <RenterShell bare open>
       <Suspense fallback={<Spinner />}>
-        <SearchPage />
+        <RenterListingPage />
       </Suspense>
     </RenterShell>
   );

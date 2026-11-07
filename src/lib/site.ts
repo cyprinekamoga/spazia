@@ -6,6 +6,8 @@ function env(value: string | undefined, fallback = ""): string {
 export const site = {
   name: "Spazia",
   url: "https://spazia.se",
+  /** The app (login, search, listings, both dashboards) runs on its own subdomain and Netlify project. */
+  appUrl: env(process.env.NEXT_PUBLIC_APP_URL, "https://app.spazia.se"),
   /** Shown on the site and used as reply-to address in emails. */
   email: "info@nordvra.se",
   /** Shown in the privacy policy. Add the org.nr once the company is registered. */
@@ -35,3 +37,12 @@ export const site = {
 
 export const skatteverketRentalUrl =
   "https://www.skatteverket.se/privat/fastigheterochbostad/inkomsterfranbostad/hyrautprivatbostadbostadsrattsmahusochhyresratt.4.233f91f71260075abe8800033479.html";
+
+/** The app's public search, e.g. https://app.spazia.se/sok?ort=Göteborg&typ=tyres */
+export function appSearchUrl({ place, category }: { place?: string; category?: string } = {}): string {
+  const q = new URLSearchParams();
+  if (place) q.set("ort", place);
+  if (category) q.set("typ", category);
+  const qs = q.toString();
+  return `${site.appUrl}/sok${qs ? `?${qs}` : ""}`;
+}

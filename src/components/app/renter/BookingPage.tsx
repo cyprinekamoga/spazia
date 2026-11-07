@@ -105,14 +105,14 @@ export function BookingPage() {
           </p>
         )}
         {(status === "declined" || status === "expired" || status === "cancelled") && (
-          <Link prefetch={false} href="/kund/sok" className="btn btn-primary mt-4">
+          <Link prefetch={false} href="/sok" className="btn btn-primary mt-4">
             {t.findOther}
           </Link>
         )}
       </div>
 
       {l && (
-        <Link prefetch={false} href={`/kund/annons?id=${l.id}`} className="card flex items-center gap-3 p-3 hover:border-night/30">
+        <Link prefetch={false} href={`/annons?id=${l.id}`} className="card flex items-center gap-3 p-3 hover:border-night/30">
           <CoverPhoto photos={l.listing_photos} className="h-16 w-16 shrink-0 rounded-xl" />
           <span className="min-w-0">
             <span className="block truncate font-bold text-night">{l.title}</span>

@@ -11,7 +11,8 @@ import { fill } from "@/lib/i18n";
 import { searchListings, type SearchResult } from "@/lib/app/data";
 import { formatKr, renterPrice } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
-import { Spinner, useAppSession } from "../AppShell";
+import { site } from "@/lib/site";
+import { Spinner, useOptionalSession } from "../AppShell";
 import { CoverPhoto } from "../ui";
 
 const t = appText.search;
@@ -21,7 +22,7 @@ function ResultCard({ listing }: { listing: SearchResult }) {
   const type = listing.space_type ? appText.spaceTypes[listing.space_type] : "";
   const from = listing.listing_spaces.length ? Math.min(...listing.listing_spaces.map((s) => renterPrice(s.host_price_month))) : null;
   return (
-    <Link prefetch={false} href={`/kund/annons?id=${listing.id}`} className="group block">
+    <Link prefetch={false} href={`/annons?id=${listing.id}`} className="group block">
       <CoverPhoto photos={listing.listing_photos} className="aspect-[4/3] w-full rounded-2xl transition-opacity group-hover:opacity-90" />
       <span className="mt-2.5 block font-bold text-night">{listing.title || appText.listings.untitled}</span>
       <span className="block text-[0.95rem] text-muted">{[type, place].filter(Boolean).join(" i ")}</span>
@@ -31,7 +32,7 @@ function ResultCard({ listing }: { listing: SearchResult }) {
 }
 
 export function SearchPage() {
-  const uid = useAppSession().user.id;
+  const uid = useOptionalSession()?.user.id ?? "";
   const params = useSearchParams();
   const router = useRouter();
   const place = params.get("ort") ?? "";
@@ -45,7 +46,7 @@ export function SearchPage() {
     if (nextPlace.trim()) q.set("ort", nextPlace.trim());
     if (nextCategory) q.set("typ", nextCategory);
     const qs = q.toString();
-    router.replace(qs ? `/kund/sok?${qs}` : "/kund/sok");
+    router.replace(qs ? `/sok?${qs}` : "/sok");
   }
 
   function submit(e: FormEvent) {
@@ -118,9 +119,9 @@ export function SearchPage() {
           <SearchX size={28} className="text-brand" aria-hidden="true" />
           <p className="text-lg font-semibold text-night">{t.empty}</p>
           <p className="text-muted">{t.emptyHint}</p>
-          <Link prefetch={false} href="/hitta-forvaring#anmalan" className="btn btn-primary mt-1">
+          <a href={`${site.url}/hitta-forvaring${place ? `?ort=${encodeURIComponent(place)}` : ""}#anmalan`} className="btn btn-primary mt-1">
             {t.emptyCta}
-          </Link>
+          </a>
         </div>
       ) : (
         <>

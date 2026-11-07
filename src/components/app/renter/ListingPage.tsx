@@ -7,23 +7,26 @@ import { appText } from "@/content/app";
 import { fetchListingBundle, fetchMyOpenRequest } from "@/lib/app/data";
 import { useLoad } from "@/lib/app/session";
 import { ListingView } from "../ListingView";
-import { Spinner, useAppSession } from "../AppShell";
+import { Spinner, useOptionalSession } from "../AppShell";
 
 const t = appText.renterListing;
 
-/** A listing as a renter sees it, with "Skicka förfrågan". */
+/**
+ * A listing with "Skicka förfrågan". Open to everyone: visitors who aren't
+ * logged in are asked to log in first and then land on the request form.
+ */
 export function RenterListingPage() {
-  const uid = useAppSession().user.id;
+  const uid = useOptionalSession()?.user.id ?? null;
   const id = useSearchParams().get("id") ?? "";
   const router = useRouter();
   const { data, loading } = useLoad(async () => {
-    const [bundle, open] = await Promise.all([fetchListingBundle(id), fetchMyOpenRequest(id, uid)]);
+    const [bundle, open] = await Promise.all([fetchListingBundle(id), uid ? fetchMyOpenRequest(id, uid) : Promise.resolve(null)]);
     return { bundle, open };
-  }, `${id}:${uid}`);
+  }, `${id}:${uid ?? ""}`);
 
   function back() {
     if (window.history.length > 1) router.back();
-    else router.push("/kund/sok");
+    else router.push("/sok");
   }
 
   const backButton = (
@@ -40,7 +43,7 @@ export function RenterListingPage() {
       <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">
         {backButton}
         <p className="mt-6 text-lg text-muted">{t.unavailable}</p>
-        <Link prefetch={false} href="/kund/sok" className="btn btn-primary mt-4">
+        <Link prefetch={false} href="/sok" className="btn btn-primary mt-4">
           {appText.booking.findOther}
         </Link>
       </div>
@@ -51,7 +54,8 @@ export function RenterListingPage() {
   const open = data?.open ?? null;
   const own = listing.host_id === uid;
   const unavailable = listing.status !== "published";
-  const action = !own && !unavailable && !open ? { href: `/kund/skicka?id=${listing.id}`, label: t.request } : null;
+  const formPath = `/kund/skicka?id=${listing.id}`;
+  const action = !own && !unavailable && !open ? { href: uid ? formPath : `/logga-in?next=${encodeURIComponent(formPath)}`, label: t.request } : null;
   const notice = own ? (
     <p className="text-muted">{t.own}</p>
   ) : open ? (

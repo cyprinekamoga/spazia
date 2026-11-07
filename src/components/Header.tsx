@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Globe, Menu, X } from "lucide-react";
 import type { Dictionary } from "@/content";
 import type { Lang } from "@/lib/i18n";
+import { site } from "@/lib/site";
 import { pagePath, translatePath } from "@/lib/routes";
 import { Logo } from "./Logo";
 
@@ -59,9 +60,9 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
             <Globe size={16} aria-hidden="true" />
             {t.common.switchLanguage}
           </a>
-          <Link prefetch={false} href="/logga-in" className="rounded-full px-3 py-2 text-sm font-semibold text-ink/80 hover:bg-frost/70 hover:text-ink">
+          <a href={`${site.appUrl}/logga-in`} className="rounded-full px-3 py-2 text-sm font-semibold text-ink/80 hover:bg-frost/70 hover:text-ink">
             {t.nav.login}
-          </Link>
+          </a>
           <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-primary !px-4 !py-2.5 text-[0.95rem]">
             {t.nav.hostCta}
           </Link>
@@ -101,9 +102,9 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
               <Globe size={18} aria-hidden="true" />
               {t.common.switchLanguage}
             </a>
-            <Link prefetch={false} href="/logga-in" className="btn btn-secondary mt-3 w-full">
+            <a href={`${site.appUrl}/logga-in`} className="btn btn-secondary mt-3 w-full">
               {t.nav.login}
-            </Link>
+            </a>
             <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-primary mt-2 w-full">
               {t.nav.hostCta}
             </Link>

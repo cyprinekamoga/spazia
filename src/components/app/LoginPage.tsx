@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, Mail } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
@@ -120,9 +119,9 @@ export function LoginPage() {
   return (
     <main className="flex min-h-dvh items-start justify-center px-4 pt-[max(3rem,env(safe-area-inset-top))] pb-10 sm:items-center sm:pt-10">
       <div className="w-full max-w-sm">
-        <Link prefetch={false} href="/" aria-label="Spazia" className="mx-auto block w-fit">
+        <a href={site.url} aria-label="Spazia" className="mx-auto block w-fit">
           <LogoMark className="h-14 w-auto" id="login-logo" />
-        </Link>
+        </a>
 
         {step === "start" ? (
           <>
@@ -207,9 +206,9 @@ export function LoginPage() {
 
         <p className="mt-8 text-center text-sm leading-relaxed text-muted">
           {t.terms}{" "}
-          <Link prefetch={false} href="/integritetspolicy" className="underline underline-offset-4">
+          <a href={`${site.url}/integritetspolicy`} className="underline underline-offset-4">
             {t.termsLink}
-          </Link>
+          </a>
           .
         </p>
       </div>

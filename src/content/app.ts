@@ -44,6 +44,8 @@ export const appText = {
     toRenter: "Byt till hyresgästläge",
     toHostShort: "Värdläge",
     toRenterShort: "Hyresgästläge",
+    login: "Logga in",
+    rentOut: "Hyr ut din plats",
   },
   chooser: {
     greeting: "Hej {name}!",

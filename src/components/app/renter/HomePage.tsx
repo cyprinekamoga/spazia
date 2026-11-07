@@ -24,7 +24,7 @@ export function SearchHero() {
   function submit(e: FormEvent) {
     e.preventDefault();
     const q = place.trim();
-    router.push(q ? `/kund/sok?ort=${encodeURIComponent(q)}` : "/kund/sok");
+    router.push(q ? `/sok?ort=${encodeURIComponent(q)}` : "/sok");
   }
 
   return (
@@ -55,7 +55,7 @@ export function SearchHero() {
             <li key={c.id}>
               <Link
                 prefetch={false}
-                href={`/kund/sok?typ=${c.id}`}
+                href={`/sok?typ=${c.id}`}
                 className="flex min-h-11 items-center gap-2 rounded-full border border-white/25 px-3.5 text-[0.95rem] font-semibold text-white transition-colors hover:border-white hover:bg-white/10"
               >
                 <Icon size={18} aria-hidden="true" />

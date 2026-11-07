@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "NEXT_PUBLIC_APP_URL=http://localhost:3001 next dev",
+    "dev:app": "SPAZIA_TARGET=app next dev -p 3001",
+    "build": "next build && node scripts/postbuild.mjs",
+    "build:app": "SPAZIA_TARGET=app npm run build",
     "start": "npx serve out",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

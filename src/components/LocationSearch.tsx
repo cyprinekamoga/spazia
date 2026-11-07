@@ -7,8 +7,9 @@ import { townSuggestions } from "@/content/cities";
 import { RENTER_PARAMS } from "@/lib/routes";
 
 /**
- * "Where do you need space?" in the hero. Sends the visitor to the renter
- * form with the town filled in. Works as a plain GET form without JavaScript.
+ * "Where do you need space?" in the hero. Sends the visitor to the app's
+ * search (an absolute URL) or to the renter form with the town filled in.
+ * Works as a plain GET form without JavaScript.
  */
 export function LocationSearch({
   action,
@@ -32,7 +33,10 @@ export function LocationSearch({
     event.preventDefault();
     const town = String(new FormData(event.currentTarget).get(RENTER_PARAMS.town) ?? "").trim();
     const query = town ? `?${RENTER_PARAMS.town}=${encodeURIComponent(town)}` : "";
-    router.push(`${action}${query}#anmalan`);
+    // The app is a separate site (app.spazia.se), so this is a full page load.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- absolute URL to another site
+    if (/^https?:/.test(action)) window.location.assign(`${action}${query}`);
+    else router.push(`${action}${query}#anmalan`);
   }
 
   return (

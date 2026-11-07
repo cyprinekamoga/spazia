@@ -155,15 +155,18 @@ function cleanTerm(term: string): string {
   return term.replace(/[,()*%\\:."']/g, " ").replace(/\s+/g, " ").trim().slice(0, 60);
 }
 
-/** Published listings, optionally by place (city or area) and by what they take. */
+/**
+ * Published listings, optionally by place (city or area) and by what they take.
+ * `exclude` leaves out the logged-in user's own listings (empty when logged out).
+ */
 export async function searchListings({ place, category, exclude }: { place: string; category: CategoryId | null; exclude: string }): Promise<SearchResult[]> {
   let q = supabase()
     .from("listings")
     .select("id, host_id, title, city, area_name, space_type, size_m2, heated, published_at, listing_photos(path, position), listing_spaces!inner(category, capacity, host_price_month)")
     .eq("status", "published")
-    .neq("host_id", exclude)
     .order("published_at", { ascending: false })
     .limit(60);
+  if (exclude) q = q.neq("host_id", exclude);
   const term = cleanTerm(place);
   if (term) q = q.or(`city.ilike.*${term}*,area_name.ilike.*${term}*`);
   if (category) q = q.eq("listing_spaces.category", category);

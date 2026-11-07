@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { appSearchUrl } from "@/lib/site";
 import { CalendarDays, Tag } from "lucide-react";
 import { getDictionary } from "@/content";
 import type { Category } from "@/content/categories";
@@ -38,7 +39,12 @@ export function CategoryView({ lang, category }: { lang: Lang; category: Categor
         title={category.metaTitle[lang].split(" – ")[0]}
         lead={category.intro[lang]}
       >
-        <Link prefetch={false} href={findHref} className="btn btn-light">
+        {lang === "sv" && (
+          <a href={appSearchUrl({ category: category.id })} className="btn btn-light">
+            {t.common.seeSpaces}
+          </a>
+        )}
+        <Link prefetch={false} href={findHref} className={lang === "sv" ? "btn btn-on-dark" : "btn btn-light"}>
           {p.ctaFind}
         </Link>
       </PhotoHero>
@@ -133,9 +139,15 @@ export function CityView({ lang, city }: { lang: Lang; city: City }) {
         title={fill(p.title, vars)}
         lead={city.intro[lang]}
       >
-        <Link prefetch={false} href={findHref} className="btn btn-light">
-          {fill(p.renterCta, vars)}
-        </Link>
+        {lang === "sv" ? (
+          <a href={appSearchUrl({ place: city.name })} className="btn btn-light">
+            {fill(p.seeSpaces, vars)}
+          </a>
+        ) : (
+          <Link prefetch={false} href={findHref} className="btn btn-light">
+            {fill(p.renterCta, vars)}
+          </Link>
+        )}
         <Link prefetch={false} href={hostHref} className="btn btn-on-dark">
           {fill(p.hostCta, vars)}
         </Link>

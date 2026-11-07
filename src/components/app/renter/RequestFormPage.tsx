@@ -76,7 +76,7 @@ export function RequestFormPage() {
   if (base.loading) return <Spinner />;
   const bundle = base.data?.bundle;
   const back = (
-    <Link prefetch={false} href={`/kund/annons?id=${id}`} className="flex min-h-11 w-fit items-center gap-1.5 font-semibold text-night">
+    <Link prefetch={false} href={`/annons?id=${id}`} className="flex min-h-11 w-fit items-center gap-1.5 font-semibold text-night">
       <ArrowLeft size={18} aria-hidden="true" />
       {appText.renterListing.back}
     </Link>

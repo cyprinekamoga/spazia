@@ -1,6 +1,12 @@
+# Two Netlify projects build from this repository:
+# - "spazia" (spazia.se): the landing site
+# - "spazia-app" (app.spazia.se): login, search, listings and both dashboards
+# next.config.ts picks the pages by project name (or SPAZIA_TARGET).
 [build]
   command = "npm run build"
   publish = "out"
+  # Skip the build when nothing this project uses changed.
+  ignore = "node ./scripts/netlify-ignore.mjs"
 
 [build.environment]
   NODE_VERSION = "22"
@@ -26,6 +32,45 @@
   from = "/en/area/*"
   to = "/en/city/lulea"
   status = 301
+
+# The app moved to its own project on app.spazia.se. Old links (and login
+# emails sent before the move) still work. Host-specific, so the app project
+# itself is not affected.
+[[redirects]]
+  from = "https://spazia.se/logga-in"
+  to = "https://app.spazia.se/logga-in"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://spazia.se/konto"
+  to = "https://app.spazia.se/konto"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://spazia.se/vard"
+  to = "https://app.spazia.se/vard"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://spazia.se/vard/*"
+  to = "https://app.spazia.se/vard/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://spazia.se/kund"
+  to = "https://app.spazia.se/kund"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://spazia.se/kund/*"
+  to = "https://app.spazia.se/kund/:splat"
+  status = 301
+  force = true
 
 # Long-lived caching for hashed build assets.
 [[headers]]
