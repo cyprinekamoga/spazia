@@ -32,13 +32,13 @@ export async function fetchListingBundle(id: string): Promise<ListingBundle | nu
   };
 }
 
-export type ListingSummary = Listing & { listing_photos: Pick<ListingPhoto, "path" | "position">[]; listing_spaces: Pick<ListingSpace, "category" | "capacity" | "host_price_month">[] };
+export type ListingSummary = Listing & { listing_photos: Pick<ListingPhoto, "path" | "position">[]; listing_spaces: Pick<ListingSpace, "category" | "capacity" | "host_price_month" | "hourly_price">[] };
 
 export async function fetchMyListings(uid: string): Promise<ListingSummary[]> {
   return must(
     await supabase()
       .from("listings")
-      .select("*, listing_photos(path, position), listing_spaces(category, capacity, host_price_month)")
+      .select("*, listing_photos(path, position), listing_spaces(category, capacity, host_price_month, hourly_price)")
       .eq("host_id", uid)
       .order("updated_at", { ascending: false }),
   ) as ListingSummary[];
@@ -50,7 +50,7 @@ export type HostRequest = RequestRow & {
 };
 
 const REQUEST_SELECT =
-  "*, request_items(category, quantity, host_price_month), renter:profiles!requests_renter_id_fkey(id, first_name, avatar_url, about, created_at), listing:listings(id, title, city, area_name)";
+  "*, request_items(category, quantity, host_price_month, hourly_price, daily_max), renter:profiles!requests_renter_id_fkey(id, first_name, avatar_url, about, created_at), listing:listings(id, title, city, area_name)";
 
 export async function fetchHostRequests(uid: string): Promise<HostRequest[]> {
   return must(
@@ -123,7 +123,7 @@ export type RenterRequest = RequestRow & {
 };
 
 const RENTER_REQUEST_SELECT =
-  "*, request_items(category, quantity, host_price_month), host:profiles!requests_host_id_fkey(id, first_name, avatar_url, about, created_at), listing:listings(id, title, city, area_name, access, access_notes, status, listing_photos(path, position))";
+  "*, request_items(category, quantity, host_price_month, hourly_price, daily_max), host:profiles!requests_host_id_fkey(id, first_name, avatar_url, about, created_at), listing:listings(id, title, city, area_name, access, access_notes, status, listing_photos(path, position))";
 
 export async function fetchRenterRequests(uid: string): Promise<RenterRequest[]> {
   return must(
@@ -147,7 +147,7 @@ export async function fetchCounterpartPrivate(userId: string): Promise<ProfilePr
 
 export type SearchResult = Pick<Listing, "id" | "host_id" | "title" | "city" | "area_name" | "space_type" | "size_m2" | "heated" | "published_at"> & {
   listing_photos: Pick<ListingPhoto, "path" | "position">[];
-  listing_spaces: Pick<ListingSpace, "category" | "capacity" | "host_price_month">[];
+  listing_spaces: Pick<ListingSpace, "category" | "capacity" | "host_price_month" | "hourly_price">[];
 };
 
 /** Characters that would break a PostgREST filter. */
@@ -162,7 +162,7 @@ function cleanTerm(term: string): string {
 export async function searchListings({ place, category, exclude }: { place: string; category: CategoryId | null; exclude: string }): Promise<SearchResult[]> {
   let q = supabase()
     .from("listings")
-    .select("id, host_id, title, city, area_name, space_type, size_m2, heated, published_at, listing_photos(path, position), listing_spaces!inner(category, capacity, host_price_month)")
+    .select("id, host_id, title, city, area_name, space_type, size_m2, heated, published_at, listing_photos(path, position), listing_spaces!inner(category, capacity, host_price_month, hourly_price)")
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(60);
@@ -179,7 +179,7 @@ export async function fetchAvailability(listingId: string, start: string, end: s
   return must(await supabase().rpc("listing_availability", { p_listing: listingId, p_start: start, p_end: end })) as Availability[];
 }
 
-/** The renter's own open or accepted request on a listing, if any. */
+/** The renter's own open or accepted monthly request on a listing, if any (hourly bookings don't count). */
 export async function fetchMyOpenRequest(listingId: string, uid: string): Promise<Pick<RequestRow, "id" | "status" | "expires_at"> | null> {
   const rows = must(
     await supabase()
@@ -187,6 +187,7 @@ export async function fetchMyOpenRequest(listingId: string, uid: string): Promis
       .select("id, status, expires_at")
       .eq("listing_id", listingId)
       .eq("renter_id", uid)
+      .eq("kind", "month")
       .in("status", ["pending", "accepted"])
       .order("created_at", { ascending: false }),
   ) as Pick<RequestRow, "id" | "status" | "expires_at">[];

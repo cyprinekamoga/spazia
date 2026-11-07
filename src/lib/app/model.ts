@@ -64,7 +64,15 @@ export interface ListingSpace {
   listing_id: string;
   category: CategoryId;
   capacity: number;
-  host_price_month: number;
+  /** Null when a parking space is only let by the hour. */
+  host_price_month: number | null;
+  /** Parking only: host price per hour, and the most it costs per 24 hours. */
+  hourly_price?: number | null;
+  daily_max?: number | null;
+  /** Bookable hours each day (local time, 0–24) and weekdays (1 = Monday). */
+  hourly_from?: number;
+  hourly_to?: number;
+  hourly_days?: number[];
 }
 
 export interface ListingPhoto {
@@ -85,7 +93,9 @@ export interface ListingBlock {
 export interface RequestItem {
   category: CategoryId;
   quantity: number;
-  host_price_month: number;
+  host_price_month: number | null;
+  hourly_price?: number | null;
+  daily_max?: number | null;
 }
 
 export interface RequestRow {
@@ -102,6 +112,12 @@ export interface RequestRow {
   created_at: string;
   expires_at: string;
   responded_at: string | null;
+  /** "month": a request for a period; "hour": a direct hourly parking booking. */
+  kind?: "month" | "hour";
+  start_at?: string | null;
+  end_at?: string | null;
+  /** Hourly bookings: the host's price for the whole booking, before fees. */
+  host_total?: number | null;
   request_items: RequestItem[];
 }
 
@@ -131,9 +147,9 @@ export function suggestedHostPrice(category: CategoryId): number {
   return Math.max(10, Math.round(getCategory(category).price / (1 + FEES.renterServiceFee) / 5) * 5);
 }
 
-/** Host's monthly income from a request, after Spazia's fee. */
+/** Host's monthly income from a request, after Spazia's fee (hourly items count 0). */
 export function requestIncome(items: RequestItem[]): number {
-  return items.reduce((sum, i) => sum + hostPayout(i.host_price_month) * i.quantity, 0);
+  return items.reduce((sum, i) => sum + (i.host_price_month ? hostPayout(i.host_price_month) * i.quantity : 0), 0);
 }
 
 export function formatKr(amount: number): string {
@@ -188,7 +204,72 @@ export type AppMode = "host" | "renter";
 
 /** What the renter pays per month for a request (service fee included). */
 export function renterMonthly(items: Pick<RequestItem, "quantity" | "host_price_month">[]): number {
-  return items.reduce((sum, i) => sum + renterPrice(i.host_price_month) * i.quantity, 0);
+  return items.reduce((sum, i) => sum + (i.host_price_month ? renterPrice(i.host_price_month) * i.quantity : 0), 0);
+}
+
+/* ---------- Hourly parking (mirrors private.parking_host_total) ---------- */
+
+export const TIME_ZONE = "Europe/Stockholm";
+
+/** The host's price for a number of hours: per hour, but at most daily_max per 24 hours. */
+export function hourlyHostTotal(hours: number, hourly: number, dailyMax: number | null | undefined, quantity = 1): number {
+  const cap = (h: number) => Math.min(h * hourly, dailyMax ?? h * hourly);
+  return (Math.floor(hours / 24) * cap(24) + cap(hours % 24)) * Math.max(1, quantity);
+}
+
+/**
+ * What the renter pays for hours of parking: the same rule on the prices the
+ * renter sees (per hour and per day, service fee included), so the total adds up.
+ */
+export function renterHourlyTotal(hours: number, hourly: number, dailyMax: number | null | undefined, quantity = 1): number {
+  return hourlyHostTotal(hours, renterPrice(hourly), dailyMax != null ? renterPrice(dailyMax) : null, quantity);
+}
+
+/** Whole hours in an hourly booking. */
+export function bookingHours(r: Pick<RequestRow, "start_at" | "end_at">): number {
+  return r.start_at && r.end_at ? Math.round((Date.parse(r.end_at) - Date.parse(r.start_at)) / 3_600_000) : 0;
+}
+
+/** "14:00" style hour label (24 = midnight at the end of the day). */
+export function hourLabel(h: number): string {
+  return `${String(h % 24).padStart(2, "0")}:00`;
+}
+
+/** Bookable hours as text: "Dygnet runt, alla dagar" or "Mån–fre 07:00–18:00". */
+export function hoursText(space: Pick<ListingSpace, "hourly_from" | "hourly_to" | "hourly_days">): string {
+  const from = space.hourly_from ?? 0;
+  const to = space.hourly_to ?? 24;
+  const days = [...(space.hourly_days ?? [1, 2, 3, 4, 5, 6, 7])].sort();
+  const names = ["mån", "tis", "ons", "tor", "fre", "lör", "sön"];
+  const contiguous = days.every((d, i) => i === 0 || d === days[i - 1] + 1);
+  const dayText =
+    days.length === 7 ? "alla dagar" : contiguous && days.length > 2 ? `${names[days[0] - 1]}–${names[days[days.length - 1] - 1]}` : days.map((d) => names[d - 1]).join(", ");
+  const timeText = from === 0 && to === 24 ? "dygnet runt" : `${hourLabel(from)}–${hourLabel(to)}`;
+  const text = `${timeText}, ${dayText}`;
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/** "12 nov. 14:00–17:00" or "12 nov. 14:00 – 14 nov. 10:00", in Swedish time. */
+export function formatTimeRange(startIso: string, endIso: string): string {
+  const day = new Intl.DateTimeFormat("sv-SE", { timeZone: TIME_ZONE, day: "numeric", month: "short" });
+  const time = new Intl.DateTimeFormat("sv-SE", { timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit" });
+  const s = new Date(startIso);
+  const e = new Date(endIso);
+  const sameDay = day.format(s) === day.format(new Date(e.getTime() - 1000));
+  return sameDay ? `${day.format(s)} ${time.format(s)}–${time.format(e)}` : `${day.format(s)} ${time.format(s)} – ${day.format(e)} ${time.format(e)}`;
+}
+
+/** Period text for any request: dates for monthly, times for hourly bookings. */
+export function periodText(r: Pick<RequestRow, "start_date" | "end_date" | "kind" | "start_at" | "end_at">, untilFurtherNotice: string): string {
+  return r.kind === "hour" && r.start_at && r.end_at ? formatTimeRange(r.start_at, r.end_at) : formatPeriod(r.start_date, r.end_date, untilFurtherNotice);
+}
+
+/** Lowest price a renter sees for a listing: monthly if offered, otherwise hourly. */
+export function fromPrice(spaces: Pick<ListingSpace, "host_price_month" | "hourly_price">[]): { amount: number; per: "month" | "hour" } | null {
+  const monthly = spaces.filter((s) => s.host_price_month).map((s) => renterPrice(s.host_price_month!));
+  if (monthly.length) return { amount: Math.min(...monthly), per: "month" };
+  const hourly = spaces.filter((s) => s.hourly_price).map((s) => renterPrice(s.hourly_price!));
+  return hourly.length ? { amount: Math.min(...hourly), per: "hour" } : null;
 }
 
 export function addDays(iso: string, days: number): string {
@@ -211,4 +292,10 @@ export function minEndDate(start: string, minPeriod: MinPeriod): string {
 /** A rental is current from its start until its end (or forever). */
 export function isCurrent(r: Pick<RequestRow, "start_date" | "end_date">, today: string): boolean {
   return r.start_date <= today && (r.end_date === null || r.end_date >= today);
+}
+
+/** Whether an accepted rental or booking is still running or ahead. */
+export function isActive(r: Pick<RequestRow, "end_date" | "kind" | "end_at">, today: string, now = Date.now()): boolean {
+  if (r.kind === "hour" && r.end_at) return Date.parse(r.end_at) > now;
+  return r.end_date === null || r.end_date >= today;
 }

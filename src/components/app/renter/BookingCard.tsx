@@ -5,7 +5,7 @@ import { Hourglass } from "lucide-react";
 import { appText } from "@/content/app";
 import { fill } from "@/lib/i18n";
 import type { RenterRequest } from "@/lib/app/data";
-import { effectiveStatus, formatPeriod, timeLeft } from "@/lib/app/model";
+import { effectiveStatus, periodText, timeLeft } from "@/lib/app/model";
 import { CoverPhoto, itemsText, StatusChip } from "../ui";
 
 /** One of the renter's requests or rentals, with the listing's cover photo. */
@@ -20,7 +20,7 @@ export function BookingCard({ request, now }: { request: RenterRequest; now: num
         <span className="block truncate font-bold text-night">{l?.title || appText.listings.untitled}</span>
         {place && <span className="block truncate text-sm text-muted">{place}</span>}
         <span className="mt-1 block text-[0.95rem] text-ink">{itemsText(request.request_items)}</span>
-        <span className="block text-sm text-muted">{formatPeriod(request.start_date, request.end_date, appText.common.untilFurtherNotice)}</span>
+        <span className="block text-sm text-muted">{periodText(request, appText.common.untilFurtherNotice)}</span>
         <span className="mt-1.5 block">
           {status === "pending" ? (
             <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#8a5a00]">
@@ -28,7 +28,7 @@ export function BookingCard({ request, now }: { request: RenterRequest; now: num
               {fill(appText.booking.answerWithin, { time: timeLeft(request.expires_at, now) })}
             </span>
           ) : (
-            <StatusChip status={status} />
+            <StatusChip status={status} kind={request.kind} />
           )}
         </span>
       </span>

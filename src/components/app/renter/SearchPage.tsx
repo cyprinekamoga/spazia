@@ -9,7 +9,7 @@ import { appText } from "@/content/app";
 import { categories, type CategoryId } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { searchListings, type SearchResult } from "@/lib/app/data";
-import { formatKr, renterPrice } from "@/lib/app/model";
+import { formatKr, fromPrice } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { site } from "@/lib/site";
 import { Spinner, useOptionalSession } from "../AppShell";
@@ -20,13 +20,13 @@ const t = appText.search;
 function ResultCard({ listing }: { listing: SearchResult }) {
   const place = [listing.area_name, listing.city].filter(Boolean).join(", ");
   const type = listing.space_type ? appText.spaceTypes[listing.space_type] : "";
-  const from = listing.listing_spaces.length ? Math.min(...listing.listing_spaces.map((s) => renterPrice(s.host_price_month))) : null;
+  const from = fromPrice(listing.listing_spaces);
   return (
     <Link prefetch={false} href={`/annons?id=${listing.id}`} className="group block">
       <CoverPhoto photos={listing.listing_photos} className="aspect-[4/3] w-full rounded-2xl transition-opacity group-hover:opacity-90" />
       <span className="mt-2.5 block font-bold text-night">{listing.title || appText.listings.untitled}</span>
       <span className="block text-[0.95rem] text-muted">{[type, place].filter(Boolean).join(" i ")}</span>
-      {from !== null && <span className="mt-1 block font-semibold text-night">{fill(t.from, { price: formatKr(from) })}</span>}
+      {from !== null && <span className="mt-1 block font-semibold text-night">{fill(from.per === "hour" ? t.fromHour : t.from, { price: formatKr(from.amount) })}</span>}
     </Link>
   );
 }

@@ -8,7 +8,7 @@ import { categoryIcons } from "@/components/Icons";
 import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
-import { formatKr, renterPrice, type Listing, type ListingPhoto, type ListingSpace, type Profile } from "@/lib/app/model";
+import { formatKr, fromPrice, hoursText, renterPrice, type Listing, type ListingPhoto, type ListingSpace, type Profile } from "@/lib/app/model";
 import { photoUrl } from "@/lib/supabase";
 
 const t = appText;
@@ -54,20 +54,34 @@ function Gallery({ photos, title }: { photos: ListingPhoto[]; title: string }) {
   );
 }
 
-/** What the booking card and the phone bar offer: the request button, or a note instead. */
-function Action({ preview, action, notice, compact = false }: { preview: boolean; action?: { href: string; label: string } | null; notice?: ReactNode; compact?: boolean }) {
+export type ListingAction = { href: string; label: string };
+
+/**
+ * What the booking card and the phone bar offer: "Skicka förfrågan" and/or
+ * "Boka parkering", or a note instead. The first action is the main one.
+ */
+function Actions({ preview, actions, previewLabels, notice, compact = false }: { preview: boolean; actions: ListingAction[]; previewLabels: string[]; notice?: ReactNode; compact?: boolean }) {
+  const box = compact ? "flex shrink-0 flex-col items-stretch gap-1.5" : "mt-4 flex flex-col gap-2";
   if (preview) {
     return (
-      <button type="button" className={`btn btn-primary ${compact ? "" : "mt-4 w-full"}`} disabled>
-        {t.renterListing.request}
-      </button>
+      <div className={box}>
+        {previewLabels.map((label, i) => (
+          <button key={label} type="button" className={`btn ${i === 0 ? "btn-primary" : "btn-secondary"} ${compact ? "!min-h-10 !py-2" : "w-full"}`} disabled>
+            {label}
+          </button>
+        ))}
+      </div>
     );
   }
-  if (action) {
+  if (actions.length) {
     return (
-      <Link prefetch={false} href={action.href} className={`btn btn-primary ${compact ? "" : "mt-4 w-full"}`}>
-        {action.label}
-      </Link>
+      <div className={box}>
+        {actions.map((a, i) => (
+          <Link key={a.href} prefetch={false} href={a.href} className={`btn ${i === 0 ? "btn-primary" : "btn-secondary"} ${compact ? (actions.length > 1 ? "!min-h-10 !py-2 text-[0.95rem]" : "") : "w-full"}`}>
+            {a.label}
+          </Link>
+        ))}
+      </div>
     );
   }
   return notice ? <div className={compact ? "text-right text-sm" : "mt-4 text-[0.95rem]"}>{notice}</div> : null;
@@ -75,8 +89,8 @@ function Action({ preview, action, notice, compact = false }: { preview: boolean
 
 /**
  * A listing as renters see it. In `preview` mode (the host's own view) the
- * request button is disabled; otherwise `action` links to the request form,
- * or `notice` explains why there is none.
+ * buttons are disabled; otherwise `actions` link to the request form and/or
+ * the hourly parking booking, or `notice` explains why there are none.
  */
 export function ListingView({
   listing,
@@ -84,7 +98,7 @@ export function ListingView({
   photos,
   host,
   preview = false,
-  action,
+  actions = [],
   notice,
 }: {
   listing: Listing;
@@ -92,12 +106,17 @@ export function ListingView({
   photos: ListingPhoto[];
   host: Profile | null;
   preview?: boolean;
-  action?: { href: string; label: string } | null;
+  actions?: ListingAction[];
   notice?: ReactNode;
 }) {
   const place = [listing.area_name, listing.city].filter(Boolean).join(", ");
   const type = listing.space_type ? t.spaceTypes[listing.space_type] : "";
-  const fromPrice = spaces.length ? Math.min(...spaces.map((s) => renterPrice(s.host_price_month))) : null;
+  const from = fromPrice(spaces);
+  const per = from?.per === "hour" ? "tim" : "mån";
+  const previewLabels = [
+    ...(spaces.some((s) => s.host_price_month) ? [t.renterListing.request] : []),
+    ...(spaces.some((s) => s.hourly_price) ? [t.renterListing.bookParking] : []),
+  ];
   const facts = [
     listing.size_m2 ? { icon: Ruler, text: `${formatKr(Number(listing.size_m2))} m²` } : null,
     listing.heated ? { icon: Thermometer, text: t.heated[listing.heated] } : null,
@@ -155,11 +174,23 @@ export function ListingView({
                         <span className="block text-sm text-muted">
                           {s.capacity} {s.capacity === 1 ? c.unit.sv : c.unitPlural.sv}
                         </span>
+                        {s.hourly_price != null && <span className="block text-sm text-muted">{fill(t.renterListing.bookable, { hours: hoursText(s) })}</span>}
                       </span>
                     </span>
                     <span className="text-right">
-                      <span className="block font-bold text-night">{formatKr(renterPrice(s.host_price_month))} kr</span>
-                      <span className="block text-sm text-muted">per {c.unit.sv} och månad</span>
+                      {s.host_price_month != null && (
+                        <>
+                          <span className="block font-bold text-night">{formatKr(renterPrice(s.host_price_month))} kr</span>
+                          <span className="block text-sm text-muted">per {c.unit.sv} och månad</span>
+                        </>
+                      )}
+                      {s.hourly_price != null && (
+                        <>
+                          <span className={`block font-bold text-night ${s.host_price_month != null ? "mt-1.5" : ""}`}>{formatKr(renterPrice(s.hourly_price))} kr</span>
+                          <span className="block text-sm text-muted">{t.renterListing.perHour}</span>
+                          {s.daily_max != null && <span className="block text-sm text-muted">{fill(t.renterListing.maxPerDay, { price: formatKr(renterPrice(s.daily_max)) })}</span>}
+                        </>
+                      )}
                     </span>
                   </li>
                 );
@@ -230,14 +261,14 @@ export function ListingView({
         {/* Larger screens: booking card beside the text */}
         <aside className="hidden lg:block">
           <div className="sticky top-24 rounded-2xl border border-line bg-paper p-5 shadow-sm">
-            {fromPrice !== null && (
+            {from !== null && (
               <p className="text-night">
                 <span className="text-sm text-muted">från </span>
-                <span className="text-2xl font-bold">{formatKr(fromPrice)} kr</span>
-                <span className="text-muted"> / mån</span>
+                <span className="text-2xl font-bold">{formatKr(from.amount)} kr</span>
+                <span className="text-muted"> / {per}</span>
               </p>
             )}
-            <Action preview={preview} action={action} notice={notice} />
+            <Actions preview={preview} actions={actions} previewLabels={previewLabels} notice={notice} />
             {preview && <p className="mt-2 text-center text-sm text-muted">Förhandsvisning</p>}
           </div>
         </aside>
@@ -247,16 +278,16 @@ export function ListingView({
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
           <p className="text-night">
-            {fromPrice !== null && (
+            {from !== null && (
               <>
                 <span className="text-sm text-muted">från </span>
-                <span className="text-lg font-bold">{formatKr(fromPrice)} kr</span>
-                <span className="text-sm text-muted"> / mån</span>
+                <span className="text-lg font-bold">{formatKr(from.amount)} kr</span>
+                <span className="text-sm text-muted"> / {per}</span>
               </>
             )}
             {preview && <span className="block text-xs text-muted">Förhandsvisning</span>}
           </p>
-          <Action preview={preview} action={action} notice={notice} compact />
+          <Actions preview={preview} actions={actions} previewLabels={previewLabels} notice={notice} compact />
         </div>
       </div>
     </article>

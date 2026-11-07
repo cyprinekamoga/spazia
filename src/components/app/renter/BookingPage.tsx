@@ -8,7 +8,7 @@ import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchCounterpartPrivate, fetchListingPrivate, fetchRenterRequest } from "@/lib/app/data";
-import { effectiveStatus, formatKr, formatPeriod, renterMonthly, renterPrice, timeLeft } from "@/lib/app/model";
+import { bookingHours, effectiveStatus, formatKr, periodText, renterHourlyTotal, renterMonthly, renterPrice, timeLeft } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner } from "../AppShell";
@@ -51,6 +51,7 @@ export function BookingPage() {
   if (!r) return <p className="text-muted">{appText.common.error}</p>;
 
   const status = effectiveStatus(r, now);
+  const hourlyItem = r.request_items.find((i) => i.hourly_price != null);
   const hostName = r.host?.first_name || t.host;
   const l = r.listing;
   const place = [l?.area_name, l?.city].filter(Boolean).join(", ");
@@ -69,7 +70,7 @@ export function BookingPage() {
 
   const banner: Record<typeof status, { tone: "wait" | "ok" | "off"; text: string }> = {
     pending: { tone: "wait", text: fill(t.pending, { name: hostName }) },
-    accepted: { tone: "ok", text: t.accepted },
+    accepted: { tone: "ok", text: r.kind === "hour" ? t.booked : t.accepted },
     declined: { tone: "off", text: fill(t.declined, { name: hostName }) },
     cancelled: { tone: "off", text: t.cancelled },
     expired: { tone: "off", text: t.expired },
@@ -167,7 +168,7 @@ export function BookingPage() {
 
       <div className="card divide-y divide-line">
         <div className="p-4">
-          <p className="text-sm font-semibold text-muted">{t.wants}</p>
+          <p className="text-sm font-semibold text-muted">{r.kind === "hour" ? t.bookedWhat : t.wants}</p>
           <ul className="mt-1 space-y-1">
             {r.request_items.map((i) => {
               const c = getCategory(i.category);
@@ -176,7 +177,13 @@ export function BookingPage() {
                   <span>
                     {i.quantity} {i.quantity === 1 ? c.unit.sv : c.unitPlural.sv} ({c.name.sv.toLowerCase()})
                   </span>
-                  <span className="shrink-0 whitespace-nowrap text-muted">{formatKr(renterPrice(i.host_price_month) * i.quantity)} kr/mån</span>
+                  <span className="shrink-0 whitespace-nowrap text-muted">
+                    {i.host_price_month != null
+                      ? `${formatKr(renterPrice(i.host_price_month) * i.quantity)} kr/mån`
+                      : i.hourly_price != null
+                        ? fill(t.hourlyPrice, { price: formatKr(renterPrice(i.hourly_price) * i.quantity) })
+                        : ""}
+                  </span>
                 </li>
               );
             })}
@@ -184,10 +191,10 @@ export function BookingPage() {
         </div>
         <div className="p-4">
           <p className="text-sm font-semibold text-muted">{t.period}</p>
-          <p className="text-night">{formatPeriod(r.start_date, r.end_date, appText.common.untilFurtherNotice)}</p>
+          <p className="text-night">{periodText(r, appText.common.untilFurtherNotice)}</p>
         </div>
         <div className="p-4">
-          <p className="text-lg font-bold text-night">{fill(t.perMonth, { amount: formatKr(renterMonthly(r.request_items)) })}</p>
+          <p className="text-lg font-bold text-night">{r.kind === "hour" ? fill(t.total, { amount: formatKr(hourlyItem ? renterHourlyTotal(bookingHours(r), hourlyItem.hourly_price!, hourlyItem.daily_max, hourlyItem.quantity) : 0) }) : fill(t.perMonth, { amount: formatKr(renterMonthly(r.request_items)) })}</p>
           <p className="text-sm text-muted">{appText.requestForm.includesFee}</p>
         </div>
       </div>

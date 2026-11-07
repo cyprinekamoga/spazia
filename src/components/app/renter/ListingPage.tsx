@@ -54,8 +54,13 @@ export function RenterListingPage() {
   const open = data?.open ?? null;
   const own = listing.host_id === uid;
   const unavailable = listing.status !== "published";
-  const formPath = `/kund/skicka?id=${listing.id}`;
-  const action = !own && !unavailable && !open ? { href: uid ? formPath : `/logga-in?next=${encodeURIComponent(formPath)}`, label: t.request } : null;
+  // Visitors who aren't logged in log in first and then land on the form.
+  const withLogin = (path: string) => (uid ? path : `/logga-in?next=${encodeURIComponent(path)}`);
+  const canAct = !own && !unavailable;
+  const actions = [
+    ...(canAct && !open && bundle.spaces.some((s) => s.host_price_month != null) ? [{ href: withLogin(`/kund/skicka?id=${listing.id}`), label: t.request }] : []),
+    ...(canAct && bundle.spaces.some((s) => s.hourly_price != null) ? [{ href: withLogin(`/kund/parkera?id=${listing.id}`), label: t.bookParking }] : []),
+  ];
   const notice = own ? (
     <p className="text-muted">{t.own}</p>
   ) : open ? (
@@ -72,7 +77,7 @@ export function RenterListingPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">
       <div className="mb-4">{backButton}</div>
-      <ListingView listing={listing} spaces={bundle.spaces} photos={bundle.photos} host={bundle.host} action={action} notice={notice} />
+      <ListingView listing={listing} spaces={bundle.spaces} photos={bundle.photos} host={bundle.host} actions={actions} notice={notice} />
     </div>
   );
 }

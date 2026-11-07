@@ -5,7 +5,7 @@ import { Hourglass } from "lucide-react";
 import { appText } from "@/content/app";
 import { fill } from "@/lib/i18n";
 import type { HostRequest } from "@/lib/app/data";
-import { effectiveStatus, formatPeriod, timeLeft } from "@/lib/app/model";
+import { effectiveStatus, periodText, timeLeft } from "@/lib/app/model";
 import { Avatar, itemsText, StatusChip } from "../ui";
 
 export { Avatar, itemsText };
@@ -25,11 +25,11 @@ export function RequestCard({ request, now }: { request: HostRequest; now: numbe
               {fill(appText.today.answerWithin, { time: timeLeft(request.expires_at, now) })}
             </span>
           ) : (
-            <StatusChip status={status} />
+            <StatusChip status={status} kind={request.kind} />
           )}
         </span>
         <span className="mt-0.5 block text-[0.95rem] text-ink">{itemsText(request.request_items)}</span>
-        <span className="block text-sm text-muted">{formatPeriod(request.start_date, request.end_date, appText.common.untilFurtherNotice)}</span>
+        <span className="block text-sm text-muted">{periodText(request, appText.common.untilFurtherNotice)}</span>
         {request.listing && <span className="block truncate text-sm text-muted">{request.listing.title}</span>}
       </span>
     </Link>

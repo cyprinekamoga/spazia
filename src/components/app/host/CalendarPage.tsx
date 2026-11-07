@@ -8,7 +8,7 @@ import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchBlocks, fetchHostRequests, fetchListingBundle, fetchMyListings } from "@/lib/app/data";
-import { formatDay, formatMonthYear, formatPeriod, overlaps, todayIso } from "@/lib/app/model";
+import { formatDay, formatMonthYear, overlaps, periodText, todayIso } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "../AppShell";
@@ -80,11 +80,15 @@ export function CalendarPage() {
 
   const blockedOn = (day: string) => blocks.find((b) => b.start_date <= day && b.end_date >= day);
   const bookingsOn = (day: string) => bookings.filter((r) => overlaps(r.start_date, r.end_date, day, day));
-  /** "none", "partly" or "full": full only when every kind of space is taken that day. */
+  /**
+   * "none", "partly" or "full": full only when monthly rentals take every kind
+   * of space all day. Hourly parking bookings take a few hours, so they count as partly.
+   */
   const load = (day: string): "none" | "partly" | "full" => {
     const on = bookingsOn(day);
     if (on.length === 0 || spaces.length === 0) return "none";
-    const allFull = spaces.every((s) => on.reduce((sum, r) => sum + (r.request_items.find((i) => i.category === s.category)?.quantity ?? 0), 0) >= s.capacity);
+    const monthly = on.filter((r) => r.kind !== "hour");
+    const allFull = spaces.every((s) => monthly.reduce((sum, r) => sum + (r.request_items.find((i) => i.category === s.category)?.quantity ?? 0), 0) >= s.capacity);
     return allFull ? "full" : "partly";
   };
 
@@ -238,7 +242,7 @@ export function CalendarPage() {
                     <Link prefetch={false} href={`/vard/forfragan?id=${r.id}`} className="card block p-4 hover:border-night/30">
                       <span className="block font-bold text-night">{r.renter?.first_name || "–"}</span>
                       <span className="block text-[0.95rem] text-ink">{itemsText(r.request_items)}</span>
-                      <span className="block text-sm text-muted">{formatPeriod(r.start_date, r.end_date, appText.common.untilFurtherNotice)}</span>
+                      <span className="block text-sm text-muted">{periodText(r, appText.common.untilFurtherNotice)}</span>
                     </Link>
                   </li>
                 ))}

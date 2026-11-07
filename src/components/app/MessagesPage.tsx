@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { appText } from "@/content/app";
 import { fill } from "@/lib/i18n";
 import { fetchConversations, fetchMessages, markRead, otherProfile, type ConversationSummary } from "@/lib/app/data";
-import { effectiveStatus, formatPeriod, type AppMode, type Message, type RequestRow } from "@/lib/app/model";
+import { effectiveStatus, periodText, type AppMode, type Message, type RequestRow } from "@/lib/app/model";
 import { MODE_HOME } from "@/lib/app/mode";
 import { must, useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
@@ -94,7 +94,7 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
     const conversation = must(
       await db.from("conversations").select(`id, listing:listings(id, title), ${otherProfile(mode)}(first_name, avatar_url)`).eq("id", id).single(),
     ) as unknown as Thread["conversation"];
-    const requests = must(await db.from("requests").select("*, request_items(category, quantity, host_price_month)").eq("conversation_id", id).order("created_at", { ascending: false })) as RequestRow[];
+    const requests = must(await db.from("requests").select("*, request_items(category, quantity, host_price_month, hourly_price, daily_max)").eq("conversation_id", id).order("created_at", { ascending: false })) as RequestRow[];
     return { conversation, requests };
   }, `${id}:${mode}`);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -160,7 +160,7 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
         <Link key={r.id} prefetch={false} href={requestHref(mode, r.id)} className="mt-4 card block p-4 hover:border-night/30">
           <span className="block text-sm font-semibold text-muted">{appText.requestStatus[effectiveStatus(r, now)]}</span>
           <span className="block font-semibold text-night">{itemsText(r.request_items)}</span>
-          <span className="block text-sm text-muted">{formatPeriod(r.start_date, r.end_date, appText.common.untilFurtherNotice)}</span>
+          <span className="block text-sm text-muted">{periodText(r, appText.common.untilFurtherNotice)}</span>
         </Link>
       ))}
 

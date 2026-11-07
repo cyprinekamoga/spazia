@@ -7,7 +7,7 @@ import { useState } from "react";
 import { appText } from "@/content/app";
 import { fetchMyListings } from "@/lib/app/data";
 import { useLoad } from "@/lib/app/session";
-import { formatKr, renterPrice } from "@/lib/app/model";
+import { formatKr, fromPrice } from "@/lib/app/model";
 import { photoUrl, supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "../AppShell";
 
@@ -66,7 +66,7 @@ export function ListingsPage() {
         <ul className="mt-6 grid gap-4 sm:grid-cols-2">
           {listings.map((l) => {
             const cover = [...l.listing_photos].sort((a, b) => a.position - b.position)[0];
-            const from = l.listing_spaces.length ? Math.min(...l.listing_spaces.map((s) => renterPrice(s.host_price_month))) : null;
+            const from = fromPrice(l.listing_spaces);
             return (
               <li key={l.id} className="card overflow-hidden">
                 <Link prefetch={false} href={l.status === "draft" ? `/vard/annons?id=${l.id}` : `/vard/forhandsvisning?id=${l.id}`} className="block">
@@ -82,7 +82,7 @@ export function ListingsPage() {
                   <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${STATUS_STYLE[l.status]}`}>{appText.status[l.status]}</span>
                   <h2 className="mt-2 text-lg leading-snug font-bold text-night">{l.title || t.untitled}</h2>
                   <p className="text-sm text-muted">{[l.area_name, l.city].filter(Boolean).join(", ") || "–"}</p>
-                  {from !== null && <p className="text-sm text-muted">från {formatKr(from)} kr/mån</p>}
+                  {from !== null && <p className="text-sm text-muted">från {formatKr(from.amount)} {from.per === "hour" ? "kr/tim" : "kr/mån"}</p>}
                   <div className="mt-3 flex flex-wrap gap-2">
                     {l.status === "draft" ? (
                       <>

@@ -102,7 +102,9 @@ export function RequestFormPage() {
     );
   }
 
-  const { listing, spaces, photos, host } = bundle;
+  const { listing, photos, host } = bundle;
+  // Monthly requests cover the spaces with a monthly price (hourly-only parking is booked elsewhere).
+  const spaces = bundle.spaces.flatMap((sp) => (sp.host_price_month != null ? [{ ...sp, host_price_month: sp.host_price_month }] : []));
   const blocks = (base.data?.blocks ?? []).filter((b) => b.end_date >= today);
   const needName = !base.data?.me.profile?.first_name;
   const hostName = host?.first_name || appText.booking.host;

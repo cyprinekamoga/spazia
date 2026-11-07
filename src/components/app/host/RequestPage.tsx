@@ -8,7 +8,7 @@ import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchCounterpartPrivate, fetchRequest } from "@/lib/app/data";
-import { effectiveStatus, formatKr, formatPeriod, hostPayout, requestIncome, timeLeft } from "@/lib/app/model";
+import { effectiveStatus, formatKr, hostPayout, periodText, requestIncome, timeLeft } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner } from "../AppShell";
@@ -87,7 +87,7 @@ export function RequestPage() {
           <p className="font-semibold text-night">{r.listing?.title}</p>
         </div>
         <div className="p-4">
-          <p className="text-sm font-semibold text-muted">{t.wants}</p>
+          <p className="text-sm font-semibold text-muted">{r.kind === "hour" ? t.bookedWhat : t.wants}</p>
           <ul className="mt-1 space-y-1">
             {r.request_items.map((i) => {
               const c = getCategory(i.category);
@@ -96,7 +96,9 @@ export function RequestPage() {
                   <span>
                     {i.quantity} {i.quantity === 1 ? c.unit.sv : c.unitPlural.sv} ({c.name.sv.toLowerCase()})
                   </span>
-                  <span className="shrink-0 whitespace-nowrap text-muted">{formatKr(hostPayout(i.host_price_month) * i.quantity)} kr/mån</span>
+                  <span className="shrink-0 whitespace-nowrap text-muted">
+                    {i.host_price_month != null ? `${formatKr(hostPayout(i.host_price_month) * i.quantity)} kr/mån` : i.hourly_price != null ? `${formatKr(hostPayout(i.hourly_price) * i.quantity)} kr/tim` : ""}
+                  </span>
                 </li>
               );
             })}
@@ -112,7 +114,7 @@ export function RequestPage() {
         )}
         <div className="p-4">
           <p className="text-sm font-semibold text-muted">{t.period}</p>
-          <p className="text-night">{formatPeriod(r.start_date, r.end_date, appText.common.untilFurtherNotice)}</p>
+          <p className="text-night">{periodText(r, appText.common.untilFurtherNotice)}</p>
         </div>
         {r.message && (
           <div className="p-4">
@@ -121,7 +123,10 @@ export function RequestPage() {
           </div>
         )}
         <div className="p-4">
-          <p className="text-lg font-bold text-night">{fill(t.price, { amount: formatKr(requestIncome(r.request_items)) })}</p>
+          <p className="text-lg font-bold text-night">
+            {r.kind === "hour" ? fill(t.priceTotal, { amount: formatKr(hostPayout(r.host_total ?? 0)) }) : fill(t.price, { amount: formatKr(requestIncome(r.request_items)) })}
+          </p>
+          {r.kind === "hour" && <p className="text-sm text-muted">{t.directBooking}</p>}
         </div>
       </div>
 
@@ -168,7 +173,7 @@ export function RequestPage() {
         )}
         {status !== "pending" && (
           <p className="font-semibold text-night">
-            Status: {appText.requestStatus[status]}
+            Status: {r.kind === "hour" && status === "accepted" ? "Bokad" : appText.requestStatus[status]}
             {status === "declined" && r.decline_reason ? ` (${r.decline_reason})` : ""}
           </p>
         )}

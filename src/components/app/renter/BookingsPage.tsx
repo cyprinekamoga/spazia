@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { appText } from "@/content/app";
 import { fetchRenterRequests } from "@/lib/app/data";
-import { effectiveStatus, todayIso } from "@/lib/app/model";
+import { effectiveStatus, isActive, todayIso } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { Spinner, useAppSession } from "../AppShell";
 import { BookingCard } from "./BookingCard";
@@ -21,8 +21,8 @@ export function BookingsPage() {
 
   const today = todayIso();
   const active = data
-    .filter((r) => r.status === "accepted" && (r.end_date === null || r.end_date >= today))
-    .sort((a, b) => a.start_date.localeCompare(b.start_date));
+    .filter((r) => r.status === "accepted" && isActive(r, today, now))
+    .sort((a, b) => (a.start_at ?? a.start_date).localeCompare(b.start_at ?? b.start_date));
   const pending = data.filter((r) => effectiveStatus(r, now) === "pending");
   const past = data.filter((r) => !active.includes(r) && !pending.includes(r));
 

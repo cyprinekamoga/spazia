@@ -26,7 +26,7 @@ const TABS: Record<AppMode, Tab[]> = {
   ],
   renter: [
     { href: "/kund", label: t.home, icon: House },
-    { href: "/sok", label: t.search, icon: Search, also: ["/annons", "/kund/skicka"] },
+    { href: "/sok", label: t.search, icon: Search, also: ["/annons", "/kund/skicka", "/kund/parkera"] },
     { href: "/kund/bokningar", label: t.bookings, icon: Tickets, also: ["/kund/bokning"] },
     { href: "/kund/meddelanden", label: t.messages, icon: MessageSquare },
     { href: "/kund/meny", label: t.menu, icon: Menu },

@@ -68,13 +68,14 @@ The pages are built on Supabase (project `spazia`, region Stockholm). They are s
 | `/sok` | Published listings by town or area and by what they take (`?ort=`, `?typ=`). Open to everyone. |
 | `/annons` | A listing with "Skicka förfrågan" (asks visitors to log in first). Open to everyone. |
 | `/kund/skicka` | The request: start date, until further notice or an end date, how many of each thing (with free places for the period), a greeting to the host, and the monthly price including the service fee |
+| `/kund/parkera` | Hourly parking: pick a start and end time (whole hours), see free spaces and the total, book directly |
 | `/kund/bokningar` | Current and upcoming, waiting for an answer, earlier |
 | `/kund/bokning` | One request or rental: status, and after acceptance the address, how to get in and the host's phone. Withdraw or cancel. |
 | `/kund/meddelanden` | Inbox and threads with hosts |
 | `/kund/meny` | Profile, account, switch to hosting, log out |
 
 **How renting works:**
-- Renters never book directly. They send a request, and the host accepts or declines within 24 hours.
+- Renters never book directly, with one exception: hourly parking. A request is answered by the host within 24 hours. A parking space can also be let by the hour (price per hour, at most a set price per 24 hours, at the days and hours the host chooses); those bookings are confirmed straight away (`book_parking`).
 - A rental can be any length, from a few days to "until further notice". Hosts can set a minimum period.
 - The street address and access instructions are shown only after the host accepts. Host and renter see each other's phone number from then on.
 - The database checks every request: the host's minimum period, closed days (no drop-off or pick-up then), free places for the period, and one open request per renter and listing.

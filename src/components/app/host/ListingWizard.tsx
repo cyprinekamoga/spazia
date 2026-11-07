@@ -39,6 +39,7 @@ import {
   FEATURES,
   formatKr,
   hostPayout,
+  hourLabel,
   MIN_PERIODS,
   renterPrice,
   SPACE_TYPES,
@@ -71,7 +72,48 @@ const SPACE_ICONS: Record<SpaceType, typeof Warehouse> = {
   other: Shapes,
 };
 
-type SpaceDraft = { enabled: boolean; capacity: number; price: string };
+/** One kind of thing the host takes. Parking can also be let by the hour. */
+type SpaceDraft = {
+  enabled: boolean;
+  capacity: number;
+  price: string;
+  monthly: boolean;
+  hourly: boolean;
+  hourlyPrice: string;
+  dailyMax: string;
+  from: number;
+  to: number;
+  days: number[];
+};
+
+const ALL_DAYS = [1, 2, 3, 4, 5, 6, 7];
+const DAY_NAMES = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
+
+/** Whether an enabled space has a usable price. */
+function spaceReady(category: CategoryId, s: SpaceDraft): boolean {
+  const monthlyOk = s.monthly && Number(s.price) >= 10;
+  if (category !== "parking") return Number(s.price) >= 10;
+  const hourlyOk = s.hourly && Number(s.hourlyPrice) >= 1 && s.days.length > 0 && s.to > s.from;
+  return (monthlyOk || hourlyOk) && (!s.monthly || monthlyOk) && (!s.hourly || hourlyOk);
+}
+
+/** The row saved to listing_spaces for a space. */
+function spaceRow(listingId: string, category: CategoryId, s: SpaceDraft) {
+  const hourly = category === "parking" && s.hourly;
+  const monthly = category !== "parking" || s.monthly;
+  const dailyMax = Number(s.dailyMax);
+  return {
+    listing_id: listingId,
+    category,
+    capacity: Math.max(1, Math.min(200, s.capacity)),
+    host_price_month: monthly ? Math.max(10, Math.round(Number(s.price) || suggestedHostPrice(category))) : null,
+    hourly_price: hourly ? Math.max(1, Math.min(1000, Math.round(Number(s.hourlyPrice)))) : null,
+    daily_max: hourly && dailyMax >= 1 ? Math.min(24000, Math.round(dailyMax)) : null,
+    hourly_from: hourly ? s.from : 0,
+    hourly_to: hourly ? s.to : 24,
+    hourly_days: hourly && s.days.length ? [...s.days].sort() : ALL_DAYS,
+  };
+}
 type Draft = {
   listing: Partial<Listing>;
   priv: Partial<ListingPrivate>;
@@ -81,13 +123,41 @@ type Draft = {
 
 function emptySpaces(): Record<CategoryId, SpaceDraft> {
   return Object.fromEntries(
-    categories.map((c) => [c.id, { enabled: false, capacity: c.id === "boxes" ? 5 : 1, price: String(suggestedHostPrice(c.id)) }]),
+    categories.map((c) => [
+      c.id,
+      {
+        enabled: false,
+        capacity: c.id === "boxes" ? 5 : 1,
+        price: String(suggestedHostPrice(c.id)),
+        monthly: true,
+        hourly: false,
+        hourlyPrice: "15",
+        dailyMax: "120",
+        from: 0,
+        to: 24,
+        days: ALL_DAYS,
+      },
+    ]),
   ) as Record<CategoryId, SpaceDraft>;
 }
 
 function fromBundle(b: ListingBundle): Draft {
   const spaces = emptySpaces();
-  for (const s of b.spaces) spaces[s.category] = { enabled: true, capacity: s.capacity, price: String(s.host_price_month) };
+  for (const s of b.spaces) {
+    spaces[s.category] = {
+      ...spaces[s.category],
+      enabled: true,
+      capacity: s.capacity,
+      price: String(s.host_price_month ?? suggestedHostPrice(s.category)),
+      monthly: s.host_price_month != null,
+      hourly: s.hourly_price != null,
+      hourlyPrice: String(s.hourly_price ?? 15),
+      dailyMax: s.daily_max != null ? String(s.daily_max) : "",
+      from: s.hourly_from ?? 0,
+      to: s.hourly_to ?? 24,
+      days: s.hourly_days ?? ALL_DAYS,
+    };
+  }
   return { listing: b.listing, priv: b.priv ?? {}, spaces, photos: b.photos };
 }
 
@@ -102,6 +172,100 @@ function missingParts(d: Draft): string[] {
   if (d.photos.length === 0) m.push("photos");
   if (!d.listing.access) m.push("access");
   return m;
+}
+
+/** "Per månad" / "Per timme" switch for parking. */
+function ModeToggle({ checked, onChange, title, hint }: { checked: boolean; onChange: (v: boolean) => void; title: string; hint: string }) {
+  return (
+    <label className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 sm:col-span-2 ${checked ? "border-night bg-frost/50" : "border-line"}`}>
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[#2f6b75]" />
+      <span>
+        <span className="block font-semibold text-night">{title}</span>
+        <span className="block text-sm text-muted">{hint}</span>
+      </span>
+    </label>
+  );
+}
+
+/** Price per hour, the cap per day, and when the parking space can be booked. */
+function HourlySettings({ s, onChange }: { s: SpaceDraft; onChange: (patch: Partial<SpaceDraft>) => void }) {
+  const hourly = Number(s.hourlyPrice) || 0;
+  const max = Number(s.dailyMax) || 0;
+  const allDay = s.from === 0 && s.to === 24;
+  const toggleDay = (d: number) => onChange({ days: s.days.includes(d) ? s.days.filter((x) => x !== d) : [...s.days, d] });
+  return (
+    <div className="grid gap-4 sm:col-span-2 sm:grid-cols-2">
+      <div>
+        <label htmlFor="hourly-price" className="field-label">
+          {w.spaces.hourlyPrice}
+        </label>
+        <div className="flex items-center gap-2">
+          <input id="hourly-price" className="field-input max-w-32" inputMode="numeric" value={s.hourlyPrice} onChange={(e) => onChange({ hourlyPrice: e.target.value.replace(/\D/g, "").slice(0, 4) })} />
+          <span className="text-muted">kr</span>
+        </div>
+      </div>
+      <div>
+        <label htmlFor="daily-max" className="field-label">
+          {w.spaces.dailyMax}
+        </label>
+        <div className="flex items-center gap-2">
+          <input id="daily-max" className="field-input max-w-32" inputMode="numeric" value={s.dailyMax} onChange={(e) => onChange({ dailyMax: e.target.value.replace(/\D/g, "").slice(0, 5) })} />
+          <span className="text-muted">kr</span>
+        </div>
+        <p className="mt-1.5 text-sm text-muted">{w.spaces.dailyMaxHint}</p>
+      </div>
+      {hourly >= 1 && (
+        <p className="text-sm leading-relaxed text-muted sm:col-span-2">
+          {fill(w.spaces.hourlyRenterPays, { price: formatKr(renterPrice(hourly)), max: formatKr(renterPrice(max >= 1 ? Math.min(max, hourly * 24) : hourly * 24)) })}
+        </p>
+      )}
+      <fieldset className="sm:col-span-2">
+        <legend className="field-label">{w.spaces.hours}</legend>
+        <label className="flex min-h-11 w-fit cursor-pointer items-center gap-2 font-medium text-night">
+          <input type="checkbox" checked={allDay} onChange={(e) => onChange(e.target.checked ? { from: 0, to: 24 } : { from: 7, to: 22 })} className="h-5 w-5 accent-[#2f6b75]" />
+          {w.spaces.allDay}
+        </label>
+        {!allDay && (
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+            <label htmlFor="hourly-from" className="text-sm font-semibold text-muted">
+              {w.spaces.from}
+            </label>
+            <select id="hourly-from" className="field-input !w-auto" value={s.from} onChange={(e) => onChange({ from: Number(e.target.value) })}>
+              {Array.from({ length: 24 }, (_, h) => (
+                <option key={h} value={h}>
+                  {hourLabel(h)}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="hourly-to" className="text-sm font-semibold text-muted">
+              {w.spaces.to}
+            </label>
+            <select id="hourly-to" className="field-input !w-auto" value={s.to} onChange={(e) => onChange({ to: Number(e.target.value) })}>
+              {Array.from({ length: 24 }, (_, i) => i + 1).map((h) => (
+                <option key={h} value={h} disabled={h <= s.from}>
+                  {h === 24 ? "24:00" : hourLabel(h)}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        <p className="mt-4 text-sm font-semibold text-muted">{w.spaces.days}</p>
+        <div className="mt-1.5 flex flex-wrap gap-2">
+          {DAY_NAMES.map((name, i) => (
+            <button
+              key={name}
+              type="button"
+              aria-pressed={s.days.includes(i + 1)}
+              onClick={() => toggleDay(i + 1)}
+              className="min-h-11 rounded-full border border-line px-3.5 font-semibold text-ink aria-pressed:border-night aria-pressed:bg-night aria-pressed:text-white"
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+    </div>
+  );
 }
 
 /** Resize a photo in the browser before upload (max 1600 px, JPEG). */
@@ -184,8 +348,10 @@ export function ListingWizard() {
         return Boolean(l.space_type);
       case "place":
         return Boolean((draft.priv.street_address ?? "").trim() && (l.city ?? "").trim());
-      case "spaces":
-        return Object.values(draft.spaces).some((s) => s.enabled && Number(s.price) >= 10);
+      case "spaces": {
+        const enabled = categories.filter((c) => draft.spaces[c.id].enabled);
+        return enabled.length > 0 && enabled.every((c) => spaceReady(c.id, draft.spaces[c.id]));
+      }
       case "photos":
         return draft.photos.length > 0;
       case "text":
@@ -232,12 +398,7 @@ export function ListingWizard() {
       }
       if (enabled.length) {
         const r = await db.from("listing_spaces").upsert(
-          enabled.map((c) => ({
-            listing_id: listingId,
-            category: c.id,
-            capacity: Math.max(1, Math.min(200, draft.spaces[c.id].capacity)),
-            host_price_month: Math.max(10, Math.round(Number(draft.spaces[c.id].price) || suggestedHostPrice(c.id))),
-          })),
+          enabled.map((c) => spaceRow(listingId!, c.id, draft.spaces[c.id])),
           { onConflict: "listing_id,category" },
         );
         if (r.error) throw new Error(r.error.message);
@@ -351,7 +512,7 @@ export function ListingWizard() {
     : "";
   const potential = categories.reduce((sum, c) => {
     const s = draft.spaces[c.id];
-    return s.enabled ? sum + hostPayout(Number(s.price) || 0) * s.capacity : sum;
+    return s.enabled && (c.id !== "parking" || s.monthly) ? sum + hostPayout(Number(s.price) || 0) * s.capacity : sum;
   }, 0);
 
   if (published) {
@@ -513,22 +674,36 @@ export function ListingWizard() {
                             </button>
                           </div>
                         </div>
-                        <div>
-                          <label htmlFor={`price-${c.id}`} className="field-label">
-                            {fill(w.spaces.price, { unit: c.unit.sv })}
-                          </label>
-                          <div className="flex items-center gap-2">
-                            <input id={`price-${c.id}`} className="field-input max-w-32" inputMode="numeric" value={s.price} onChange={(e) => setSpace(c.id, { price: e.target.value.replace(/\D/g, "").slice(0, 6) })} />
-                            <span className="text-muted">kr</span>
-                          </div>
-                          <button type="button" className="mt-1.5 text-sm font-semibold text-brand underline underline-offset-4" onClick={() => setSpace(c.id, { price: String(suggestedHostPrice(c.id)) })}>
-                            {fill(w.spaces.suggested, { price: suggestedHostPrice(c.id) })}
-                          </button>
-                        </div>
-                        {price >= 10 && (
-                          <p className="text-sm leading-relaxed text-muted sm:col-span-2">
-                            {fill(w.spaces.renterPays, { price: formatKr(renterPrice(price)) })} {fill(w.spaces.youGet, { price: formatKr(hostPayout(price)) })}
-                          </p>
+                        {c.id === "parking" && (
+                          <ModeToggle checked={s.monthly} onChange={(v) => setSpace(c.id, { monthly: v })} title={w.spaces.monthly} hint={w.spaces.monthlyHint} />
+                        )}
+                        {(c.id !== "parking" || s.monthly) && (
+                          <>
+                            <div>
+                              <label htmlFor={`price-${c.id}`} className="field-label">
+                                {fill(w.spaces.price, { unit: c.unit.sv })}
+                              </label>
+                              <div className="flex items-center gap-2">
+                                <input id={`price-${c.id}`} className="field-input max-w-32" inputMode="numeric" value={s.price} onChange={(e) => setSpace(c.id, { price: e.target.value.replace(/\D/g, "").slice(0, 6) })} />
+                                <span className="text-muted">kr</span>
+                              </div>
+                              <button type="button" className="mt-1.5 text-sm font-semibold text-brand underline underline-offset-4" onClick={() => setSpace(c.id, { price: String(suggestedHostPrice(c.id)) })}>
+                                {fill(w.spaces.suggested, { price: suggestedHostPrice(c.id) })}
+                              </button>
+                            </div>
+                            {price >= 10 && (
+                              <p className="text-sm leading-relaxed text-muted sm:col-span-2">
+                                {fill(w.spaces.renterPays, { price: formatKr(renterPrice(price)) })} {fill(w.spaces.youGet, { price: formatKr(hostPayout(price)) })}
+                              </p>
+                            )}
+                          </>
+                        )}
+                        {c.id === "parking" && (
+                          <>
+                            <ModeToggle checked={s.hourly} onChange={(v) => setSpace(c.id, { hourly: v })} title={w.spaces.hourly} hint={w.spaces.hourlyHint} />
+                            {s.hourly && <HourlySettings s={s} onChange={(patch) => setSpace(c.id, patch)} />}
+                            {!s.monthly && !s.hourly && <p className="text-sm font-medium text-[#b42318] sm:col-span-2">{w.spaces.needOne}</p>}
+                          </>
                         )}
                       </div>
                     )}
@@ -679,7 +854,7 @@ export function ListingWizard() {
             <div className="mt-8 overflow-hidden rounded-3xl border border-line bg-snow p-4 sm:p-6 [&_.fixed]:hidden">
               <ListingView
                 listing={l as Listing}
-                spaces={categories.filter((c) => draft.spaces[c.id].enabled).map((c) => ({ id: c.id, listing_id: id ?? "", category: c.id, capacity: draft.spaces[c.id].capacity, host_price_month: Number(draft.spaces[c.id].price) || 0 }))}
+                spaces={categories.filter((c) => draft.spaces[c.id].enabled).map((c) => ({ id: c.id, ...spaceRow(id ?? "", c.id, draft.spaces[c.id]) }))}
                 photos={draft.photos}
                 host={null}
                 preview

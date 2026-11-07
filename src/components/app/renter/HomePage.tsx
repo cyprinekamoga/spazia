@@ -9,7 +9,7 @@ import { appText } from "@/content/app";
 import { categories } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchMyProfile, fetchRenterRequests } from "@/lib/app/data";
-import { effectiveStatus, isCurrent, todayIso } from "@/lib/app/model";
+import { effectiveStatus, isActive, isCurrent, todayIso } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { Spinner, useAppSession } from "../AppShell";
 import { BookingCard } from "./BookingCard";
@@ -92,7 +92,7 @@ export function RenterHomePage() {
   const { me, requests } = data;
   const today = todayIso();
   const pending = requests.filter((r) => effectiveStatus(r, now) === "pending");
-  const accepted = requests.filter((r) => r.status === "accepted");
+  const accepted = requests.filter((r) => r.status === "accepted" && isActive(r, today, now));
   const current = accepted.filter((r) => isCurrent(r, today));
   const upcoming = accepted.filter((r) => r.start_date > today).sort((a, b) => a.start_date.localeCompare(b.start_date));
   const name = me.profile?.first_name;
