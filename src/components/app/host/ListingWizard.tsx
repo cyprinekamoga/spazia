@@ -28,7 +28,7 @@ import { LogoMark } from "@/components/Logo";
 import { categoryIcons } from "@/components/Icons";
 import { TownField } from "@/components/forms/FormFields";
 import { ListingView } from "@/components/app/ListingView";
-import { useHostSession, Spinner } from "@/components/app/HostShell";
+import { useAppSession, Spinner } from "@/components/app/AppShell";
 import { appText } from "@/content/app";
 import { categories, type CategoryId } from "@/content/categories";
 import { tidyTown } from "@/content/cities";
@@ -142,7 +142,7 @@ function Field({ id, label, hint, children }: { id: string; label: string; hint?
 }
 
 export function ListingWizard() {
-  const session = useHostSession();
+  const session = useAppSession();
   const uid = session.user.id;
   const router = useRouter();
   const params = useSearchParams();

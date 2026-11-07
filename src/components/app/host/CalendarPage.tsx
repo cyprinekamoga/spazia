@@ -11,7 +11,7 @@ import { fetchBlocks, fetchHostRequests, fetchListingBundle, fetchMyListings } f
 import { formatDay, formatMonthYear, formatPeriod, overlaps, todayIso } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
-import { Spinner, useHostSession } from "../HostShell";
+import { Spinner, useAppSession } from "../AppShell";
 import { itemsText } from "./RequestCard";
 
 const t = appText.calendar;
@@ -38,7 +38,7 @@ function weekdayIndex(iso: string): number {
 }
 
 export function CalendarPage() {
-  const uid = useHostSession().user.id;
+  const uid = useAppSession().user.id;
   const params = useSearchParams();
   const listingsLoad = useLoad(() => fetchMyListings(uid), uid);
   const listings = (listingsLoad.data ?? []).filter((l) => l.status !== "draft");

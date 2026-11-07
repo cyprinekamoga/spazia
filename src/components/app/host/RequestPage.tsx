@@ -7,11 +7,11 @@ import { useState } from "react";
 import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
-import { fetchRequest } from "@/lib/app/data";
+import { fetchCounterpartPrivate, fetchRequest } from "@/lib/app/data";
 import { effectiveStatus, formatKr, formatPeriod, hostPayout, requestIncome, timeLeft } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
-import { Spinner } from "../HostShell";
+import { Spinner } from "../AppShell";
 import { Avatar } from "./RequestCard";
 
 const t = appText.request;
@@ -22,7 +22,12 @@ function memberSince(iso: string): string {
 
 export function RequestPage() {
   const id = useSearchParams().get("id") ?? "";
-  const { data: r, loading, reload } = useLoad(() => fetchRequest(id), id);
+  const { data: r, loading, reload } = useLoad(async () => {
+    const req = await fetchRequest(id);
+    // The renter's phone is readable once the request is accepted.
+    const phone = req?.status === "accepted" ? ((await fetchCounterpartPrivate(req.renter_id))?.phone ?? "") : "";
+    return req ? { ...req, renterPhone: phone } : null;
+  }, id);
   const [busy, setBusy] = useState(false);
   const [declining, setDeclining] = useState(false);
   const [reason, setReason] = useState("");
@@ -97,6 +102,14 @@ export function RequestPage() {
             })}
           </ul>
         </div>
+        {r.renterPhone && (
+          <div className="p-4">
+            <p className="text-sm font-semibold text-muted">{appText.menu.phone}</p>
+            <a href={`tel:${r.renterPhone.replace(/\s/g, "")}`} className="font-semibold text-brand underline underline-offset-4">
+              {r.renterPhone}
+            </a>
+          </div>
+        )}
         <div className="p-4">
           <p className="text-sm font-semibold text-muted">{t.period}</p>
           <p className="text-night">{formatPeriod(r.start_date, r.end_date, appText.common.untilFurtherNotice)}</p>

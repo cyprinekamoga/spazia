@@ -2,7 +2,8 @@
 
 import { supabase } from "../supabase";
 import { must } from "./session";
-import type { Listing, ListingBlock, ListingPhoto, ListingPrivate, ListingSpace, Message, Profile, ProfilePrivate, RequestRow } from "./model";
+import type { AppMode, Listing, ListingBlock, ListingPhoto, ListingPrivate, ListingSpace, Message, Profile, ProfilePrivate, RequestRow } from "./model";
+import type { CategoryId } from "@/content/categories";
 
 export interface ListingBundle {
   listing: Listing;
@@ -80,20 +81,26 @@ export type ConversationSummary = {
   host_id: string;
   renter_id: string;
   last_message_at: string;
-  renter: Pick<Profile, "id" | "first_name" | "avatar_url"> | null;
+  /** The other person: the renter for a host, the host for a renter. */
+  other: Pick<Profile, "id" | "first_name" | "avatar_url"> | null;
   listing: Pick<Listing, "id" | "title"> | null;
   messages: Pick<Message, "body" | "kind" | "sender_id" | "created_at">[];
   conversation_reads: { user_id: string; last_read_at: string }[];
 };
 
-export async function fetchConversations(uid: string): Promise<ConversationSummary[]> {
+/** The profile on the other side of a conversation, as a PostgREST embed. */
+export function otherProfile(mode: AppMode): string {
+  return mode === "host" ? "other:profiles!conversations_renter_id_fkey" : "other:profiles!conversations_host_id_fkey";
+}
+
+export async function fetchConversations(uid: string, mode: AppMode): Promise<ConversationSummary[]> {
   return must(
     await supabase()
       .from("conversations")
       .select(
-        "id, listing_id, host_id, renter_id, last_message_at, renter:profiles!conversations_renter_id_fkey(id, first_name, avatar_url), listing:listings(id, title), messages(body, kind, sender_id, created_at), conversation_reads(user_id, last_read_at)",
+        `id, listing_id, host_id, renter_id, last_message_at, ${otherProfile(mode)}(id, first_name, avatar_url), listing:listings(id, title), messages(body, kind, sender_id, created_at), conversation_reads(user_id, last_read_at)`,
       )
-      .eq("host_id", uid)
+      .eq(mode === "host" ? "host_id" : "renter_id", uid)
       .order("last_message_at", { ascending: false })
       .order("created_at", { referencedTable: "messages", ascending: false })
       .limit(1, { referencedTable: "messages" }),
@@ -106,4 +113,79 @@ export async function fetchMessages(conversationId: string): Promise<Message[]> 
 
 export async function markRead(conversationId: string, uid: string): Promise<void> {
   await supabase().from("conversation_reads").upsert({ conversation_id: conversationId, user_id: uid, last_read_at: new Date().toISOString() });
+}
+
+/* ---------- Renter side ---------- */
+
+export type RenterRequest = RequestRow & {
+  host: Pick<Profile, "id" | "first_name" | "avatar_url" | "about" | "created_at"> | null;
+  listing: (Pick<Listing, "id" | "title" | "city" | "area_name" | "access" | "access_notes" | "status"> & { listing_photos: Pick<ListingPhoto, "path" | "position">[] }) | null;
+};
+
+const RENTER_REQUEST_SELECT =
+  "*, request_items(category, quantity, host_price_month), host:profiles!requests_host_id_fkey(id, first_name, avatar_url, about, created_at), listing:listings(id, title, city, area_name, access, access_notes, status, listing_photos(path, position))";
+
+export async function fetchRenterRequests(uid: string): Promise<RenterRequest[]> {
+  return must(
+    await supabase().from("requests").select(RENTER_REQUEST_SELECT).eq("renter_id", uid).order("created_at", { ascending: false }),
+  ) as RenterRequest[];
+}
+
+export async function fetchRenterRequest(id: string): Promise<RenterRequest | null> {
+  return must(await supabase().from("requests").select(RENTER_REQUEST_SELECT).eq("id", id).maybeSingle()) as RenterRequest | null;
+}
+
+/** Address and access instructions: readable once the host has accepted. */
+export async function fetchListingPrivate(listingId: string): Promise<ListingPrivate | null> {
+  return must(await supabase().from("listing_private").select("*").eq("listing_id", listingId).maybeSingle()) as ListingPrivate | null;
+}
+
+/** The other person's phone and last name: readable once a request between you is accepted. */
+export async function fetchCounterpartPrivate(userId: string): Promise<ProfilePrivate | null> {
+  return must(await supabase().from("profile_private").select("id, last_name, phone").eq("id", userId).maybeSingle()) as ProfilePrivate | null;
+}
+
+export type SearchResult = Pick<Listing, "id" | "host_id" | "title" | "city" | "area_name" | "space_type" | "size_m2" | "heated" | "published_at"> & {
+  listing_photos: Pick<ListingPhoto, "path" | "position">[];
+  listing_spaces: Pick<ListingSpace, "category" | "capacity" | "host_price_month">[];
+};
+
+/** Characters that would break a PostgREST filter. */
+function cleanTerm(term: string): string {
+  return term.replace(/[,()*%\\:."']/g, " ").replace(/\s+/g, " ").trim().slice(0, 60);
+}
+
+/** Published listings, optionally by place (city or area) and by what they take. */
+export async function searchListings({ place, category, exclude }: { place: string; category: CategoryId | null; exclude: string }): Promise<SearchResult[]> {
+  let q = supabase()
+    .from("listings")
+    .select("id, host_id, title, city, area_name, space_type, size_m2, heated, published_at, listing_photos(path, position), listing_spaces!inner(category, capacity, host_price_month)")
+    .eq("status", "published")
+    .neq("host_id", exclude)
+    .order("published_at", { ascending: false })
+    .limit(60);
+  const term = cleanTerm(place);
+  if (term) q = q.or(`city.ilike.*${term}*,area_name.ilike.*${term}*`);
+  if (category) q = q.eq("listing_spaces.category", category);
+  return must(await q) as SearchResult[];
+}
+
+export type Availability = { category: CategoryId; capacity: number; available: number };
+
+export async function fetchAvailability(listingId: string, start: string, end: string | null): Promise<Availability[]> {
+  return must(await supabase().rpc("listing_availability", { p_listing: listingId, p_start: start, p_end: end })) as Availability[];
+}
+
+/** The renter's own open or accepted request on a listing, if any. */
+export async function fetchMyOpenRequest(listingId: string, uid: string): Promise<Pick<RequestRow, "id" | "status" | "expires_at"> | null> {
+  const rows = must(
+    await supabase()
+      .from("requests")
+      .select("id, status, expires_at")
+      .eq("listing_id", listingId)
+      .eq("renter_id", uid)
+      .in("status", ["pending", "accepted"])
+      .order("created_at", { ascending: false }),
+  ) as Pick<RequestRow, "id" | "status" | "expires_at">[];
+  return rows.find((r) => r.status === "accepted" || Date.parse(r.expires_at) > Date.now()) ?? null;
 }

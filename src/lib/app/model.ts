@@ -181,3 +181,34 @@ export function effectiveStatus(r: Pick<RequestRow, "status" | "expires_at">, no
 export function overlaps(aStart: string, aEnd: string | null, bStart: string, bEnd: string | null): boolean {
   return aStart <= (bEnd ?? "9999-12-31") && (aEnd ?? "9999-12-31") >= bStart;
 }
+
+/* ---------- Renter side ---------- */
+
+export type AppMode = "host" | "renter";
+
+/** What the renter pays per month for a request (service fee included). */
+export function renterMonthly(items: Pick<RequestItem, "quantity" | "host_price_month">[]): number {
+  return items.reduce((sum, i) => sum + renterPrice(i.host_price_month) * i.quantity, 0);
+}
+
+export function addDays(iso: string, days: number): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+/** Earliest end date the host accepts for a start date (mirrors create_request). */
+export function minEndDate(start: string, minPeriod: MinPeriod): string {
+  if (minPeriod === "week") return addDays(start, 6);
+  if (minPeriod === "month") {
+    const d = new Date(`${start}T00:00:00Z`);
+    d.setUTCMonth(d.getUTCMonth() + 1);
+    return addDays(d.toISOString().slice(0, 10), -1);
+  }
+  return start;
+}
+
+/** A rental is current from its start until its end (or forever). */
+export function isCurrent(r: Pick<RequestRow, "start_date" | "end_date">, today: string): boolean {
+  return r.start_date <= today && (r.end_date === null || r.end_date >= today);
+}

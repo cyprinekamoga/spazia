@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { HostShell, Spinner } from "@/components/app/HostShell";
+import { HostShell, Spinner } from "@/components/app/AppShell";
 import { ListingPreviewPage } from "@/components/app/host/ListingPreviewPage";
 
 export const metadata: Metadata = { title: "Förhandsvisning" };

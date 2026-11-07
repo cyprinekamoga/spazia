@@ -8,7 +8,7 @@ import { fill } from "@/lib/i18n";
 import { fetchHostRequests, fetchMyListings, fetchMyProfile } from "@/lib/app/data";
 import { effectiveStatus, formatKr, requestIncome, todayIso } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
-import { Spinner, useHostSession } from "../HostShell";
+import { Spinner, useAppSession } from "../AppShell";
 import { RequestCard } from "./RequestCard";
 
 const t = appText.today;
@@ -25,7 +25,7 @@ function Todo({ href, children }: { href: string; children: string }) {
 }
 
 export function TodayPage() {
-  const uid = useHostSession().user.id;
+  const uid = useAppSession().user.id;
   const { data, loading, error } = useLoad(async () => {
     const [me, listings, requests] = await Promise.all([fetchMyProfile(uid), fetchMyListings(uid), fetchHostRequests(uid)]);
     return { me, listings, requests };

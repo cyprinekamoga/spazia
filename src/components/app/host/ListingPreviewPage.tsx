@@ -7,7 +7,7 @@ import { appText } from "@/content/app";
 import { fetchListingBundle } from "@/lib/app/data";
 import { useLoad } from "@/lib/app/session";
 import { ListingView } from "../ListingView";
-import { Spinner } from "../HostShell";
+import { Spinner } from "../AppShell";
 
 /** The host's own listing, shown the way renters will see it. */
 export function ListingPreviewPage() {

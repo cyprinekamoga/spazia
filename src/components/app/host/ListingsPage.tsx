@@ -9,7 +9,7 @@ import { fetchMyListings } from "@/lib/app/data";
 import { useLoad } from "@/lib/app/session";
 import { formatKr, renterPrice } from "@/lib/app/model";
 import { photoUrl, supabase } from "@/lib/supabase";
-import { Spinner, useHostSession } from "../HostShell";
+import { Spinner, useAppSession } from "../AppShell";
 
 const t = appText.listings;
 
@@ -20,7 +20,7 @@ const STATUS_STYLE = {
 };
 
 export function ListingsPage() {
-  const uid = useHostSession().user.id;
+  const uid = useAppSession().user.id;
   const { data, loading, error, reload } = useLoad(() => fetchMyListings(uid), uid);
   const [busy, setBusy] = useState<string | null>(null);
 

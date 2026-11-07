@@ -1,7 +1,9 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- photos come from Supabase Storage, not the build */
+import Link from "next/link";
 import { CalendarClock, Clock3, DoorOpen, KeyRound, Ruler, ShieldCheck, Thermometer } from "lucide-react";
+import type { ReactNode } from "react";
 import { categoryIcons } from "@/components/Icons";
 import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
@@ -52,19 +54,46 @@ function Gallery({ photos, title }: { photos: ListingPhoto[]; title: string }) {
   );
 }
 
-/** A listing as renters see it. In `preview` mode the request button is disabled. */
+/** What the booking card and the phone bar offer: the request button, or a note instead. */
+function Action({ preview, action, notice, compact = false }: { preview: boolean; action?: { href: string; label: string } | null; notice?: ReactNode; compact?: boolean }) {
+  if (preview) {
+    return (
+      <button type="button" className={`btn btn-primary ${compact ? "" : "mt-4 w-full"}`} disabled>
+        {t.renterListing.request}
+      </button>
+    );
+  }
+  if (action) {
+    return (
+      <Link prefetch={false} href={action.href} className={`btn btn-primary ${compact ? "" : "mt-4 w-full"}`}>
+        {action.label}
+      </Link>
+    );
+  }
+  return notice ? <div className={compact ? "text-right text-sm" : "mt-4 text-[0.95rem]"}>{notice}</div> : null;
+}
+
+/**
+ * A listing as renters see it. In `preview` mode (the host's own view) the
+ * request button is disabled; otherwise `action` links to the request form,
+ * or `notice` explains why there is none.
+ */
 export function ListingView({
   listing,
   spaces,
   photos,
   host,
   preview = false,
+  action,
+  notice,
 }: {
   listing: Listing;
   spaces: ListingSpace[];
   photos: ListingPhoto[];
   host: Profile | null;
   preview?: boolean;
+  action?: { href: string; label: string } | null;
+  notice?: ReactNode;
 }) {
   const place = [listing.area_name, listing.city].filter(Boolean).join(", ");
   const type = listing.space_type ? t.spaceTypes[listing.space_type] : "";
@@ -208,9 +237,7 @@ export function ListingView({
                 <span className="text-muted"> / mån</span>
               </p>
             )}
-            <button type="button" className="btn btn-primary mt-4 w-full" disabled={preview}>
-              Skicka förfrågan
-            </button>
+            <Action preview={preview} action={action} notice={notice} />
             {preview && <p className="mt-2 text-center text-sm text-muted">Förhandsvisning</p>}
           </div>
         </aside>
@@ -229,9 +256,7 @@ export function ListingView({
             )}
             {preview && <span className="block text-xs text-muted">Förhandsvisning</span>}
           </p>
-          <button type="button" className="btn btn-primary" disabled={preview}>
-            Skicka förfrågan
-          </button>
+          <Action preview={preview} action={action} notice={notice} compact />
         </div>
       </div>
     </article>

@@ -39,9 +39,11 @@ Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-
   - Tap targets of at least 44 px.
   - Responsive WebP photos, so a phone downloads about 600 KB of images for the whole home page.
 
-## The app (host side)
+## The app
 
-Logged-in pages, built on Supabase (project `spazia`, region Stockholm). They are static pages that load their data in the browser, so the site stays a static export.
+Logged-in pages, built on Supabase (project `spazia`, region Stockholm). They are static pages that load their data in the browser, so the site stays a static export. One account works for both sides: after login, `/konto` asks whether you want to rent a space (`/kund`) or host (`/vard`), and both sides have a switch to the other.
+
+### Host side
 
 | Page | What it does |
 |---|---|
@@ -53,12 +55,27 @@ Logged-in pages, built on Supabase (project `spazia`, region Stockholm). They ar
 | `/vard/forfragan` | A request: accept or decline (with a reason), cancel |
 | `/vard/kalender` | Month view per listing: bookings, how full each day is, closing days or periods |
 | `/vard/meddelanden` | Inbox and threads, one per renter and listing |
-| `/vard/meny` | Profile (photo, name, phone, about), account, log out |
+| `/vard/meny` | Profile (photo, name, phone, about), account, switch to renting, log out |
+
+### Renter side
+
+| Page | What it does |
+|---|---|
+| `/konto` | After login: choose "Hyra plats" or "Hyra ut", with what's waiting on each side |
+| `/kund` | **Hem:** search box and categories, requests waiting for an answer, current and upcoming rentals |
+| `/kund/sok` | Published listings by town or area and by what they take (`?ort=`, `?typ=`) |
+| `/kund/annons` | A listing with "Skicka förfrågan" |
+| `/kund/skicka` | The request: start date, until further notice or an end date, how many of each thing (with free places for the period), a greeting to the host, and the monthly price including the service fee |
+| `/kund/bokningar` | Current and upcoming, waiting for an answer, earlier |
+| `/kund/bokning` | One request or rental: status, and after acceptance the address, how to get in and the host's phone. Withdraw or cancel. |
+| `/kund/meddelanden` | Inbox and threads with hosts |
+| `/kund/meny` | Profile, account, switch to hosting, log out |
 
 **How renting works:**
 - Renters never book directly. They send a request, and the host accepts or declines within 24 hours.
 - A rental can be any length, from a few days to "until further notice". Hosts can set a minimum period.
-- The street address and access instructions are shown only after the host accepts.
+- The street address and access instructions are shown only after the host accepts. Host and renter see each other's phone number from then on.
+- The database checks every request: the host's minimum period, closed days (no drop-off or pick-up then), free places for the period, and one open request per renter and listing.
 - There are no inspection visits: hosts photograph their own space.
 
 **Where things are:**

@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Camera, ChevronRight, Loader2, LogOut } from "lucide-react";
+import { ArrowLeftRight, Camera, ChevronRight, Loader2, LogOut } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { appText } from "@/content/app";
 import { fetchMyProfile } from "@/lib/app/data";
+import type { AppMode } from "@/lib/app/model";
+import { MODE_HOME } from "@/lib/app/mode";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
-import { Spinner, useHostSession } from "../HostShell";
-import { Avatar } from "./RequestCard";
+import { Spinner, useAppSession } from "./AppShell";
+import { Avatar } from "./ui";
 
 const t = appText.menu;
 
@@ -24,8 +26,8 @@ async function squareJpeg(file: File, size = 400): Promise<Blob> {
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob"))), "image/jpeg", 0.85));
 }
 
-export function MenuPage() {
-  const session = useHostSession();
+export function MenuPage({ mode }: { mode: AppMode }) {
+  const session = useAppSession();
   const uid = session.user.id;
   const router = useRouter();
   const { data, loading } = useLoad(() => fetchMyProfile(uid), uid);
@@ -91,7 +93,7 @@ export function MenuPage() {
       <form onSubmit={save} className="card space-y-5 p-5">
         <div>
           <h2 className="text-xl font-bold text-night">{t.profile}</h2>
-          <p className="mt-1 text-sm text-muted">{t.profileHint}</p>
+          <p className="mt-1 text-sm text-muted">{mode === "host" ? t.profileHint : t.renter.profileHint}</p>
         </div>
         <div className="flex items-center gap-4">
           <Avatar name={form.first_name} url={form.avatar_url} size={72} />
@@ -121,13 +123,13 @@ export function MenuPage() {
             {t.phone}
           </label>
           <input id="phone" className="field-input" type="tel" inputMode="tel" autoComplete="tel" maxLength={40} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-          <p className="mt-1.5 text-sm text-muted">{t.phoneHint}</p>
+          <p className="mt-1.5 text-sm text-muted">{mode === "host" ? t.phoneHint : t.renter.phoneHint}</p>
         </div>
         <div>
           <label htmlFor="about" className="field-label">
             {t.about}
           </label>
-          <textarea id="about" className="field-input resize-y" rows={4} maxLength={1000} placeholder={t.aboutPlaceholder} value={form.about} onChange={(e) => setForm({ ...form, about: e.target.value })} />
+          <textarea id="about" className="field-input resize-y" rows={4} maxLength={1000} placeholder={mode === "host" ? t.aboutPlaceholder : t.renter.aboutPlaceholder} value={form.about} onChange={(e) => setForm({ ...form, about: e.target.value })} />
         </div>
         <div className="flex items-center gap-3">
           <button type="submit" disabled={status === "saving"} className="btn btn-primary">
@@ -149,12 +151,23 @@ export function MenuPage() {
         </dl>
       </section>
 
-      <section className="card p-5">
-        <h2 className="text-xl font-bold text-night">{t.payouts}</h2>
-        <p className="mt-2 leading-relaxed text-muted">{t.payoutsText}</p>
-      </section>
+      {mode === "host" && (
+        <section className="card p-5">
+          <h2 className="text-xl font-bold text-night">{t.payouts}</h2>
+          <p className="mt-2 leading-relaxed text-muted">{t.payoutsText}</p>
+        </section>
+      )}
 
       <ul className="card divide-y divide-line">
+        <li>
+          <Link prefetch={false} href={MODE_HOME[mode === "host" ? "renter" : "host"]} className="flex min-h-14 items-center justify-between px-5 font-semibold text-night">
+            <span className="flex items-center gap-2">
+              <ArrowLeftRight size={18} className="text-brand" aria-hidden="true" />
+              {mode === "host" ? appText.nav.toRenter : appText.nav.toHost}
+            </span>
+            <ChevronRight size={18} className="text-muted" aria-hidden="true" />
+          </Link>
+        </li>
         <li>
           <Link prefetch={false} href="/trygghet" className="flex min-h-14 items-center justify-between px-5 font-semibold text-night">
             {t.help}
