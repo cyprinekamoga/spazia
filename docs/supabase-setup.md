@@ -2,11 +2,11 @@
 
 Appen (`/logga-in` och värdläget på `/vard`) använder Supabase-projektet **spazia** (`mtyhnfsceahvovauckkj`, region Stockholm). Databasen, åtkomstreglerna och bildlagringen är redan på plats. Det här är stegen som bara ni kan göra, eftersom de kräver inloggning i Supabase och Google.
 
-Gör steg 1–3 innan sajten driftsätts. Steg 4 (Google) kan göras när som helst. Tills dess visar knappen "Fortsätt med Google" att Google inte är påslaget än.
+Gör steg 1–3 först. Steg 4 (Google) kan göras när som helst. Tills dess visar knappen "Fortsätt med Google" att Google inte är påslaget än.
 
 ## 1. Adresser (Supabase)
 
-*Authentication → URL Configuration*
+[Authentication → URL Configuration](https://supabase.com/dashboard/project/mtyhnfsceahvovauckkj/auth/url-configuration)
 
 - **Site URL:** `https://spazia.se`
 - **Redirect URLs**, lägg till:
@@ -15,9 +15,9 @@ Gör steg 1–3 innan sajten driftsätts. Steg 4 (Google) kan göras när som he
 
 ## 2. Mejl via Strato (Supabase)
 
-Supabases egen mejltjänst skickar bara till medlemmar i ert Supabase-team och bara ett par mejl i timmen. Riktiga användare behöver ert eget mejlkonto.
+Utan eget mejlkonto kommer mejlen från "Supabase Auth" och når bara medlemmar i ert Supabase-team. Med Strato kommer de från "Spazia" och når alla.
 
-*Authentication → Emails → SMTP Settings → Enable custom SMTP*
+[Authentication → Emails → SMTP Settings](https://supabase.com/dashboard/project/mtyhnfsceahvovauckkj/auth/smtp). Slå på *Enable custom SMTP*:
 
 | Fält | Värde |
 |---|---|
@@ -28,33 +28,41 @@ Supabases egen mejltjänst skickar bara till medlemmar i ert Supabase-team och b
 | Username | `info@nordvra.se` |
 | Password | lösenordet till mejlkontot (skriv in det själv) |
 
-Höj sedan gränsen för antal mejl i *Authentication → Rate Limits*, till exempel 60 i timmen.
+Höj sedan gränsen i [Authentication → Rate Limits](https://supabase.com/dashboard/project/mtyhnfsceahvovauckkj/auth/rate-limits), till exempel till 60 mejl i timmen.
 
 ## 3. Mejlmall med kod (Supabase)
 
-Inloggningssidan låter användaren antingen klicka på länken i mejlet eller skriva in en sexsiffrig kod. Koden är smidigast på mobilen, men den kommer bara med om mallen innehåller `{{ .Token }}`.
+Supabases standardmallar har bara en länk och ingen kod. Koden kommer med först när mallen innehåller `{{ .Token }}`.
 
-*Authentication → Emails → Templates*. Ändra både **Magic Link** och **Confirm signup**:
+Nya användare får mallen **Confirm signup**. Den som redan har ett konto får **Magic Link**. Ändra därför båda i [Authentication → Emails → Templates](https://supabase.com/dashboard/project/mtyhnfsceahvovauckkj/auth/templates):
 
 - **Subject:** `Din kod till Spazia: {{ .Token }}`
 - **Body:** klistra in innehållet i [`email-templates/login.html`](email-templates/login.html).
 
 ## 4. Logga in med Google
 
-1. Öppna [Google Cloud Console](https://console.cloud.google.com/) och skapa ett projekt, till exempel "Spazia".
-2. *APIs & Services → OAuth consent screen*:
-   - Välj *External*.
-   - Appnamn: `Spazia`.
-   - Supportmejl: `info@nordvra.se`.
-   - Domän: `spazia.se`.
-   - Integritetspolicy: `https://spazia.se/integritetspolicy`.
-3. *Credentials → Create credentials → OAuth client ID*. Välj typen *Web application*:
+Allt i Google görs i [Google Auth Platform](https://console.cloud.google.com/auth/overview).
+
+1. Skapa ett projekt, till exempel "Spazia", och klicka *Get started*:
+   - App name: `Spazia`.
+   - Support email: `info@nordvra.se`.
+   - Audience: *External*.
+   - Contact information: `info@nordvra.se`.
+2. [Branding](https://console.cloud.google.com/auth/branding):
+   - Lägg till `spazia.se` under *Authorized domains*.
+   - Home page: `https://spazia.se`.
+   - Privacy policy: `https://spazia.se/integritetspolicy`.
+3. [Data Access](https://console.cloud.google.com/auth/scopes): lägg till `openid`, `.../auth/userinfo.email` och `.../auth/userinfo.profile`. Lägg inte till fler, för då kräver Google en granskning.
+4. [Clients → Create client](https://console.cloud.google.com/auth/clients/create). Välj typen *Web application*:
    - Authorized JavaScript origins: `https://spazia.se`
    - Authorized redirect URIs: `https://mtyhnfsceahvovauckkj.supabase.co/auth/v1/callback`
-4. Kopiera *Client ID* och *Client secret*.
-5. I Supabase: *Authentication → Sign In / Providers → Google*. Slå på Google och klistra in de två värdena.
+5. Kopiera *Client ID* och *Client secret*.
+6. [Audience](https://console.cloud.google.com/auth/audience): klicka *Publish app*. Annars kan bara testanvändare som ni har lagt till logga in.
+7. I Supabase: [Authentication → Sign In / Providers → Google](https://supabase.com/dashboard/project/mtyhnfsceahvovauckkj/auth/providers?provider=Google). Slå på Google och klistra in de två värdena.
 
 Knappen på sajten märker själv att Google är påslaget. Ingen ny driftsättning behövs.
+
+Googles inloggningsruta visar `mtyhnfsceahvovauckkj.supabase.co` tills Google har godkänt namnet och loggan. Det ansöker ni om under [Verification](https://console.cloud.google.com/auth/verification), och det tar några arbetsdagar. Ett alternativ är en egen domän i Supabase, till exempel `auth.spazia.se`, men den kostar extra och kräver en betalplan.
 
 ## 5. Apple (senare)
 
