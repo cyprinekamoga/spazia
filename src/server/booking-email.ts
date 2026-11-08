@@ -16,7 +16,10 @@ export type NotificationKind =
   | "request_accepted"
   | "request_declined"
   | "cancelled_by_renter"
-  | "cancelled_by_host";
+  | "cancelled_by_host"
+  | "payment_failed"
+  | "payment_lapsed"
+  | "rental_ending";
 
 export interface NotificationItem {
   category: CategoryId;
@@ -48,12 +51,22 @@ export interface NotificationPayload {
   listing_city: string;
   listing_area: string;
   items: NotificationItem[];
+  /** The latest payment for the request, when payments apply. */
+  payment?: {
+    amount: number;
+    host_amount: number;
+    status: string;
+    period_start: string;
+    period_end: string;
+    pay_by: string;
+    failure: string;
+  } | null;
 }
 
 const TIME_ZONE = "Europe/Stockholm";
 
 /** What the host receives (Spazia's host fee deducted), same rounding as the app. */
-const hostPayout = (price: number) => Math.round(price * (1 - FEES.hostFee));
+const hostPayout = (price: number) => Math.round((price * Math.round((1 - FEES.hostFee) * 100)) / 100);
 
 const kr = (amount: number) => `${new Intl.NumberFormat("sv-SE", { maximumFractionDigits: 0 }).format(amount)} kr`;
 
@@ -182,6 +195,69 @@ export function buildBookingEmail(p: NotificationPayload, opts: { appUrl: string
         button: { href: searchLink, label: "Hitta en annan plats" },
       };
       break;
+    case "payment_failed": {
+      const pay = p.payment;
+      const first = !pay || pay.period_start === p.start_date;
+      d = {
+        subject: `Betalningen för ”${p.listing_title}” gick inte igenom`,
+        intro: [
+          hello,
+          `Vi kunde inte dra ${pay ? kr(pay.amount) : "hyran"} från ditt kort${pay ? ` för ${day(pay.period_start)} – ${day(pay.period_end)}` : ""}. Det kan bero på att kortet har gått ut, att det saknas pengar eller att banken vill att du bekräftar betalningen.`,
+        ],
+        rows: [["Plats", place(p)], ...(pay ? ([["Att betala", kr(pay.amount)], ["Betala senast", deadline(pay.pay_by)]] as [string, string][]) : [])],
+        after: [first ? "Betalar du inte i tid avbryts hyran." : "Betalar du inte i tid avslutas hyran efter den sista betalda dagen."],
+        button: { href: renterLink, label: "Betala nu" },
+      };
+      break;
+    }
+    case "payment_lapsed": {
+      const first = !p.payment || p.payment.period_start === p.start_date;
+      const end = p.end_date ? day(p.end_date) : "";
+      d =
+        p.role === "renter"
+          ? {
+              subject: first ? `Bokningen av ”${p.listing_title}” avbröts` : `Hyran av ”${p.listing_title}” avslutas`,
+              intro: [
+                hello,
+                first
+                  ? "Betalningen för den första månaden kom inte in i tid, så bokningen har avbrutits. Du har inte betalat något."
+                  : `Betalningen för nästa månad kom inte in i tid, så hyran slutar ${end}. Hämta dina saker senast då, eller kontakta ${name} i appen.`,
+              ],
+              rows: [["Plats", place(p)]],
+              button: { href: first ? searchLink : renterLink, label: first ? "Hitta en annan plats" : "Visa i appen" },
+            }
+          : {
+              subject: first ? `${name} betalade inte, bokningen avbröts` : `${name} betalade inte, hyran avslutas`,
+              intro: [
+                hello,
+                first
+                  ? `${name} betalade aldrig den första månaden för ”${p.listing_title}”, så bokningen har avbrutits. Platsen är ledig igen.`
+                  : `${name} betalade inte nästa månad för ”${p.listing_title}”, så hyran slutar ${end}. Du får betalt för tiden fram till dess.`,
+              ],
+              rows: [["Vad", itemsText(p.items)]],
+              button: { href: hostLink, label: "Visa i appen" },
+            };
+      break;
+    }
+    case "rental_ending": {
+      const end = p.end_date ? day(p.end_date) : "";
+      const reason: [string, string][] = p.cancel_reason.trim() ? [["Meddelande", p.cancel_reason.trim()]] : [];
+      d =
+        p.role === "host"
+          ? {
+              subject: `${name} avslutar hyran av ”${p.listing_title}”`,
+              intro: [hello, `${name} har avslutat hyran. Sista dagen är ${end}, och efter det dras inga fler betalningar. Platsen är ledig för andra efter det.`],
+              rows: [["Vad", itemsText(p.items)], ["Sista dag", end], ...reason],
+              button: { href: hostLink, label: "Visa i appen" },
+            }
+          : {
+              subject: `${name} avslutar uthyrningen av ”${p.listing_title}”`,
+              intro: [hello, `${name} har avslutat uthyrningen. Sista dagen är ${end}, och efter det dras inga fler betalningar. Hämta dina saker senast då.`],
+              rows: [["Plats", place(p)], ["Sista dag", end], ...reason],
+              button: { href: renterLink, label: "Visa i appen" },
+            };
+      break;
+    }
     default:
       return null;
   }

@@ -37,7 +37,8 @@ const STATUS_STYLE: Record<RequestStatus, string> = {
 
 /** Status label; an accepted hourly parking booking reads "Bokad". */
 export function StatusChip({ status, kind }: { status: RequestStatus; kind?: "month" | "hour" }) {
-  const label = kind === "hour" && status === "accepted" ? "Bokad" : appText.requestStatus[status];
+  const label =
+    kind === "hour" && status === "accepted" ? "Bokad" : kind === "hour" && status === "pending" ? appText.payments.statuses.due : appText.requestStatus[status];
   return <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold whitespace-nowrap ${STATUS_STYLE[status]}`}>{label}</span>;
 }
 

@@ -6,12 +6,14 @@ import { ArrowLeftRight, Camera, ChevronRight, Loader2, LogOut } from "lucide-re
 import { useEffect, useState, type FormEvent } from "react";
 import { appText } from "@/content/app";
 import { fetchMyProfile } from "@/lib/app/data";
+import { fetchPaymentSetup } from "@/lib/app/payments";
 import type { AppMode } from "@/lib/app/model";
 import { MODE_HOME } from "@/lib/app/mode";
 import { useLoad } from "@/lib/app/session";
 import { site } from "@/lib/site";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "./AppShell";
+import { CardSection } from "./renter/CardSection";
 import { Avatar } from "./ui";
 
 const t = appText.menu;
@@ -32,6 +34,7 @@ export function MenuPage({ mode }: { mode: AppMode }) {
   const uid = session.user.id;
   const router = useRouter();
   const { data, loading } = useLoad(() => fetchMyProfile(uid), uid);
+  const pay = useLoad(fetchPaymentSetup, `pay-${uid}`);
   const [form, setForm] = useState({ first_name: "", last_name: "", phone: "", about: "", avatar_url: "" as string | null });
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [uploading, setUploading] = useState(false);
@@ -153,11 +156,22 @@ export function MenuPage({ mode }: { mode: AppMode }) {
       </section>
 
       {mode === "host" && (
-        <section className="card p-5">
-          <h2 className="text-xl font-bold text-night">{t.payouts}</h2>
-          <p className="mt-2 leading-relaxed text-muted">{t.payoutsText}</p>
-        </section>
+        <Link prefetch={false} href="/vard/utbetalningar" className="card flex items-center justify-between gap-3 p-5 hover:border-night/30">
+          <span>
+            <span className="block text-xl font-bold text-night">{t.payouts}</span>
+            <span className="mt-1 block leading-relaxed text-muted">
+              {!pay.data?.enabled
+                ? t.payoutsText
+                : pay.data.payouts?.payouts_enabled
+                  ? appText.payments.bankReady
+                  : appText.payments.hostBanner}
+            </span>
+          </span>
+          <ChevronRight size={18} className="shrink-0 text-muted" aria-hidden="true" />
+        </Link>
       )}
+
+      {mode === "renter" && pay.data?.enabled && <CardSection setup={pay.data} onChange={pay.reload} returnTo="/kund/meny" />}
 
       <ul className="card divide-y divide-line">
         <li>

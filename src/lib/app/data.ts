@@ -53,9 +53,11 @@ const REQUEST_SELECT =
   "*, request_items(category, quantity, host_price_month, hourly_price, daily_max), renter:profiles!requests_renter_id_fkey(id, first_name, avatar_url, about, created_at), listing:listings(id, title, city, area_name)";
 
 export async function fetchHostRequests(uid: string): Promise<HostRequest[]> {
-  return must(
+  const rows = must(
     await supabase().from("requests").select(REQUEST_SELECT).eq("host_id", uid).order("created_at", { ascending: false }),
   ) as HostRequest[];
+  // Parking bookings that are still being paid (or never were) aren't the host's business.
+  return rows.filter((r) => !(r.kind === "hour" && (r.status === "pending" || r.status === "expired")));
 }
 
 export async function fetchRequest(id: string): Promise<HostRequest | null> {
@@ -94,7 +96,7 @@ export function otherProfile(mode: AppMode): string {
 }
 
 export async function fetchConversations(uid: string, mode: AppMode): Promise<ConversationSummary[]> {
-  return must(
+  const rows = must(
     await supabase()
       .from("conversations")
       .select(
@@ -105,6 +107,8 @@ export async function fetchConversations(uid: string, mode: AppMode): Promise<Co
       .order("created_at", { referencedTable: "messages", ascending: false })
       .limit(1, { referencedTable: "messages" }),
   ) as unknown as ConversationSummary[];
+  // A parking booking that was never paid leaves an empty conversation: hide it.
+  return rows.filter((c) => (c as unknown as { messages?: unknown[] }).messages?.length !== 0);
 }
 
 export async function fetchMessages(conversationId: string): Promise<Message[]> {

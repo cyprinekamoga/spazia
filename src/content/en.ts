@@ -445,7 +445,7 @@ export const en: Dictionary = {
     metaTitle: "Privacy policy",
     metaDescription: "How Spazia handles your personal data on spazia.se and in the app: the waitlist, your account, listings, bookings, messages and cookies.",
     title: "Privacy policy",
-    updated: "Last updated: 8 November 2026",
+    updated: "Last updated: 9 November 2026",
     lead: "This policy covers spazia.se and the app at app.spazia.se, where hosts and renters have their accounts.",
     analytics: {
       title: "Visitor statistics",
@@ -482,6 +482,14 @@ export const en: Dictionary = {
         bullets: [],
       },
       {
+        title: "Payments",
+        text: "Payments are handled by our payment provider Stripe. Your card number never reaches Spazia: we only store the card type, the last four digits and the expiry date, to show which card is used. We also store what has been paid, when and for which booking.",
+        bullets: [
+          "As a host, you give us your name, personal identity number and address. By law, Spazia must report to the Swedish Tax Agency every year what hosts have earned through the platform, and for which spaces.",
+          "You give your bank account and the details Stripe needs to verify your identity directly to Stripe. Spazia doesn't see them.",
+        ],
+      },
+      {
         title: "Who sees what",
         text: "",
         bullets: [
@@ -503,6 +511,7 @@ export const en: Dictionary = {
           "Your account, listings, requests, bookings, messages and the emails about them: to perform our agreement with you, so the service works.",
           "Security, preventing fraud and abuse and helping with disputes: our legitimate interest in a safe service.",
           "Bookkeeping, once payments through Spazia have started: our legal obligation under the Swedish Bookkeeping Act.",
+          "Reporting hosts' rental income to the Swedish Tax Agency: our legal obligation as a platform operator.",
         ],
       },
       {
@@ -513,6 +522,7 @@ export const en: Dictionary = {
           "Your account and listings: as long as you have the account. If you ask us to delete it, we do so within 30 days.",
           "Requests, bookings and messages: as long as the account exists, and after that for no more than 12 months if they are needed to settle a dispute.",
           "Once payments through Spazia have started, we keep bookkeeping records for seven years, as the Bookkeeping Act requires.",
+          "Hosts' personal identity numbers, addresses and rental income are kept for as long as the platform reporting rules require.",
         ],
       },
       {
@@ -520,6 +530,7 @@ export const en: Dictionary = {
         text: "We never sell your data. These suppliers process it on our behalf:",
         bullets: [
           "Supabase: the database, the login and the photos in the app. The data is stored on servers in Stockholm.",
+          "Stripe: receives payments and pays out to hosts. Stripe also checks hosts' identity and bank account.",
           "Netlify: hosting for spazia.se and the app, and storage of sign-ups within the EU.",
           "Strato: sends our emails.",
           "Google: if you choose to log in with Google. Google's own terms then also apply.",
@@ -593,7 +604,7 @@ export const en: Dictionary = {
         bullets: [
           "You send a request saying what you want to store and from which date.",
           "The host has 24 hours to answer. Once the host accepts, the rental runs from the start date, and you see the address and how to get in.",
-          "If either of you wants to end an ongoing rental, tell the other in good time, preferably a month ahead, and then cancel in the app. The other person is told straight away.",
+          "If either of you wants to end an ongoing rental, tell the other in good time and end it in the app. The other person is told straight away. Once payment in the app has started, the rental ends when the paid period ends.",
         ],
       },
       {
@@ -609,8 +620,15 @@ export const en: Dictionary = {
       },
       {
         title: "Prices, fees and payment",
-        text: "The host sets the price. The renter pays the host's price plus Spazia's 15% service fee, and the host receives their price minus Spazia's 5% fee. Payment through Spazia has not started yet. Until it has, host and renter settle payment directly with each other, and Spazia charges no fee. We will tell you well in advance before payment in the app starts.",
-        bullets: [],
+        text: "The host sets the price. The renter pays the host's price plus Spazia's 15% service fee, and the host receives their price minus Spazia's 5% fee. Spazia covers the card fees. Payment in the app starts soon. Until it does, host and renter settle payment directly with each other, and Spazia charges no fee. Once it has started, the following applies:",
+        bullets: [
+          "You pay by card, Apple Pay or Google Pay through our payment provider Stripe. Spazia receives the payment and transfers the host's share.",
+          "Monthly storage: your card is charged when the host accepts the request, and then on the same date every month until the rental ends. The last month of a rental with an end date is charged per day.",
+          "Hourly parking is paid when you book. The space is held for you for 30 minutes while you pay.",
+          "The host receives their share one day after the rental or booking starts. Stripe pays out to the host's bank account every Monday.",
+          "If a payment fails, you get an email with a link to pay. The first month must be paid within 48 hours, or the rental is cancelled. Later months must be paid within 7 days, or the rental ends after the last paid day.",
+          "If you cancel storage before the rental starts, or parking at least one hour before the start, you get the full amount back. If the host cancels, you always get the full amount back.",
+        ],
       },
       {
         title: "Damage and liability",

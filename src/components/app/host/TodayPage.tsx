@@ -7,6 +7,7 @@ import { appText } from "@/content/app";
 import { fill } from "@/lib/i18n";
 import { fetchHostRequests, fetchMyListings, fetchMyProfile } from "@/lib/app/data";
 import { effectiveStatus, formatKr, requestIncome, todayIso } from "@/lib/app/model";
+import { fetchPaymentSetup } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
 import { Spinner, useAppSession } from "../AppShell";
 import { RequestCard } from "./RequestCard";
@@ -27,8 +28,8 @@ function Todo({ href, children }: { href: string; children: string }) {
 export function TodayPage() {
   const uid = useAppSession().user.id;
   const { data, loading, error } = useLoad(async () => {
-    const [me, listings, requests] = await Promise.all([fetchMyProfile(uid), fetchMyListings(uid), fetchHostRequests(uid)]);
-    return { me, listings, requests };
+    const [me, listings, requests, pay] = await Promise.all([fetchMyProfile(uid), fetchMyListings(uid), fetchHostRequests(uid), fetchPaymentSetup().catch(() => null)]);
+    return { me, listings, requests, pay };
   }, uid);
   // The time the page was loaded: used for "answer within" and expiry.
   const [now] = useState(() => Date.now());
@@ -45,6 +46,8 @@ export function TodayPage() {
   const income = current.reduce((sum, r) => sum + requestIncome(r.request_items), 0);
   const drafts = listings.filter((l) => l.status === "draft");
   const name = me.profile?.first_name;
+  // With payments on, a host needs a connected bank account to accept requests.
+  const needsPayouts = Boolean(data.pay?.enabled && !data.pay.payouts?.details_submitted && listings.length > 0);
 
   return (
     <div className="space-y-9">
@@ -56,10 +59,11 @@ export function TodayPage() {
         </Link>
       )}
 
-      {(drafts.length > 0 || !me.priv?.phone || !me.profile?.avatar_url) && (
+      {(needsPayouts || drafts.length > 0 || !me.priv?.phone || !me.profile?.avatar_url) && (
         <section>
           <h2 className="text-2xl text-night">{t.todo}</h2>
           <ul className="mt-3 space-y-2">
+            {needsPayouts && <Todo href="/vard/utbetalningar">{appText.payments.hostBanner}</Todo>}
             {drafts.map((d) => (
               <Todo key={d.id} href={`/vard/annons?id=${d.id}`}>
                 {fill(t.finishListing, { title: d.title || appText.listings.untitled })}

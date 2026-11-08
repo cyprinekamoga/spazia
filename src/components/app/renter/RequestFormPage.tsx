@@ -10,8 +10,10 @@ import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchAvailability, fetchBlocks, fetchListingBundle, fetchMyOpenRequest, fetchMyProfile } from "@/lib/app/data";
 import { addDays, formatDay, formatKr, minEndDate, renterMonthly, renterPrice, todayIso, type ListingBlock } from "@/lib/app/model";
+import { fetchPaymentSetup } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
+import { CardSection } from "./CardSection";
 import { Spinner, useAppSession } from "../AppShell";
 import { CoverPhoto } from "../ui";
 
@@ -60,6 +62,7 @@ export function RequestFormPage() {
     const [bundle, blocks, me, open] = await Promise.all([fetchListingBundle(id), fetchBlocks(id), fetchMyProfile(uid), fetchMyOpenRequest(id, uid)]);
     return { bundle, blocks, me, open };
   }, `${id}:${uid}`);
+  const pay = useLoad(fetchPaymentSetup, `pay-${uid}`);
 
   const [start, setStart] = useState(() => addDays(todayIso(), 1));
   const [openEnded, setOpenEnded] = useState(true);
@@ -123,7 +126,10 @@ export function RequestFormPage() {
           ? "blocked"
           : null;
   const needsEnd = !openEnded && !end;
-  const canSend = !busy && !dateProblem && !needsEnd && chosen.length > 0 && (!needName || firstName.trim().length > 0);
+  // With payments on, a saved card is needed (it's charged when the host accepts).
+  const payments = pay.data?.enabled ?? false;
+  const needsCard = payments && !pay.data?.card;
+  const canSend = !busy && !needsCard && !dateProblem && !needsEnd && chosen.length > 0 && (!needName || firstName.trim().length > 0);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -192,7 +198,14 @@ export function RequestFormPage() {
         </p>
         <p className="mt-1 text-sm text-muted">{t.includesFee}</p>
       </div>
-      <p className="rounded-xl bg-frost/70 p-3 text-sm text-ink">{t.noPayment}</p>
+      {payments && pay.data ? (
+        <>
+          <CardSection setup={pay.data} onChange={pay.reload} returnTo={`/kund/skicka?id=${id}`} intro={needsCard ? appText.payments.cardNeeded : appText.payments.cardText} compact />
+          {chosen.length > 0 && <p className="rounded-xl bg-frost/70 p-3 text-sm text-ink">{fill(appText.payments.chargeInfo, { amount: formatKr(total) })}</p>}
+        </>
+      ) : (
+        <p className="rounded-xl bg-frost/70 p-3 text-sm text-ink">{t.noPayment}</p>
+      )}
       {error && (
         <p role="alert" className="rounded-xl bg-[#fef3f2] p-3 text-[0.95rem] font-medium text-[#b42318]">
           {error}

@@ -8,7 +8,8 @@ import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchCounterpartPrivate, fetchRequest } from "@/lib/app/data";
-import { effectiveStatus, formatKr, hostCanCancel, hostPayout, periodText, requestIncome, timeLeft } from "@/lib/app/model";
+import { effectiveStatus, formatDay, formatKr, formatMoment, hostCanCancel, hostPayout, periodText, requestIncome, timeLeft, todayIso } from "@/lib/app/model";
+import { fetchPaymentSetup, fetchRequestPayments, type Payment, type PaymentSetup } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner } from "../AppShell";
@@ -24,16 +25,20 @@ export function RequestPage() {
   const id = useSearchParams().get("id") ?? "";
   const { data: r, loading, reload } = useLoad(async () => {
     const req = await fetchRequest(id);
-    // The renter's phone is readable once the request is accepted.
+    // The renter's phone is readable once the request is accepted (and paid, with payments).
     const phone = req?.status === "accepted" ? ((await fetchCounterpartPrivate(req.renter_id))?.phone ?? "") : "";
-    return req ? { ...req, renterPhone: phone } : null;
+    const [payments, setup] = await Promise.all([
+      req?.payment_required ? fetchRequestPayments(req.id) : Promise.resolve([] as Payment[]),
+      req?.payment_required ? fetchPaymentSetup().catch(() => null) : Promise.resolve(null as PaymentSetup | null),
+    ]);
+    return req ? { ...req, renterPhone: phone, payments, setup } : null;
   }, id);
   const [busy, setBusy] = useState(false);
   const [declining, setDeclining] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [reason, setReason] = useState("");
   const [cancelReason, setCancelReason] = useState("");
-  const [message, setMessage] = useState<{ tone: "ok" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{ tone: "ok" | "error"; text: string; payouts?: boolean } | null>(null);
   const [now] = useState(() => Date.now());
 
   if (loading) return <Spinner />;
@@ -49,7 +54,12 @@ export function RequestPage() {
     setBusy(false);
     setDeclining(false);
     if (res.error) {
-      setMessage({ tone: "error", text: /no_capacity/.test(res.error.message) ? t.noCapacity : appText.common.error });
+      const payouts = /payouts_required/.test(res.error.message);
+      setMessage({
+        tone: "error",
+        text: payouts ? appText.payments.payoutsRequired : /no_capacity/.test(res.error.message) ? t.noCapacity : appText.common.error,
+        payouts,
+      });
     } else if (res.data === "expired") {
       setMessage({ tone: "error", text: t.expired });
     } else if (res.data === "accepted") {
@@ -68,8 +78,25 @@ export function RequestPage() {
     await reload();
   }
 
+  async function endRental() {
+    const last = r!.paid_through ?? todayIso();
+    if (!window.confirm(r!.payment_required ? fill(appText.payments.endConfirm, { date: formatDay(last, true) }) : appText.payments.endConfirmToday)) return;
+    setBusy(true);
+    setMessage(null);
+    const res = await supabase().rpc("end_rental", { p_request: id });
+    setBusy(false);
+    if (res.error) setMessage({ tone: "error", text: appText.common.error });
+    await reload();
+  }
+
   const isHour = r.kind === "hour";
-  const canCancel = hostCanCancel({ ...r, status }, now);
+  // A paid monthly rental that has started is ended at the end of the paid period, not cancelled.
+  const endInstead = !isHour && Boolean(r.payment_required) && status === "accepted" && todayIso() >= r.start_date;
+  const ending = Boolean(r.ended_at && r.end_date);
+  const payoutsMissing = Boolean(r.payment_required && r.setup?.enabled && !r.setup.payouts?.details_submitted);
+  const paidPayments = r.payments.filter((p) => p.status === "paid" && !p.refund_requested_at);
+  const nextShare = paidPayments.find((p) => !p.transferred_at) ?? paidPayments[paidPayments.length - 1];
+  const canCancel = hostCanCancel({ ...r, status }, now) && !endInstead;
   // A pending request that was withdrawn got responded_at and cancelled_at in the same moment.
   const withdrawn = r.cancelled_by === r.renter_id && r.responded_at != null && r.cancelled_at != null && Date.parse(r.responded_at) === Date.parse(r.cancelled_at);
   const cancelledText =
@@ -149,7 +176,36 @@ export function RequestPage() {
       {message && (
         <p role={message.tone === "error" ? "alert" : "status"} className={`mt-5 rounded-xl p-4 text-[0.95rem] font-medium ${message.tone === "error" ? "bg-[#fef3f2] text-[#b42318]" : "bg-[#e7f4ec] text-pine"}`}>
           {message.text}
+          {message.payouts && (
+            <Link prefetch={false} href="/vard/utbetalningar" className="ml-1 font-semibold underline underline-offset-4">
+              {appText.payments.hostBannerCta}
+            </Link>
+          )}
         </p>
+      )}
+
+      {status === "pending" && payoutsMissing && !message && (
+        <p className="mt-5 rounded-xl bg-[#fff6e5] p-4 text-[0.95rem] text-night">
+          {appText.payments.payoutsRequired}{" "}
+          <Link prefetch={false} href="/vard/utbetalningar" className="font-semibold underline underline-offset-4">
+            {appText.payments.hostBannerCta}
+          </Link>
+        </p>
+      )}
+
+      {r.payment_required && status === "accepted" && (
+        <div className="mt-5 rounded-xl bg-frost/70 p-4 text-[0.95rem] text-ink">
+          <p className="font-semibold text-night">{r.paid_through || isHour ? appText.payments.renterPaid : appText.payments.awaitingPayment}</p>
+          {nextShare && (
+            <p className="mt-1">
+              {fill(appText.payments.hostShare, {
+                amount: formatKr(nextShare.host_amount),
+                date: formatMoment(Date.parse(nextShare.transfer_due_at) > now ? nextShare.transfer_due_at : now),
+              })}
+            </p>
+          )}
+          {ending && r.end_date && <p className="mt-1">{fill(appText.payments.ending, { date: formatDay(r.end_date, true) })}</p>}
+        </div>
       )}
 
       <div className="mt-6 space-y-3">
@@ -232,6 +288,11 @@ export function RequestPage() {
             <MessageSquare size={18} aria-hidden="true" />
             {t.message_renter}
           </Link>
+          {endInstead && !ending && (
+            <button type="button" disabled={busy} onClick={endRental} className="btn text-[#b42318] hover:bg-[#fef3f2]">
+              {appText.payments.endRentalHost}
+            </button>
+          )}
           {canCancel && !cancelling && (
             <button type="button" disabled={busy} onClick={() => setCancelling(true)} className="btn text-[#b42318] hover:bg-[#fef3f2]">
               {t.cancel}

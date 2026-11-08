@@ -8,6 +8,7 @@ import { appText } from "@/content/app";
 import { fill } from "@/lib/i18n";
 import { fetchBlocks, fetchListingBundle, fetchMyProfile } from "@/lib/app/data";
 import { formatDay, formatKr, hourLabel, hoursText, renterHourlyTotal, renterPrice, TIME_ZONE, type ListingBlock, type ListingSpace } from "@/lib/app/model";
+import { fetchPaymentsEnabled, goToStripe } from "@/lib/app/payments";
 import { must, useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "../AppShell";
@@ -76,8 +77,8 @@ export function ParkingBookingPage() {
   const router = useRouter();
   const [now] = useState(swedishNow);
   const base = useLoad(async () => {
-    const [bundle, blocks, me] = await Promise.all([fetchListingBundle(id), fetchBlocks(id), fetchMyProfile(uid)]);
-    return { bundle, blocks, me };
+    const [bundle, blocks, me, payments] = await Promise.all([fetchListingBundle(id), fetchBlocks(id), fetchMyProfile(uid), fetchPaymentsEnabled()]);
+    return { bundle, blocks, me, payments };
   }, `${id}:${uid}`);
 
   const startHour0 = (now.hour + 1) % 24;
@@ -130,6 +131,7 @@ export function ParkingBookingPage() {
   const full = !timeProblem && !free.loading && freeNow < 1;
   const canBook = !busy && !timeProblem && !full && hours >= 1 && (!needName || firstName.trim().length > 0);
   const place = [listing.area_name, listing.city].filter(Boolean).join(", ");
+  const payments = base.data?.payments ?? false;
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -153,7 +155,18 @@ export function ParkingBookingPage() {
       await free.reload();
       return;
     }
-    router.replace(`/kund/bokning?id=${res.data as string}`);
+    const requestId = res.data as string;
+    if (payments) {
+      // The space is held for 30 minutes while the renter pays in Stripe Checkout.
+      try {
+        const payment = must(await db.from("payments").select("id").eq("request_id", requestId).single()) as { id: string };
+        await goToStripe("pay", { payment: payment.id });
+        return;
+      } catch {
+        // The booking page has a "Pay" button for the hold.
+      }
+    }
+    router.replace(`/kund/bokning?id=${requestId}`);
   }
 
   const renterHourly = renterPrice(space.hourly_price!);
@@ -275,7 +288,7 @@ export function ParkingBookingPage() {
               {t.instant}
             </p>
             <p className="text-sm text-muted">
-              {t.cancelRule} {t.noPayment}
+              {t.cancelRule} {payments ? "" : t.noPayment}
             </p>
             {error && (
               <p role="alert" className="rounded-xl bg-[#fef3f2] p-3 text-[0.95rem] font-medium text-[#b42318]">
@@ -283,7 +296,7 @@ export function ParkingBookingPage() {
               </p>
             )}
             <button type="submit" disabled={!canBook} className="btn btn-primary w-full">
-              {busy ? t.booking : t.book}
+              {busy ? (payments ? appText.payments.redirecting : t.booking) : payments ? appText.payments.bookAndPay : t.book}
             </button>
           </div>
         </aside>

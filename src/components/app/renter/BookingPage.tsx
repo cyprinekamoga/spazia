@@ -8,11 +8,13 @@ import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchCounterpartPrivate, fetchListingPrivate, fetchRenterRequest } from "@/lib/app/data";
-import { bookingHours, effectiveStatus, formatKr, formatMoment, periodText, renterCancelDeadline, renterCanCancel, renterHourlyTotal, renterMonthly, renterPrice, timeLeft } from "@/lib/app/model";
+import { bookingHours, effectiveStatus, formatDay, formatKr, formatMoment, periodText, renterCancelDeadline, renterCanCancel, renterHourlyTotal, renterMonthly, renterPrice, timeLeft, todayIso } from "@/lib/app/model";
+import { fetchRequestPayments, type Payment } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner } from "../AppShell";
 import { Avatar, CoverPhoto } from "../ui";
+import { PaymentPanel } from "./PaymentPanel";
 
 const t = appText.booking;
 
@@ -38,9 +40,10 @@ export function BookingPage() {
   const justSent = params.get("skickad") === "1";
   const { data, loading, reload } = useLoad(async () => {
     const r = await fetchRenterRequest(id);
-    if (!r || r.status !== "accepted") return { r, priv: null, hostPriv: null };
+    const payments: Payment[] = r?.payment_required ? await fetchRequestPayments(r.id) : [];
+    if (!r || r.status !== "accepted") return { r, priv: null, hostPriv: null, payments };
     const [priv, hostPriv] = await Promise.all([fetchListingPrivate(r.listing_id), fetchCounterpartPrivate(r.host_id)]);
-    return { r, priv, hostPriv };
+    return { r, priv, hostPriv, payments };
   }, id);
   const [now] = useState(() => Date.now());
   const [busy, setBusy] = useState(false);
@@ -68,18 +71,34 @@ export function BookingPage() {
     await reload();
   }
 
+  async function endRental() {
+    const last = r!.paid_through ?? todayIso();
+    if (!window.confirm(r!.payment_required ? fill(appText.payments.endConfirm, { date: formatDay(last, true) }) : appText.payments.endConfirmToday)) return;
+    setBusy(true);
+    setFailed(null);
+    const res = await supabase().rpc("end_rental", { p_request: r!.id });
+    setBusy(false);
+    if (res.error) setFailed(appText.common.error);
+    await reload();
+  }
+
   const isHour = r.kind === "hour";
-  const canCancel = renterCanCancel({ ...r, status }, now);
+  // A parking booking that is being paid, and a paid monthly rental that has started (ended, not cancelled).
+  const isHold = isHour && r.payment_required && (status === "pending" || status === "expired");
+  const endInstead = !isHour && r.payment_required && status === "accepted" && todayIso() >= r.start_date;
+  const ending = Boolean(r.ended_at && r.end_date);
+  const unpaid = r.payment_required && status === "accepted" && !r.paid_through;
+  const canCancel = renterCanCancel({ ...r, status }, now) && !isHold && !endInstead;
   const deadline = isHour ? renterCancelDeadline(r) : null;
   const notStarted = !isHour || (r.start_at != null && now < Date.parse(r.start_at));
   const cancelledText = r.cancelled_by && r.cancelled_by === r.host_id ? fill(t.cancelledByHost, { name: hostName }) : r.cancelled_by ? t.cancelledByYou : t.cancelled;
 
   const banner: Record<typeof status, { tone: "wait" | "ok" | "off"; text: string }> = {
-    pending: { tone: "wait", text: fill(t.pending, { name: hostName }) },
-    accepted: { tone: "ok", text: r.kind === "hour" ? t.booked : t.accepted },
+    pending: { tone: "wait", text: isHold ? appText.payments.holdTitle : fill(t.pending, { name: hostName }) },
+    accepted: { tone: "ok", text: unpaid ? appText.payments.acceptedUnpaid : r.kind === "hour" ? t.booked : t.accepted },
     declined: { tone: "off", text: fill(t.declined, { name: hostName }) },
     cancelled: { tone: "off", text: cancelledText },
-    expired: { tone: "off", text: t.expired },
+    expired: { tone: "off", text: isHold ? appText.payments.holdExpired : t.expired },
   };
   const b = banner[status];
 
@@ -99,7 +118,7 @@ export function BookingPage() {
 
       <div className={`rounded-2xl p-5 ${b.tone === "ok" ? "bg-night text-white" : b.tone === "wait" ? "bg-[#fff6e5] text-night" : "bg-frost text-night"}`}>
         <p className="text-xl font-bold">{b.text}</p>
-        {status === "pending" && (
+        {status === "pending" && !isHold && (
           <p className="mt-1 flex items-center gap-1.5 font-semibold text-[#8a5a00]">
             <Hourglass size={17} aria-hidden="true" />
             {fill(t.answerWithin, { time: timeLeft(r.expires_at, now) })}
@@ -120,12 +139,14 @@ export function BookingPage() {
             {r.decline_reason}
           </p>
         )}
-        {(status === "declined" || status === "expired" || status === "cancelled") && (
+        {(status === "declined" || (status === "expired" && !isHold) || status === "cancelled") && (
           <Link prefetch={false} href="/sok" className="btn btn-primary mt-4">
             {t.findOther}
           </Link>
         )}
       </div>
+
+      <PaymentPanel r={r} status={status} payments={data?.payments ?? []} onChange={reload} />
 
       {l && (
         <Link prefetch={false} href={`/annons?id=${l.id}`} className="card flex items-center gap-3 p-3 hover:border-night/30">
@@ -138,7 +159,7 @@ export function BookingPage() {
         </Link>
       )}
 
-      {status === "accepted" ? (
+      {status === "accepted" && !unpaid ? (
         <div className="card divide-y divide-line">
           <Row icon={MapPin} label={t.address}>
             <p className="font-semibold">{address || place}</p>
@@ -173,7 +194,7 @@ export function BookingPage() {
           )}
         </div>
       ) : (
-        status === "pending" && (
+        status === "pending" && !isHold && (
           <p className="flex gap-2 rounded-2xl bg-frost/70 p-4 text-[0.95rem] text-ink">
             <KeyRound size={18} className="mt-0.5 shrink-0 text-brand" aria-hidden="true" />
             {t.addressLater}
@@ -238,9 +259,14 @@ export function BookingPage() {
         </p>
       )}
 
-      {status === "pending" && (
+      {status === "pending" && !isHold && (
         <button type="button" disabled={busy} onClick={() => cancel(t.withdrawConfirm)} className="btn text-[#b42318] hover:bg-[#fef3f2]">
           {t.withdraw}
+        </button>
+      )}
+      {endInstead && !ending && (
+        <button type="button" disabled={busy} onClick={endRental} className="btn text-[#b42318] hover:bg-[#fef3f2]">
+          {appText.payments.endRental}
         </button>
       )}
       {status === "accepted" && canCancel && (

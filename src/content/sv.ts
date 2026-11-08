@@ -443,7 +443,7 @@ export const sv = {
     metaTitle: "Integritetspolicy",
     metaDescription: "Så hanterar Spazia dina personuppgifter på spazia.se och i appen: väntelistan, kontot, annonser, bokningar, meddelanden och cookies.",
     title: "Integritetspolicy",
-    updated: "Senast uppdaterad: 8 november 2026",
+    updated: "Senast uppdaterad: 9 november 2026",
     lead: "Policyn gäller spazia.se och appen på app.spazia.se, där värdar och hyresgäster har sina konton.",
     analytics: {
       title: "Besöksstatistik",
@@ -480,6 +480,14 @@ export const sv = {
         bullets: [] as string[],
       },
       {
+        title: "Betalningar",
+        text: "Betalningar sköts av vår betalleverantör Stripe. Ditt kortnummer hamnar aldrig hos Spazia: vi sparar bara korttyp, de sista fyra siffrorna och utgångsdatum, för att visa vilket kort som används. Vi sparar också vad som har betalats, när och för vilken bokning.",
+        bullets: [
+          "Som värd lämnar du namn, personnummer och adress till oss. Spazia måste enligt lag varje år lämna uppgifter till Skatteverket om vad värdar har tjänat via plattformen, och vilka platser det gäller.",
+          "Ditt bankkonto och de uppgifter Stripe behöver för att kontrollera vem du är lämnar du direkt till Stripe. Spazia ser dem inte.",
+        ],
+      },
+      {
         title: "Vem som ser vad",
         text: "",
         bullets: [
@@ -501,6 +509,7 @@ export const sv = {
           "Kontot, annonserna, förfrågningarna, bokningarna, meddelandena och mejlen om dem: för att fullgöra avtalet med dig, alltså för att tjänsten ska fungera.",
           "Säkerhet, att förhindra bedrägerier och missbruk och att hjälpa till vid tvister: vårt berättigade intresse av en trygg tjänst.",
           "Bokföring, när betalning via Spazia har startat: vår rättsliga förpliktelse enligt bokföringslagen.",
+          "Uppgifter till Skatteverket om värdars hyresintäkter: vår rättsliga förpliktelse som plattformsoperatör.",
         ],
       },
       {
@@ -511,6 +520,7 @@ export const sv = {
           "Kontot och annonserna: så länge du har kontot. Ber du oss radera kontot gör vi det inom 30 dagar.",
           "Förfrågningar, bokningar och meddelanden: så länge kontot finns, och därefter högst 12 månader om de behövs för att reda ut en tvist.",
           "När betalning via Spazia har startat sparar vi bokföringsunderlag i sju år, som bokföringslagen kräver.",
+          "Värdars personnummer, adress och hyresintäkter sparar vi så länge lagen om plattformsrapportering kräver.",
         ],
       },
       {
@@ -518,6 +528,7 @@ export const sv = {
         text: "Vi säljer aldrig dina uppgifter. De här leverantörerna behandlar dem för vår räkning:",
         bullets: [
           "Supabase: databasen, inloggningen och bilderna i appen. Uppgifterna lagras på servrar i Stockholm.",
+          "Stripe: tar emot betalningar och betalar ut till värdar. Stripe kontrollerar också värdars identitet och bankkonto.",
           "Netlify: webbhotell för spazia.se och appen, och lagring av intresseanmälningar inom EU.",
           "Strato: skickar våra mejl.",
           "Google: om du väljer att logga in med Google. Då gäller också Googles egna villkor.",
@@ -591,7 +602,7 @@ export const sv = {
         bullets: [
           "Du skickar en förfrågan med vad du vill förvara och från vilket datum.",
           "Värden har 24 timmar på sig att svara. När värden godkänner gäller hyran från startdatumet, och du ser adressen och hur du kommer in.",
-          "Vill någon av er avsluta en pågående hyra, säg till den andra i god tid, helst en månad innan, och avboka sedan i appen. Den andra får besked direkt.",
+          "Vill någon av er avsluta en pågående hyra, säg till den andra i god tid och avsluta den i appen. Den andra får besked direkt. När betalning i appen är igång slutar hyran när den betalda perioden är slut.",
         ],
       },
       {
@@ -607,8 +618,15 @@ export const sv = {
       },
       {
         title: "Priser, avgifter och betalning",
-        text: "Värden sätter priset. Hyresgästen betalar värdens pris plus Spazias serviceavgift på 15 %, och värden får sitt pris minus Spazias avgift på 5 %. Betalning via Spazia är inte igång än. Tills den är det gör värd och hyresgäst upp om betalningen direkt med varandra, och Spazia tar ingen avgift. Vi berättar i god tid innan betalning i appen börjar gälla.",
-        bullets: [] as string[],
+        text: "Värden sätter priset. Hyresgästen betalar värdens pris plus Spazias serviceavgift på 15 %, och värden får sitt pris minus Spazias avgift på 5 %. Spazia står för kortavgifterna. Betalning i appen startar inom kort. Tills den är igång gör värd och hyresgäst upp om betalningen direkt med varandra, och Spazia tar ingen avgift. När den är igång gäller följande:",
+        bullets: [
+          "Du betalar med kort, Apple Pay eller Google Pay via vår betalleverantör Stripe. Spazia tar emot betalningen och för över värdens del.",
+          "Förvaring per månad: kortet debiteras när värden godkänner förfrågan och sedan samma datum varje månad tills hyran avslutas. Sista månaden för en hyra med slutdatum debiteras per dag.",
+          "Parkering per timme betalas när du bokar. Platsen hålls åt dig i 30 minuter medan du betalar.",
+          "Värden får sin del ett dygn efter att uthyrningen eller bokningen har börjat. Stripe betalar ut till värdens bankkonto varje måndag.",
+          "Går en betalning inte igenom får du ett mejl med en länk för att betala. Första månaden måste betalas inom 48 timmar, annars avbryts hyran. Senare månader måste betalas inom 7 dagar, annars avslutas hyran efter den sista betalda dagen.",
+          "Avbokar du förvaring innan hyran har börjat, eller parkering minst en timme före start, får du tillbaka hela beloppet. Avbokar värden får du alltid tillbaka hela beloppet.",
+        ],
       },
       {
         title: "Skador och ansvar",

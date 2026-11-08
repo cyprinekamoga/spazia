@@ -122,6 +122,11 @@ export interface RequestRow {
   cancelled_by?: string | null;
   cancelled_at?: string | null;
   cancel_reason?: string;
+  /** Payments: whether this rental is paid through Spazia, and up to which day. */
+  payment_required?: boolean;
+  paid_through?: string | null;
+  ended_by?: string | null;
+  ended_at?: string | null;
   request_items: RequestItem[];
 }
 
@@ -138,12 +143,13 @@ export interface Message {
 
 /** What the renter pays per unit and month for a host price (service fee on top). */
 export function renterPrice(hostPrice: number): number {
-  return Math.round(hostPrice * (1 + FEES.renterServiceFee));
+  // Whole-number maths, so it rounds exactly like the database (private.renter_price).
+  return Math.round((hostPrice * Math.round((1 + FEES.renterServiceFee) * 100)) / 100);
 }
 
 /** What the host receives per unit and month (Spazia's fee deducted). */
 export function hostPayout(hostPrice: number): number {
-  return Math.round(hostPrice * (1 - FEES.hostFee));
+  return Math.round((hostPrice * Math.round((1 - FEES.hostFee) * 100)) / 100);
 }
 
 /** A host price that gives renters our guide price, rounded to 5 kr. */

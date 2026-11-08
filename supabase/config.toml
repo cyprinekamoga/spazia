@@ -1,0 +1,10 @@
+# Supabase CLI settings used when deploying the Edge Functions.
+project_id = "spazia"
+
+# Stripe calls this; it checks Stripe's signature instead of a login.
+[functions.stripe-webhook]
+verify_jwt = false
+
+# The database calls this with a one-time token instead of a login.
+[functions.payments-worker]
+verify_jwt = false
