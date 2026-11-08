@@ -274,7 +274,9 @@ export function ParkingBookingPage() {
               <Zap size={16} className="mt-0.5 shrink-0 text-brand" aria-hidden="true" />
               {t.instant}
             </p>
-            <p className="text-sm text-muted">{t.noPayment}</p>
+            <p className="text-sm text-muted">
+              {t.cancelRule} {t.noPayment}
+            </p>
             {error && (
               <p role="alert" className="rounded-xl bg-[#fef3f2] p-3 text-[0.95rem] font-medium text-[#b42318]">
                 {error}

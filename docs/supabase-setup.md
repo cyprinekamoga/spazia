@@ -74,6 +74,19 @@ Kräver ett Apple Developer-konto (cirka 99 USD per år).
 
 Knappen "Fortsätt med Apple" dyker upp på inloggningssidan av sig själv när Apple är påslaget.
 
+## 6. Mejl om förfrågningar och bokningar
+
+Värden får ett mejl vid varje ny förfrågan och parkeringsbokning, och båda parter får mejl när en förfrågan besvaras eller något avbokas. Databasen köar mejlen (`private.notifications`) och skickar dem till funktionen `/api/notify` på spazia.se, som mejlar via Strato precis som väntelistan.
+
+Adressen till funktionen ligger i databasen. Så länge den saknas väntar mejlen i kön, i högst ett dygn. Den sätts en gång, efter att sajten med funktionen är publicerad:
+
+```sql
+insert into private.settings (key, value) values ('notify_url', 'https://spazia.se/api/notify')
+on conflict (key) do update set value = excluded.value;
+```
+
+Ett jobb i databasen (`spazia-retry-notifications`) försöker igen var tionde minut med mejl som inte gick iväg, högst fem gånger.
+
 ## Bra att veta
 
 - **nordvra är pausat.** Gratisplanen tillåter två aktiva projekt, så nordvra pausades för att Spazia skulle få plats. Det går att starta igen i Supabase, men då måste ett annat projekt pausas, eller så behöver ni Pro-planen.

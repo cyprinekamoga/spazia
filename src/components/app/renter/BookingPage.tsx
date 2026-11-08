@@ -8,7 +8,7 @@ import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchCounterpartPrivate, fetchListingPrivate, fetchRenterRequest } from "@/lib/app/data";
-import { bookingHours, effectiveStatus, formatKr, periodText, renterHourlyTotal, renterMonthly, renterPrice, timeLeft } from "@/lib/app/model";
+import { bookingHours, effectiveStatus, formatKr, formatMoment, periodText, renterCancelDeadline, renterCanCancel, renterHourlyTotal, renterMonthly, renterPrice, timeLeft } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner } from "../AppShell";
@@ -44,7 +44,7 @@ export function BookingPage() {
   }, id);
   const [now] = useState(() => Date.now());
   const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
 
   if (loading) return <Spinner />;
   const r = data?.r;
@@ -61,18 +61,24 @@ export function BookingPage() {
   async function cancel(confirmText: string) {
     if (!window.confirm(confirmText)) return;
     setBusy(true);
-    setFailed(false);
+    setFailed(null);
     const res = await supabase().rpc("cancel_request", { p_request: r!.id });
     setBusy(false);
-    if (res.error) setFailed(true);
+    if (res.error) setFailed(/too_late|already_started/.test(res.error.message) ? t.tooLateError : appText.common.error);
     await reload();
   }
+
+  const isHour = r.kind === "hour";
+  const canCancel = renterCanCancel({ ...r, status }, now);
+  const deadline = isHour ? renterCancelDeadline(r) : null;
+  const notStarted = !isHour || (r.start_at != null && now < Date.parse(r.start_at));
+  const cancelledText = r.cancelled_by && r.cancelled_by === r.host_id ? fill(t.cancelledByHost, { name: hostName }) : r.cancelled_by ? t.cancelledByYou : t.cancelled;
 
   const banner: Record<typeof status, { tone: "wait" | "ok" | "off"; text: string }> = {
     pending: { tone: "wait", text: fill(t.pending, { name: hostName }) },
     accepted: { tone: "ok", text: r.kind === "hour" ? t.booked : t.accepted },
     declined: { tone: "off", text: fill(t.declined, { name: hostName }) },
-    cancelled: { tone: "off", text: t.cancelled },
+    cancelled: { tone: "off", text: cancelledText },
     expired: { tone: "off", text: t.expired },
   };
   const b = banner[status];
@@ -98,6 +104,15 @@ export function BookingPage() {
             <Hourglass size={17} aria-hidden="true" />
             {fill(t.answerWithin, { time: timeLeft(r.expires_at, now) })}
           </p>
+        )}
+        {status === "cancelled" && r.cancelled_by === r.host_id && r.cancel_reason && (
+          <p className="mt-2">
+            <span className="font-semibold">{t.reason}: </span>
+            {r.cancel_reason}
+          </p>
+        )}
+        {status === "accepted" && isHour && deadline !== null && notStarted && (
+          <p className="mt-2 text-white/85">{canCancel ? fill(t.freeCancelUntil, { time: formatMoment(deadline) }) : fill(t.tooLate, { name: hostName })}</p>
         )}
         {status === "declined" && r.decline_reason && (
           <p className="mt-2">
@@ -219,7 +234,7 @@ export function BookingPage() {
 
       {failed && (
         <p role="alert" className="rounded-xl bg-[#fef3f2] p-4 text-[0.95rem] font-medium text-[#b42318]">
-          {appText.common.error}
+          {failed}
         </p>
       )}
 
@@ -228,8 +243,8 @@ export function BookingPage() {
           {t.withdraw}
         </button>
       )}
-      {status === "accepted" && (
-        <button type="button" disabled={busy} onClick={() => cancel(t.cancelConfirm)} className="btn text-[#b42318] hover:bg-[#fef3f2]">
+      {status === "accepted" && canCancel && (
+        <button type="button" disabled={busy} onClick={() => cancel(isHour ? t.cancelParkingConfirm : t.cancelConfirm)} className="btn text-[#b42318] hover:bg-[#fef3f2]">
           {t.cancel}
         </button>
       )}

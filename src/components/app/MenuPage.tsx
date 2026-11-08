@@ -175,6 +175,17 @@ export function MenuPage({ mode }: { mode: AppMode }) {
             <ChevronRight size={18} className="text-muted" aria-hidden="true" />
           </a>
         </li>
+        {[
+          { href: `${site.url}/anvandarvillkor`, label: t.terms },
+          { href: `${site.url}/integritetspolicy`, label: t.privacy },
+        ].map((link) => (
+          <li key={link.href}>
+            <a href={link.href} className="flex min-h-14 items-center justify-between px-5 font-semibold text-night">
+              {link.label}
+              <ChevronRight size={18} className="text-muted" aria-hidden="true" />
+            </a>
+          </li>
+        ))}
         <li>
           <button type="button" onClick={logout} className="flex min-h-14 w-full items-center gap-2 px-5 font-semibold text-[#b42318]">
             <LogOut size={18} aria-hidden="true" />

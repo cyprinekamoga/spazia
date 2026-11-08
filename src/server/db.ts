@@ -9,7 +9,7 @@
  */
 import { getStore, type Store } from "@netlify/blobs";
 import { randomUUID } from "node:crypto";
-import { tidyTown } from "../content/cities";
+import { tidyTown, townKey } from "../content/cities";
 import { detectKind, type LeadKind } from "../lib/lead-emails";
 import { env } from "./env";
 
@@ -22,6 +22,8 @@ export interface Lead {
   kind: LeadKind;
   createdAt: string;
   data: Record<string, string>;
+  /** Place in line among sign-ups of the same kind in the same town (hosts and renters only). */
+  position?: number;
 }
 
 export interface LeadMeta {
@@ -33,7 +35,8 @@ export interface LeadMeta {
 
 /** Fields we keep from a form submission. Anything else (IP, user agent …) is dropped. */
 const LEAD_FIELDS = [
-  "ref", "first_name", "email", "phone", "city", "lang",
+  "ref", "first_name", "email", "phone", "city", "lang", "invited_by",
+  "org_name", "org_type", "org_need",
   "space_type", "heated", "engine_heater", "size", "accepts",
   "items", "quantity", "start", "duration", "occupation", "has_bankid",
   "message", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "referrer", "landing_page",
@@ -101,10 +104,21 @@ export async function saveLead(raw: Record<string, string | undefined>): Promise
     if (value) data[field] = value;
   }
   if (data.city) data.city = tidyTown(data.city);
+  if (data.invited_by && !INVITE_RE.test(data.invited_by)) delete data.invited_by;
   const id = isValidId(data.ref) ? data.ref.toLowerCase() : randomUUID();
   const lead: Lead = { id, kind, createdAt: new Date().toISOString(), data };
   const { modified } = await store().setJSON(`lead/${id}`, lead, { onlyIfNew: true });
   if (!modified) return (await getLead(id)) ?? lead;
+  // Count it on the waitlist. A failure here must not lose the lead or its emails.
+  try {
+    const position = await countLead(lead);
+    if (position) {
+      lead.position = position;
+      await store().setJSON(`lead/${id}`, lead);
+    }
+  } catch (err) {
+    console.error("waitlist: could not count the lead:", err);
+  }
   return lead;
 }
 
@@ -148,4 +162,96 @@ export async function listLeads(): Promise<LeadRow[]> {
     return lead ? { ...lead, meta } : null;
   });
   return rows.filter((r): r is LeadRow => r !== null).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+/* ---------- Waitlist: places in line, invites and sign-ups per town ---------- */
+
+/**
+ * One small document with the counts, so the public endpoints never have to
+ * read every lead. Updated with a compare-and-swap on each new lead.
+ */
+export interface WaitlistStats {
+  /** By townKey: the town's name and sign-ups per kind. */
+  towns: Record<string, { name: string; host: number; renter: number }>;
+  /** Invite code → number of people who signed up with it. */
+  invites: Record<string, number>;
+  /** Invite code → lead id, to show who invited whom. */
+  codes: Record<string, string>;
+  updatedAt: string;
+}
+
+const STATS_KEY = "stats/waitlist";
+const INVITE_RE = /^[0-9a-f]{8}$/;
+
+/** A lead's invite code: the first 8 characters of its id. */
+export function inviteCode(id: string): string {
+  return id.slice(0, 8).toLowerCase();
+}
+
+function addToStats(stats: WaitlistStats, lead: Lead): number | null {
+  stats.codes[inviteCode(lead.id)] = lead.id;
+  const inviter = lead.data.invited_by;
+  if (inviter && inviter !== inviteCode(lead.id) && stats.codes[inviter]) {
+    stats.invites[inviter] = (stats.invites[inviter] ?? 0) + 1;
+  }
+  if (lead.kind !== "host" && lead.kind !== "renter") return null;
+  const key = townKey(lead.data.city ?? "");
+  if (!key) return null;
+  const town = (stats.towns[key] ??= { name: lead.data.city, host: 0, renter: 0 });
+  town[lead.kind] += 1;
+  return town[lead.kind];
+}
+
+/** Rebuild the counts from all stored leads (first run, or after cleaning up). */
+async function buildStats(): Promise<{ stats: WaitlistStats; positions: Map<string, number> }> {
+  const leads = (await listLeads()).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  const stats: WaitlistStats = { towns: {}, invites: {}, codes: {}, updatedAt: new Date().toISOString() };
+  const positions = new Map<string, number>();
+  for (const lead of leads) {
+    const position = addToStats(stats, lead);
+    if (position) positions.set(lead.id, position);
+  }
+  return { stats, positions };
+}
+
+/** Count a newly stored lead. Returns its place in line in its town, if it has one. */
+async function countLead(lead: Lead): Promise<number | null> {
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const current = await store().getWithMetadata(STATS_KEY, { type: "json" });
+    if (!current) {
+      // First time: build from everything stored, which already includes this lead.
+      const { stats, positions } = await buildStats();
+      const { modified } = await store().setJSON(STATS_KEY, stats, { onlyIfNew: true });
+      if (modified) return positions.get(lead.id) ?? null;
+      continue;
+    }
+    const stats = current.data as WaitlistStats;
+    stats.codes ??= {};
+    const position = addToStats(stats, lead);
+    stats.updatedAt = new Date().toISOString();
+    const { modified } = await store().setJSON(STATS_KEY, stats, { onlyIfMatch: current.etag });
+    if (modified) return position;
+    await new Promise((resolve) => setTimeout(resolve, 50 + Math.random() * 200));
+  }
+  throw new Error("waitlist stats: too many concurrent updates");
+}
+
+export async function getStats(): Promise<WaitlistStats> {
+  const stats = await getJSON<WaitlistStats>(STATS_KEY);
+  if (stats) return stats;
+  const built = (await buildStats()).stats;
+  await store().setJSON(STATS_KEY, built, { onlyIfNew: true });
+  return built;
+}
+
+/** Recount everything, e.g. after leads were deleted on the admin page. */
+export async function rebuildStats(): Promise<void> {
+  await store().setJSON(STATS_KEY, (await buildStats()).stats);
+}
+
+/** The person who owns an invite code, if any. */
+export async function inviterOf(code: string | undefined): Promise<Lead | null> {
+  if (!code || !INVITE_RE.test(code)) return null;
+  const id = (await getStats()).codes[code];
+  return id ? getLead(id) : null;
 }

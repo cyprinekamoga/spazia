@@ -13,7 +13,7 @@
  */
 import type { FormSubmittedEvent } from "@netlify/functions";
 import { buildLeadEmails } from "../../src/lib/lead-emails";
-import { saveLead } from "../../src/server/db";
+import { inviterOf, saveLead } from "../../src/server/db";
 import { env, siteUrl } from "../../src/server/env";
 import { sendMail, teamAddress } from "../../src/server/mailer";
 
@@ -28,7 +28,16 @@ export async function handleSubmission(data: Record<string, string>) {
     console.error("lead-emails: could not store the lead:", err);
   }
 
-  const emails = buildLeadEmails(data, { teamAddress: teamAddress(), leadId, siteUrl: siteUrl() });
+  // Who invited them (name and town), for the team email.
+  let invitedBy: string | undefined;
+  try {
+    const inviter = await inviterOf(data.invited_by);
+    if (inviter) invitedBy = [inviter.data.first_name, inviter.data.city].filter(Boolean).join(", ");
+  } catch (err) {
+    console.error("lead-emails: could not look up the inviter:", err);
+  }
+
+  const emails = buildLeadEmails(data, { teamAddress: teamAddress(), leadId, siteUrl: siteUrl(), invitedBy });
   if (!emails) {
     console.log("lead-emails: not a Spazia lead form, skipping");
     return [];

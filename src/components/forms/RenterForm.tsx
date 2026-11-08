@@ -11,6 +11,7 @@ import { pagePath, RENTER_PARAMS } from "@/lib/routes";
 import { site } from "@/lib/site";
 import { categoryIcons } from "../Icons";
 import { ChoiceGroup, ConsentField, Honeypot, SelectField, TextArea, TextField, TownField, type Errors } from "./FormFields";
+import { WaitlistBox } from "./WaitlistBox";
 import { EMAIL_RE, list, orNull, str, townFromQuery, useLeadForm, useQueryString } from "./useLeadForm";
 
 const categoryIds = categories.map((c) => c.id) as string[];
@@ -64,7 +65,7 @@ export function RenterForm({ lang, t }: { lang: Lang; t: Dictionary }) {
     consent: true,
   });
 
-  const { status, errors, onSubmit, successRef } = useLeadForm("renter", lang, validate, toPayload);
+  const { status, errors, onSubmit, successRef, ref, town: sentTown } = useLeadForm("renter", lang, validate, toPayload);
 
   if (status === "success") {
     return (
@@ -72,6 +73,7 @@ export function RenterForm({ lang, t }: { lang: Lang; t: Dictionary }) {
         <CheckCircle2 size={48} className="mx-auto text-pine" aria-hidden="true" />
         <h3 className="mt-4 text-2xl font-bold text-night">{r.successTitle}</h3>
         <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">{r.successText}</p>
+        {ref && <WaitlistBox lang={lang} leadRef={ref} kind="renter" town={sentTown} />}
         <Link prefetch={false} href={pagePath("trust", lang)} className="btn btn-secondary mt-6">
           {t.trust.link}
         </Link>

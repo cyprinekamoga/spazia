@@ -15,7 +15,7 @@
 import type { Config } from "@netlify/functions";
 import { adminPassword, checkPassword, clearSessionCookie, createSessionCookie, isLoggedIn } from "../../src/server/auth";
 import { campaignEmail } from "../../src/server/campaign-email";
-import { deleteLead, getLead, isValidId, LEAD_STATUSES, listLeads, recordMailing, updateMeta, type LeadStatus } from "../../src/server/db";
+import { deleteLead, getLead, isValidId, LEAD_STATUSES, listLeads, rebuildStats, recordMailing, updateMeta, type LeadStatus } from "../../src/server/db";
 import { error, isSameOriginJson, json, readJson, sleep, str } from "../../src/server/http";
 import { mailConfigured, sendMail, teamAddress } from "../../src/server/mailer";
 
@@ -95,6 +95,7 @@ const admin = async (req: Request): Promise<Response> => {
       if (method === "PATCH") return await patchLead(req, id);
       if (method === "DELETE") {
         await deleteLead(id);
+        await rebuildStats().catch((err) => console.error("waitlist: could not recount:", err));
         return json({ ok: true });
       }
     }

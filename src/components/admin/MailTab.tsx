@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
-import { api, townOf, type AdminData } from "./api";
+import { api, kindLabel, townOf, type AdminData } from "./api";
 
 const BATCH = 20;
 
@@ -112,7 +112,7 @@ export function MailTab({ data, onChange }: { data: AdminData; onChange: () => P
             <ul className="mt-2 max-h-48 overflow-y-auto text-sm text-ink">
               {recipients.map((r) => (
                 <li key={r.id}>
-                  {r.data.first_name} ({r.kind === "host" ? "värd" : "hyresgäst"}, {r.data.lang === "en" ? "engelska" : "svenska"})
+                  {r.data.first_name} ({kindLabel(r.kind).toLowerCase()}, {r.data.lang === "en" ? "engelska" : "svenska"})
                 </li>
               ))}
             </ul>

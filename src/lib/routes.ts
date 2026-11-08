@@ -1,10 +1,11 @@
 import { categories } from "@/content/categories";
 import { cities } from "@/content/cities";
 import { guides } from "@/content/guides";
+import { universities } from "@/content/universities";
 import type { L10n, Lang } from "./i18n";
 import { site } from "./site";
 
-export type PageKey = "home" | "host" | "find" | "trust" | "about" | "privacy" | "guides";
+export type PageKey = "home" | "host" | "find" | "trust" | "about" | "privacy" | "terms" | "guides" | "students" | "organisations";
 
 export const pagePaths: Record<PageKey, L10n> = {
   home: { sv: "/", en: "/en" },
@@ -13,8 +14,14 @@ export const pagePaths: Record<PageKey, L10n> = {
   trust: { sv: "/trygghet", en: "/en/trust-and-safety" },
   about: { sv: "/om-oss", en: "/en/about" },
   privacy: { sv: "/integritetspolicy", en: "/en/privacy" },
+  terms: { sv: "/anvandarvillkor", en: "/en/terms" },
   guides: { sv: "/guider", en: "/en/guides" },
+  students: { sv: "/student", en: "/en/students" },
+  organisations: { sv: "/organisationer", en: "/en/organisations" },
 };
+
+/** "Your place in the queue" (linked from the sign-up email). Not in the sitemap. */
+export const mySpotPaths: L10n = { sv: "/min-plats", en: "/en/my-spot" };
 
 /** Query parameters that pre-fill the forms (from the hero search, category and city pages). */
 export const RENTER_PARAMS = { item: "vad", town: "ort" } as const;
@@ -38,6 +45,10 @@ export function guidePath(slug: L10n, lang: Lang): string {
   return `${pagePaths.guides[lang]}/${slug[lang]}`;
 }
 
+export function universityPath(slug: string, lang: Lang): string {
+  return `${pagePaths.students[lang]}/${slug}`;
+}
+
 /** Every page on the site, with its path in both languages. */
 export function allRoutes(): L10n[] {
   return [
@@ -45,6 +56,7 @@ export function allRoutes(): L10n[] {
     ...categories.map((c) => ({ sv: categoryPath(c.slug, "sv"), en: categoryPath(c.slug, "en") })),
     ...cities.map((c) => ({ sv: cityPath(c.slug, "sv"), en: cityPath(c.slug, "en") })),
     ...guides.map((g) => ({ sv: guidePath(g.slug, "sv"), en: guidePath(g.slug, "en") })),
+    ...universities.map((u) => ({ sv: universityPath(u.slug, "sv"), en: universityPath(u.slug, "en") })),
   ];
 }
 

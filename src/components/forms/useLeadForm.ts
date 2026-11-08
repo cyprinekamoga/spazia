@@ -3,7 +3,7 @@
 import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { RENTER_PARAMS } from "@/lib/routes";
 import { submitLead, type LeadKind, type LeadPayload } from "@/lib/leads";
-import { getAttribution, trackLead } from "@/lib/tracking";
+import { getAttribution, getInvite, trackLead } from "@/lib/tracking";
 import type { Errors } from "./FormFields";
 
 type Status = "idle" | "sending" | "success" | "error";
@@ -22,6 +22,8 @@ export function useLeadForm(
   const [errors, setErrors] = useState<Errors>({});
   // Random id for this registration, used as its id on the admin page.
   const [ref, setRef] = useState<string | null>(null);
+  // The town that was sent, for the waitlist box on the success screen.
+  const [town, setTown] = useState("");
   const successRef = useRef<HTMLDivElement>(null);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -52,10 +54,13 @@ export function useLeadForm(
       const attribution = getAttribution();
       const leadRef = ref ?? newRef();
       setRef(leadRef);
+      const payload = toPayload(data);
+      setTown(typeof payload.city === "string" ? payload.city : "");
       await submitLead(kind, {
-        ...toPayload(data),
+        ...payload,
         ref: leadRef,
         lang,
+        invited_by: getInvite(),
         utm_source: attribution.utm_source ?? null,
         utm_medium: attribution.utm_medium ?? null,
         utm_campaign: attribution.utm_campaign ?? null,
@@ -75,7 +80,7 @@ export function useLeadForm(
     }
   }
 
-  return { status, errors, onSubmit, successRef, ref };
+  return { status, errors, onSubmit, successRef, ref, town };
 }
 
 function newRef(): string {

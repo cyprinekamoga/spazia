@@ -118,6 +118,10 @@ export interface RequestRow {
   end_at?: string | null;
   /** Hourly bookings: the host's price for the whole booking, before fees. */
   host_total?: number | null;
+  /** Who cancelled (host or renter), when, and the message they left. */
+  cancelled_by?: string | null;
+  cancelled_at?: string | null;
+  cancel_reason?: string;
   request_items: RequestItem[];
 }
 
@@ -189,6 +193,37 @@ export function timeLeft(isoTimestamp: string, now = Date.now()): string {
 }
 
 /** A pending request past its 24 hours counts as expired, even before the database says so. */
+/* ---------- Cancelling (the database enforces the same rules) ---------- */
+
+/** Hourly parking: the renter can cancel free of charge until this many hours before the start. */
+export const FREE_CANCEL_HOURS = 1;
+
+type CancelFields = Pick<RequestRow, "status" | "kind" | "start_at">;
+
+/** When the renter's free cancellation ends (ms), for hourly bookings. */
+export function renterCancelDeadline(r: Pick<RequestRow, "start_at">): number | null {
+  return r.start_at ? Date.parse(r.start_at) - FREE_CANCEL_HOURS * 3_600_000 : null;
+}
+
+/** Whether the renter can still cancel: monthly any time while active, hourly until 1 hour before the start. */
+export function renterCanCancel(r: CancelFields, now = Date.now()): boolean {
+  if (r.status !== "pending" && r.status !== "accepted") return false;
+  if (r.kind !== "hour") return true;
+  const deadline = renterCancelDeadline(r);
+  return deadline !== null && now <= deadline;
+}
+
+/** Whether the host can still cancel: monthly any time while accepted, hourly until the start. */
+export function hostCanCancel(r: CancelFields, now = Date.now()): boolean {
+  if (r.status !== "accepted") return false;
+  return r.kind !== "hour" || (r.start_at != null && now < Date.parse(r.start_at));
+}
+
+/** Clock time in Swedish time, e.g. "tis 10 nov. 07:00". */
+export function formatMoment(iso: string | number): string {
+  return new Intl.DateTimeFormat("sv-SE", { timeZone: TIME_ZONE, weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
+}
+
 export function effectiveStatus(r: Pick<RequestRow, "status" | "expires_at">, now = Date.now()): RequestStatus {
   return r.status === "pending" && Date.parse(r.expires_at) < now ? "expired" : r.status;
 }

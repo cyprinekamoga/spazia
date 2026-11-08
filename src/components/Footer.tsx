@@ -75,6 +75,16 @@ export function Footer({ lang, t }: { lang: Lang; t: Dictionary }) {
               </Link>
             </li>
             <li>
+              <Link prefetch={false} href={pagePath("students", lang)} className={linkClass}>
+                {t.footer.students}
+              </Link>
+            </li>
+            <li>
+              <Link prefetch={false} href={pagePath("organisations", lang)} className={linkClass}>
+                {t.footer.organisations}
+              </Link>
+            </li>
+            <li>
               <Link prefetch={false} href={pagePath("about", lang)} className={linkClass}>
                 {t.nav.about}
               </Link>
@@ -82,6 +92,11 @@ export function Footer({ lang, t }: { lang: Lang; t: Dictionary }) {
             <li>
               <Link prefetch={false} href={pagePath("privacy", lang)} className={linkClass}>
                 {t.footer.privacy}
+              </Link>
+            </li>
+            <li>
+              <Link prefetch={false} href={pagePath("terms", lang)} className={linkClass}>
+                {t.footer.terms}
               </Link>
             </li>
             <li>

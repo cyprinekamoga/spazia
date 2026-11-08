@@ -19,7 +19,7 @@ const SITE_ONLY = [
   /^src\/views\//,
   /^src\/components\/(admin|forms)\//,
   /^src\/server\//,
-  /^src\/content\/(sv|en|guides|market-prices|cities)\.ts$/,
+  /^src\/content\/(sv|en|guides|market-prices|cities|universities)\.ts$/,
   /^netlify\/functions\//,
   /^public\/photos\//,
 ];

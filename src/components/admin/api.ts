@@ -8,9 +8,10 @@ export type LeadStatus = "new" | "contacted" | "listed" | "matched" | "declined"
 
 export interface AdminLead {
   id: string;
-  kind: "host" | "renter";
+  kind: "host" | "renter" | "org";
   createdAt: string;
   data: Record<string, string>;
+  position?: number;
   meta: { status: LeadStatus; notes: string; updatedAt: string | null; mailings: { at: string; subject: string; tag: string }[] };
 }
 
@@ -63,6 +64,16 @@ export const STATUS_LABELS: Record<LeadStatus, string> = {
   declined: "Inte aktuell",
 };
 
+/** "Värd", "Hyresgäst" or "Organisation". */
+export function kindLabel(kind: AdminLead["kind"]): string {
+  return kind === "host" ? "Värd" : kind === "org" ? "Organisation" : "Hyresgäst";
+}
+
+/** Invite code of a lead (first 8 characters of its id), as in ?inbjudan=… */
+export function inviteCodeOf(lead: AdminLead): string {
+  return lead.id.slice(0, 8).toLowerCase();
+}
+
 export function statusesFor(kind: AdminLead["kind"]): LeadStatus[] {
   return kind === "host" ? ["new", "contacted", "listed", "declined"] : ["new", "contacted", "matched", "declined"];
 }
@@ -88,8 +99,15 @@ export function townOf(lead: AdminLead): string {
 /** All answers as label/value rows, in Swedish. */
 export function describeLead(lead: AdminLead): [string, string][] {
   const d = lead.data;
+  const org = sv.forms.org;
   const rows: [string, string][] =
-    lead.kind === "host"
+    lead.kind === "org"
+      ? [
+          ["Organisation", d.org_name ?? ""],
+          ["Typ", pick(org.orgTypes, d.org_type)],
+          ["Gäller", pick(org.needs, d.org_need)],
+        ]
+      : lead.kind === "host"
       ? [
           ["Typ av utrymme", pick(host.spaceTypes, d.space_type)],
           ["Uppvärmt", pick(host.heatedOptions, d.heated)],
@@ -110,6 +128,9 @@ export function describeLead(lead: AdminLead): [string, string][] {
   return [
     ...rows,
     ["Meddelande", d.message ?? ""],
+    ["Plats i kön", lead.position ? `${lead.position} i ${townOf(lead)}` : ""],
+    ["Inbjudningskod", lead.kind === "org" ? "" : inviteCodeOf(lead)],
+    ["Inbjuden med kod", d.invited_by ?? ""],
     ["Språk", d.lang === "en" ? "Engelska" : "Svenska"],
     ["Källa", [d.utm_source, d.utm_medium, d.utm_campaign].filter(Boolean).join(" / ") || "Direkt"],
     ["Första sida", d.landing_page ?? ""],
@@ -120,6 +141,7 @@ export function describeLead(lead: AdminLead): [string, string][] {
 /** Short one-line summary for the list. */
 export function summaryOf(lead: AdminLead): string {
   const d = lead.data;
+  if (lead.kind === "org") return [d.org_name, pick(sv.forms.org.needs, d.org_need)].filter(Boolean).join(": ");
   return lead.kind === "host"
     ? [pick(host.spaceTypes, d.space_type), categoryNames(d.accepts)].filter(Boolean).join(": ")
     : [categoryNames(d.items), pick(renter.starts, d.start)].filter(Boolean).join(", ");
@@ -147,7 +169,7 @@ export function leadsCsv(leads: AdminLead[]): string {
   const rows = leads.map((l) => {
     const d = l.data;
     return [
-      formatDate(l.createdAt), l.kind === "host" ? "Värd" : "Hyresgäst", d.first_name ?? "", d.email ?? "", d.phone ?? "",
+      formatDate(l.createdAt), kindLabel(l.kind), d.first_name ?? "", d.email ?? "", d.phone ?? "",
       townOf(l), STATUS_LABELS[l.meta.status], l.meta.notes,
       pick(host.spaceTypes, d.space_type), categoryNames(d.accepts), pick(host.sizes, d.size), categoryNames(d.items), d.quantity ?? "",
       pick(renter.starts, d.start), pick(renter.durations, d.duration), d.heated ?? "", d.engine_heater ?? "",

@@ -6,6 +6,10 @@
  */
 const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
 const STORAGE_KEY = "spazia-attribution";
+/** ?inbjudan=<code>: someone's invite link. Remembered separately (the last one wins). */
+export const INVITE_PARAM = "inbjudan";
+const INVITE_KEY = "spazia-invite";
+const INVITE_RE = /^[0-9a-f]{8}$/;
 
 export type Attribution = Partial<Record<(typeof UTM_KEYS)[number] | "referrer" | "landing_page", string>>;
 
@@ -19,8 +23,17 @@ function safeSession(): Storage | null {
 
 export function captureAttribution(): void {
   const storage = safeSession();
-  if (!storage || storage.getItem(STORAGE_KEY)) return;
+  if (!storage) return;
   const params = new URLSearchParams(window.location.search);
+  const invite = (params.get(INVITE_PARAM) ?? "").toLowerCase();
+  if (INVITE_RE.test(invite)) {
+    try {
+      storage.setItem(INVITE_KEY, invite);
+    } catch {
+      /* optional */
+    }
+  }
+  if (storage.getItem(STORAGE_KEY)) return;
   const data: Attribution = {
     landing_page: window.location.pathname,
     referrer: document.referrer || undefined,
@@ -33,6 +46,16 @@ export function captureAttribution(): void {
     storage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch {
     /* storage full or blocked – attribution is optional */
+  }
+}
+
+/** The invite code from someone's invite link, if the visitor came through one. */
+export function getInvite(): string | null {
+  try {
+    const value = safeSession()?.getItem(INVITE_KEY) ?? "";
+    return INVITE_RE.test(value) ? value : null;
+  } catch {
+    return null;
   }
 }
 
@@ -76,7 +99,7 @@ type Fbq = (...args: unknown[]) => void;
 
 type Plausible = (event: string, options?: { props?: Record<string, string> }) => void;
 
-export function trackLead(kind: "host" | "renter"): void {
+export function trackLead(kind: "host" | "renter" | "org"): void {
   const w = window as unknown as { fbq?: Fbq; plausible?: Plausible };
   // Meta Pixel – only present after the visitor accepted cookies.
   if (typeof w.fbq === "function") {

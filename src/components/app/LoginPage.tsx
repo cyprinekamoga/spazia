@@ -206,8 +206,12 @@ export function LoginPage() {
 
         <p className="mt-8 text-center text-sm leading-relaxed text-muted">
           {t.terms}{" "}
-          <a href={`${site.url}/integritetspolicy`} className="underline underline-offset-4">
+          <a href={`${site.url}/anvandarvillkor`} className="underline underline-offset-4">
             {t.termsLink}
+          </a>{" "}
+          {t.termsAnd}{" "}
+          <a href={`${site.url}/integritetspolicy`} className="underline underline-offset-4">
+            {t.privacyLink}
           </a>
           .
         </p>

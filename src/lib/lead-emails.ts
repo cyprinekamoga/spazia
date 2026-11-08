@@ -12,7 +12,7 @@ import { tidyTown } from "../content/cities";
 import { en } from "../content/en";
 import { sv } from "../content/sv";
 
-export type LeadKind = "host" | "renter";
+export type LeadKind = "host" | "renter" | "org";
 
 export interface MailMessage {
   to: string;
@@ -29,6 +29,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 /** Which form a submission came from. */
 export function detectKind(data: Data): LeadKind | null {
   const formName = data["form-name"] ?? data.form_name;
+  if (formName === "org-lead" || data.org_name) return "org";
   if (formName === "host-lead" || data.space_type) return "host";
   if (formName === "renter-lead" || data.items) return "renter";
   return null;
@@ -66,7 +67,14 @@ function describe(kind: LeadKind, data: Data, lang: "sv" | "en"): [string, strin
   const f = t.forms;
   const town = townOf(data);
   const rows: [string, string][] =
-    kind === "host"
+    kind === "org"
+      ? [
+          [f.org.orgName, oneLine(data.org_name, 120)],
+          [f.org.orgType, pick(f.org.orgTypes, data.org_type)],
+          [f.org.need, pick(f.org.needs, data.org_need)],
+          [f.town, town],
+        ]
+      : kind === "host"
       ? [
           [f.town, town],
           [f.host.spaceType, pick(f.host.spaceTypes, data.space_type)],
@@ -155,6 +163,15 @@ const confirmationCopy = {
         `Tack för din förfrågan. Vi letar efter en verifierad värd ${town ? `i ${town}` : "nära dig"} och hör av oss så snart vi har hittat en.`,
       ],
     },
+    org: {
+      subject: "Tack, vi hör av oss",
+      intro: (name: string) => [
+        `Hej ${name}!`,
+        "Tack för att ni hörde av er. Vi går igenom det ni skrev och återkommer inom några dagar med ett förslag på upplägg.",
+      ],
+    },
+    queueText: (town: string) => `Se din plats i kön och bjud in grannar. Ju fler som anmäler sig${town ? ` i ${town}` : ""}, desto snabbare öppnar vi där.`,
+    queueButton: "Se din plats i kön",
     summary: "Det här skickade du:",
     outro: "Har du frågor? Svara bara på det här mejlet.",
     signoff: "Hälsningar\nSpazia",
@@ -175,6 +192,15 @@ const confirmationCopy = {
         `Thanks for your request. We're looking for a verified host ${town ? `in ${town}` : "near you"} and will get in touch as soon as we've found one.`,
       ],
     },
+    org: {
+      subject: "Thanks, we'll be in touch",
+      intro: (name: string) => [
+        `Hi ${name},`,
+        "Thanks for getting in touch. We'll go through what you wrote and come back within a few days with a suggestion for how it could work.",
+      ],
+    },
+    queueText: (town: string) => `See your place in the queue and invite your neighbours. The more people who sign up${town ? ` in ${town}` : ""}, the sooner we open there.`,
+    queueButton: "See your place in the queue",
     summary: "What you sent us:",
     outro: "Questions? Just reply to this email.",
     signoff: "Best wishes\nSpazia",
@@ -184,7 +210,7 @@ const confirmationCopy = {
 
 export function buildLeadEmails(
   data: Data,
-  opts: { teamAddress: string; leadId?: string; siteUrl?: string },
+  opts: { teamAddress: string; leadId?: string; siteUrl?: string; invitedBy?: string },
 ): { kind: LeadKind; team: MailMessage; confirmation: MailMessage | null } | null {
   const kind = detectKind(data);
   if (!kind) return null;
@@ -204,13 +230,16 @@ export function buildLeadEmails(
     ["Meddelande", oneLine(data.message, 1000)],
     ["Språk", lang === "sv" ? "Svenska" : "Engelska"],
     ["Källa", [data.utm_source, data.utm_medium, data.utm_campaign].filter(Boolean).join(" / ") || "Direkt"],
+    ["Inbjuden av", oneLine(opts.invitedBy)],
     ["Första sida", oneLine(data.landing_page)],
     ["Kom från", oneLine(data.referrer)],
   ].filter(([, v]) => v !== "") as [string, string][];
 
   const where = town || "ort saknas";
   const teamSubject =
-    kind === "host"
+    kind === "org"
+      ? `Ny organisation: ${oneLine(data.org_name, 80) || name}, ${where} (${pick(sv.forms.org.needs, data.org_need).toLowerCase()})`
+      : kind === "host"
       ? `Ny värd: ${name}, ${where} (${pick(sv.forms.host.spaceTypes, data.space_type).toLowerCase()})`
       : `Ny hyresgäst: ${name}, ${categoryList(data.items, "sv").toLowerCase()} (${where})`;
 
@@ -219,17 +248,16 @@ export function buildLeadEmails(
   const adminLine = adminUrl ? `\n\nÖppna i admin: ${adminUrl}` : "";
   const adminHtml = adminUrl ? buttonHtml(adminUrl, "Öppna i admin") : "";
 
+  const teamTitle = kind === "org" ? "Ny organisation" : kind === "host" ? "Ny värd" : "Ny hyresgäst";
   const team: MailMessage = {
     to: opts.teamAddress,
     replyTo: validEmail ? email : undefined,
     subject: oneLine(teamSubject, 180),
-    text: `${kind === "host" ? "Ny värd" : "Ny hyresgäst"} på spazia.se\n\n${teamRows
+    text: `${teamTitle} på spazia.se\n\n${teamRows
       .map(([k, v]) => labelValue(k, v))
       .join("\n")}\n\nSvara på mejlet för att kontakta ${name} direkt.${adminLine}`,
     html: htmlLayout(
-      `<p style="margin:0 0 16px;font-size:18px;font-weight:700">${
-        kind === "host" ? "Ny värd" : "Ny hyresgäst"
-      }</p>${htmlTable(teamRows)}<p style="margin:18px 0 0;font-size:15px;color:#586670">Svara på mejlet för att kontakta ${escapeHtml(
+      `<p style="margin:0 0 16px;font-size:18px;font-weight:700">${teamTitle}</p>${htmlTable(teamRows)}<p style="margin:18px 0 0;font-size:15px;color:#586670">Svara på mejlet för att kontakta ${escapeHtml(
         name,
       )} direkt.</p><div style="margin-top:16px">${adminHtml}</div>`,
       "Skickat automatiskt från formuläret på spazia.se",
@@ -242,15 +270,19 @@ export function buildLeadEmails(
     const c = confirmationCopy[lang];
     const intro = c[kind].intro(name, town);
     const rows = describe(kind, data, lang);
+    // Hosts and renters get a link to their place in the queue, where they can invite others.
+    const queueUrl = kind !== "org" && opts.leadId ? `${siteUrl}${lang === "en" ? "/en/my-spot" : "/min-plats"}?id=${opts.leadId}` : "";
+    const queueText = queueUrl ? `\n\n${c.queueText(town)}\n${queueUrl}` : "";
+    const queueHtml = queueUrl ? `<div style="margin-top:20px">${paragraphsHtml([c.queueText(town)])}${buttonHtml(queueUrl, c.queueButton)}</div>` : "";
     confirmation = {
       to: email,
       replyTo: opts.teamAddress,
       subject: c[kind].subject,
-      text: `${intro.join("\n\n")}\n\n${c.summary}\n${rows.map(([k, v]) => labelValue(k, v)).join("\n")}\n\n${c.outro}\n\n${c.signoff}\nspazia.se\n\n${c.footer}`,
+      text: `${intro.join("\n\n")}\n\n${c.summary}\n${rows.map(([k, v]) => labelValue(k, v)).join("\n")}${queueText}\n\n${c.outro}\n\n${c.signoff}\nspazia.se\n\n${c.footer}`,
       html: htmlLayout(
         `${paragraphsHtml(intro)}<p style="margin:18px 0 8px;font-size:15px;font-weight:700">${escapeHtml(c.summary)}</p>${htmlTable(
           rows,
-        )}<div style="margin-top:20px">${paragraphsHtml([c.outro])}</div><p style="margin:0;font-size:16px;line-height:1.55">${escapeHtml(
+        )}${queueHtml}<div style="margin-top:20px">${paragraphsHtml([c.outro])}</div><p style="margin:0;font-size:16px;line-height:1.55">${escapeHtml(
           c.signoff,
         ).replace("\n", "<br>")}<br><a href="https://spazia.se" style="color:#2f6b75">spazia.se</a></p>`,
         escapeHtml(c.footer),

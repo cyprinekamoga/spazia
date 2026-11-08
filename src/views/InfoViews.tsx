@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Mail } from "lucide-react";
 import { getDictionary } from "@/content";
 import { photos } from "@/content/photos";
+import { MySpot } from "@/components/forms/MySpot";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { CheckList, FinalCta, PhotoHero, Section } from "@/components/sections";
 import { fill, type Lang } from "@/lib/i18n";
@@ -112,29 +113,65 @@ export function AboutView({ lang }: { lang: Lang }) {
   );
 }
 
-export function PrivacyView({ lang }: { lang: Lang }) {
+type LegalSection = { title: string; text: string; bullets: string[] };
+
+/** Privacy policy and terms: a title, a date, a lead and numbered-free sections with optional bullet lists. */
+function LegalPage({ lang, title, updated, lead, sections }: { lang: Lang; title: string; updated: string; lead: string; sections: LegalSection[] }) {
   const t = getDictionary(lang);
-  const p = t.privacyPage;
   const legal = site.orgNumber ? `${site.legalName} (org.nr ${site.orgNumber})` : site.legalName;
+  const vars = { legal, email: site.email };
   return (
     <Section>
       <article className="mx-auto max-w-3xl">
-        <h1 className="text-[2.25rem] leading-tight text-night sm:text-5xl">{p.title}</h1>
-        <p className="mt-3 text-muted">{p.updated}</p>
+        <h1 className="text-[2.25rem] leading-tight text-night sm:text-5xl">{title}</h1>
+        <p className="mt-3 text-muted">{updated}</p>
+        <p className="mt-5 text-lg leading-relaxed text-ink">{lead}</p>
         <div className="mt-8 space-y-7 sm:mt-10 sm:space-y-8">
-          {[...p.sections, ...(site.plausibleDomain ? [p.analytics] : [])].map((s) => (
+          {sections.map((s) => (
             <section key={s.title}>
               <h2 className="text-xl text-night sm:text-2xl">{s.title}</h2>
-              <p className="mt-2 leading-relaxed text-ink sm:mt-3">{fill(s.text, { legal, email: site.email })}</p>
+              {s.text && <p className="mt-2 leading-relaxed text-ink sm:mt-3">{fill(s.text, vars)}</p>}
+              {s.bullets.length > 0 && (
+                <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-ink marker:text-muted">
+                  {s.bullets.map((b) => (
+                    <li key={b}>{fill(b, vars)}</li>
+                  ))}
+                </ul>
+              )}
             </section>
           ))}
         </div>
-        <p className="mt-12">
+        <p className="mt-12 flex flex-wrap gap-x-6 gap-y-2">
           <Link prefetch={false} href={pagePath("home", lang)} className="inline-flex min-h-11 items-center font-semibold text-night underline underline-offset-4">
             ← {t.notFound.home}
           </Link>
         </p>
       </article>
+    </Section>
+  );
+}
+
+export function PrivacyView({ lang }: { lang: Lang }) {
+  const p = getDictionary(lang).privacyPage;
+  const sections = site.plausibleDomain ? [...p.sections.slice(0, -2), p.analytics, ...p.sections.slice(-2)] : p.sections;
+  return <LegalPage lang={lang} title={p.title} updated={p.updated} lead={p.lead} sections={sections} />;
+}
+
+export function TermsView({ lang }: { lang: Lang }) {
+  const p = getDictionary(lang).termsPage;
+  return <LegalPage lang={lang} title={p.title} updated={p.updated} lead={p.lead} sections={p.sections} />;
+}
+
+/** Place in the queue and invite link (linked from the sign-up email). */
+export function MySpotView({ lang }: { lang: Lang }) {
+  const p = getDictionary(lang).mySpotPage;
+  return (
+    <Section>
+      <div className="mx-auto max-w-xl">
+        <h1 className="text-[2.25rem] leading-tight text-night sm:text-5xl">{p.title}</h1>
+        <p className="mt-3 text-lg leading-relaxed text-muted">{p.lead}</p>
+        <MySpot lang={lang} />
+      </div>
     </Section>
   );
 }

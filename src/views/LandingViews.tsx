@@ -5,6 +5,7 @@ import { getDictionary } from "@/content";
 import type { Category } from "@/content/categories";
 import type { City } from "@/content/cities";
 import { guides } from "@/content/guides";
+import { DemandBadge } from "@/components/DemandBadge";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { RenterCalculator } from "@/components/RenterCalculator";
 import {
@@ -154,6 +155,7 @@ export function CityView({ lang, city }: { lang: Lang; city: City }) {
       </PhotoHero>
 
       <Section>
+        <DemandBadge lang={lang} town={city.name} className="mb-4 sm:mb-6" />
         <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
           <div className="card flex flex-col p-5 sm:p-8">
             <h2 className="text-2xl leading-snug text-night">{fill(p.renterTitle, vars)}</h2>

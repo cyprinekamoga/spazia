@@ -175,6 +175,7 @@ export function ListingView({
                           {s.capacity} {s.capacity === 1 ? c.unit.sv : c.unitPlural.sv}
                         </span>
                         {s.hourly_price != null && <span className="block text-sm text-muted">{fill(t.renterListing.bookable, { hours: hoursText(s) })}</span>}
+                        {s.hourly_price != null && <span className="block text-sm text-muted">{t.parkingForm.cancelRule}</span>}
                       </span>
                     </span>
                     <span className="text-right">

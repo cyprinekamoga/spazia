@@ -8,7 +8,7 @@ import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchCounterpartPrivate, fetchRequest } from "@/lib/app/data";
-import { effectiveStatus, formatKr, hostPayout, periodText, requestIncome, timeLeft } from "@/lib/app/model";
+import { effectiveStatus, formatKr, hostCanCancel, hostPayout, periodText, requestIncome, timeLeft } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner } from "../AppShell";
@@ -30,7 +30,9 @@ export function RequestPage() {
   }, id);
   const [busy, setBusy] = useState(false);
   const [declining, setDeclining] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   const [reason, setReason] = useState("");
+  const [cancelReason, setCancelReason] = useState("");
   const [message, setMessage] = useState<{ tone: "ok" | "error"; text: string } | null>(null);
   const [now] = useState(() => Date.now());
 
@@ -57,13 +59,27 @@ export function RequestPage() {
   }
 
   async function cancel() {
-    if (!window.confirm(t.cancelConfirm)) return;
     setBusy(true);
-    const res = await supabase().rpc("cancel_request", { p_request: id });
+    setMessage(null);
+    const res = await supabase().rpc("cancel_request", { p_request: id, p_reason: cancelReason });
     setBusy(false);
-    if (res.error) setMessage({ tone: "error", text: appText.common.error });
+    setCancelling(false);
+    if (res.error) setMessage({ tone: "error", text: /already_started/.test(res.error.message) ? t.tooLateHost : appText.common.error });
     await reload();
   }
+
+  const isHour = r.kind === "hour";
+  const canCancel = hostCanCancel({ ...r, status }, now);
+  // A pending request that was withdrawn got responded_at and cancelled_at in the same moment.
+  const withdrawn = r.cancelled_by === r.renter_id && r.responded_at != null && r.cancelled_at != null && Date.parse(r.responded_at) === Date.parse(r.cancelled_at);
+  const cancelledText =
+    r.cancelled_by === r.host_id
+      ? t.cancelledByYou
+      : withdrawn
+        ? fill(t.cancelledWithdrawn, { name })
+        : r.cancelled_by === r.renter_id
+          ? fill(t.cancelledByRenter, { name })
+          : null;
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -175,15 +191,49 @@ export function RequestPage() {
           <p className="font-semibold text-night">
             Status: {r.kind === "hour" && status === "accepted" ? "Bokad" : appText.requestStatus[status]}
             {status === "declined" && r.decline_reason ? ` (${r.decline_reason})` : ""}
+            {status === "cancelled" && cancelledText ? ` · ${cancelledText}` : ""}
           </p>
+        )}
+        {status === "cancelled" && r.cancel_reason && r.cancelled_by !== r.host_id && (
+          <p className="leading-relaxed text-ink">
+            <span className="font-semibold">{t.message}: </span>
+            {r.cancel_reason}
+          </p>
+        )}
+        {cancelling && canCancel && (
+          <div className="card p-4">
+            <p className="font-bold text-night">{t.cancelTitle}</p>
+            <p className="mt-1 text-[0.95rem] text-muted">{isHour ? t.cancelHourNote : fill(t.cancelNote, { name })}</p>
+            {isHour && <p className="mt-1 text-[0.95rem] text-muted">{fill(t.cancelNote, { name })}</p>}
+            <label htmlFor="cancel-reason" className="field-label mt-3">
+              {fill(t.cancelReason, { name })}
+            </label>
+            <textarea
+              id="cancel-reason"
+              className="field-input resize-y"
+              rows={3}
+              maxLength={500}
+              placeholder={t.cancelReasonPlaceholder}
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+            />
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <button type="button" disabled={busy} onClick={cancel} className="btn bg-[#b42318] text-white hover:bg-[#912018]">
+                {t.cancelConfirm}
+              </button>
+              <button type="button" onClick={() => setCancelling(false)} className="btn btn-secondary">
+                {t.keep}
+              </button>
+            </div>
+          </div>
         )}
         <div className="flex flex-col gap-2 sm:flex-row">
           <Link prefetch={false} href={`/vard/meddelanden?id=${r.conversation_id}`} className="btn btn-secondary">
             <MessageSquare size={18} aria-hidden="true" />
             {t.message_renter}
           </Link>
-          {status === "accepted" && (
-            <button type="button" disabled={busy} onClick={cancel} className="btn text-[#b42318] hover:bg-[#fef3f2]">
+          {canCancel && !cancelling && (
+            <button type="button" disabled={busy} onClick={() => setCancelling(true)} className="btn text-[#b42318] hover:bg-[#fef3f2]">
               {t.cancel}
             </button>
           )}

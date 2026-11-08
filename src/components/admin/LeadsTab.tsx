@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import {
   api,
   describeLead,
+  kindLabel,
   download,
   formatDate,
   leadsCsv,
@@ -19,7 +20,7 @@ import {
 
 export function LeadsTab({ data, focusLead, onChange }: { data: AdminData; focusLead: string | null; onChange: () => Promise<void> }) {
   const [query, setQuery] = useState("");
-  const [kind, setKind] = useState<"all" | "host" | "renter">("all");
+  const [kind, setKind] = useState<"all" | "host" | "renter" | "org">("all");
   const [town, setTown] = useState("all");
   const [status, setStatus] = useState<"all" | LeadStatus>("all");
   const [only, setOnly] = useState<string | null>(focusLead);
@@ -56,7 +57,7 @@ export function LeadsTab({ data, focusLead, onChange }: { data: AdminData; focus
             </label>
             <input id="lead-search" className="field-input" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Namn, e-post, telefon …" />
           </div>
-          <Select id="lead-kind" label="Typ" value={kind} onChange={(v) => setKind(v as typeof kind)} options={[["all", "Alla"], ["host", "Värdar"], ["renter", "Hyresgäster"]]} />
+          <Select id="lead-kind" label="Typ" value={kind} onChange={(v) => setKind(v as typeof kind)} options={[["all", "Alla"], ["host", "Värdar"], ["renter", "Hyresgäster"], ["org", "Organisationer"]]} />
           <Select id="lead-town" label="Ort" value={town} onChange={setTown} options={[["all", "Alla orter"], ...towns.map((t) => [t, t] as [string, string])]} />
           <Select
             id="lead-status"
@@ -137,7 +138,7 @@ function LeadCard({ lead, startOpen, onChange }: { lead: AdminLead; startOpen: b
             <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <span className="text-lg font-bold text-night">{d.first_name || "–"}</span>
               <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${lead.kind === "host" ? "bg-brand-soft text-brand" : "bg-frost text-night"}`}>
-                {lead.kind === "host" ? "Värd" : "Hyresgäst"}
+                {kindLabel(lead.kind)}
               </span>
             </span>
             <span className="mt-0.5 block text-[0.95rem] text-ink">{town}</span>

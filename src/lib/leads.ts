@@ -1,6 +1,6 @@
 import { site } from "./site";
 
-export type LeadKind = "host" | "renter";
+export type LeadKind = "host" | "renter" | "org";
 
 type LeadValue = string | string[] | boolean | null;
 export type LeadPayload = Record<string, LeadValue>;
@@ -8,12 +8,14 @@ export type LeadPayload = Record<string, LeadValue>;
 const TABLES: Record<LeadKind, string> = {
   host: "host_leads",
   renter: "renter_leads",
+  org: "org_leads",
 };
 
 /** Netlify Forms names – must match the hidden forms in public/__forms.html. */
 export const NETLIFY_FORM_NAMES: Record<LeadKind, string> = {
   host: "host-lead",
   renter: "renter-lead",
+  org: "org-lead",
 };
 
 export const usesSupabase = Boolean(site.supabaseUrl && site.supabaseKey);
