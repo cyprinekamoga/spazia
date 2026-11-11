@@ -6,7 +6,9 @@ Allt är byggt men avstängt tills stegen nedan är klara. Gör allt i **testlä
 
 ## 1. Stripe-kontot
 
-Det finns redan en **testmiljö (sandbox)** som jag skapade med Stripes CLI. Den går ut efter 7 dagar om den inte tas över: öppna länken du fick i chatten (eller kör `stripe sandboxes claim`) och logga in eller skapa ert Stripe-konto. Alternativt skapar ni kontot direkt på [stripe.com](https://stripe.com) och gör en egen sandbox under *Developers → Sandboxes*.
+Skapa kontot på [dashboard.stripe.com/register](https://dashboard.stripe.com/register) med **Sverige** som land. Gör sedan en testmiljö: klicka på kontonamnet uppe till vänster → *Switch to sandbox* → *Create sandbox*, ge den ett namn (till exempel ”Spazia test”) och låt *Copy live account to sandbox* vara på. Testmiljön går att använda innan kontot är aktiverat för riktiga betalningar.
+
+Testmiljön jag skapade med Stripes CLI under bygget är amerikansk och kan inte testa svenska värdkonton eller svensk moms. Den behöver inte tas över, den försvinner av sig själv den 15 november.
 
 I Stripes Dashboard (först i sandboxen, sedan skarpt):
 
@@ -26,15 +28,15 @@ I Stripes Dashboard (först i sandboxen, sedan skarpt):
 
 Klistra aldrig in nycklarna i en chatt. De läggs bara i [Supabase → Edge Functions → Secrets](https://supabase.com/dashboard/project/mtyhnfsceahvovauckkj/functions/secrets).
 
-1. **Begränsad nyckel** (`rk_…`), inte den hemliga (`sk_…`): *Developers → API keys → Create restricted key* med de här rättigheterna, och inget mer:
-   - *Write:* Customers, Payment Methods, PaymentIntents, Checkout Sessions, Products, Prices, Subscriptions, Subscription Schedules, Invoices, Invoice Items, Credit Notes, Refunds, Transfers, Connect: Accounts, Account Links, Login Links
-   - *Read:* SetupIntents, Charges, Events
-   Lägg in den som `STRIPE_SECRET_KEY`. Saknas en rättighet svarar Stripe med 403. Testa därför allt i sandboxen först.
-2. **Webhook för ert konto** (*Developers → Webhooks → Add destination*, *Your account*, *Snapshot*):
+1. **Begränsad nyckel** (`rk_…`), inte en med full åtkomst: *Developers → API keys → Create secret key*, välj egna rättigheter (*custom permissions*) och ge den de här, inget mer:
+   - *Write:* Customers, Payment Methods, Payment Intents, Checkout Sessions, Products, Prices, Subscriptions, Subscription Schedules, Invoices, Invoice Items, Credit Notes, Refunds, Transfers, Accounts (Connect), Account Links, Login Links
+   - *Read:* Setup Intents, Charges, Events, Invoice Payments (om den finns som egen rad)
+   Transfers och Connect markeras som *Elevated risk*. Det stämmer: nyckeln ska kunna föra över pengar till värdarna. Lägg in nyckeln som `STRIPE_SECRET_KEY`. Saknas en rättighet svarar Stripe med 403, och felet syns under nyckelns *View request logs*. Testa därför allt i sandboxen först.
+2. **Webhook för betalningar** (*Developers → Webhooks → Create an event destination*, *Your account*, *Snapshot*, API-version `2026-10-28.endive`):
    - URL: `https://mtyhnfsceahvovauckkj.supabase.co/functions/v1/stripe-webhook`
    - Händelser: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `payment_intent.succeeded`, `payment_intent.payment_failed`, `invoice.created`, `invoice.paid`, `invoice.payment_failed`, `customer.subscription.deleted`, `charge.refunded`, `charge.dispute.created`, `radar.early_fraud_warning.created`
    - Signing secret (`whsec_…`) → `STRIPE_WEBHOOK_SECRET`
-3. **Webhook för värdarnas konton** (*Add destination*, *Connected accounts*, payload *Thin*, samma URL):
+3. **Webhook för värdarnas konton** (*Create an event destination*, **Your account**, payload *Thin*, samma URL). Välj *Your account* och inte *Connected accounts*: Stripe skickar v2-händelser om värdkonton till plattformens eget konto.
    - Händelser: `v2.core.account[configuration.recipient].capability_status_updated`, `v2.core.account[requirements].updated`, `v2.core.account.updated`
    - Signing secret → `STRIPE_CONNECT_WEBHOOK_SECRET`
 

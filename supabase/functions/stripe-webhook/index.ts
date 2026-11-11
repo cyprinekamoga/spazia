@@ -2,12 +2,13 @@
  * Stripe → Spazia, at https://<project>.supabase.co/functions/v1/stripe-webhook.
  * Two destinations in Stripe (Developers → Webhooks / Event destinations):
  *
- *  1. Your account, snapshot events (signing secret: STRIPE_WEBHOOK_SECRET):
+ *  1. Your account, snapshot events, API version 2026-10-28.endive (signing secret: STRIPE_WEBHOOK_SECRET):
  *     checkout.session.completed, checkout.session.async_payment_succeeded,
  *     payment_intent.succeeded, payment_intent.payment_failed,
  *     invoice.created, invoice.paid, invoice.payment_failed, customer.subscription.deleted,
  *     charge.refunded, charge.dispute.created, radar.early_fraud_warning.created
- *  2. Connected accounts, thin v2 events (signing secret: STRIPE_CONNECT_WEBHOOK_SECRET):
+ *  2. Your account, thin v2 events about hosts' accounts (signing secret: STRIPE_CONNECT_WEBHOOK_SECRET).
+ *     v2 events for connected accounts are sent to the platform's own account scope:
  *     v2.core.account[configuration.recipient].capability_status_updated,
  *     v2.core.account[requirements].updated, v2.core.account.updated
  *
