@@ -8,3 +8,7 @@ verify_jwt = false
 # The database calls this with a one-time token instead of a login.
 [functions.payments-worker]
 verify_jwt = false
+
+# Checks the signed-in user itself (auth.getUser), so the gateway's JWT check is off.
+[functions.payments]
+verify_jwt = false
