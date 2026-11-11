@@ -58,6 +58,15 @@ on conflict (key) do update set value = excluded.value;
 
 Stäng av igen med `update private.settings set value = 'false' where key = 'payments_enabled';`. Appen fungerar då som innan, utan betalning.
 
+**Testläge.** Med `payments_enabled = 'test'` gäller betalningarna bara konton vars mejladresser står i `payments_test_users` (kommaseparerade). Alla andra använder appen som innan. Så kan hela flödet testas i Stripes sandbox medan riktiga användare inte märker något:
+
+```sql
+insert into private.settings (key, value) values
+  ('payments_enabled', 'test'),
+  ('payments_test_users', 'testvard@example.com,testkund@example.com')
+on conflict (key) do update set value = excluded.value;
+```
+
 ## 4. Skarpt läge
 
 Skapa en begränsad nyckel och samma två webhooks i skarpt läge, och byt de tre hemligheterna i Supabase. Inget annat behöver ändras.

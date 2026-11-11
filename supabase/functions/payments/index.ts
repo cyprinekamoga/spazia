@@ -47,8 +47,9 @@ async function signedInUser(req: Request): Promise<UserRow> {
   return user;
 }
 
-async function paymentsOn(): Promise<boolean> {
-  const [row] = await sql<{ on: boolean }[]>`select private.payments_on() as on`;
+/** Payments on for this user (in test mode only for the test accounts). */
+async function paymentsOnFor(userId: string): Promise<boolean> {
+  const [row] = await sql<{ on: boolean }[]>`select private.payments_on_for(${userId}::uuid) as on`;
   return row?.on ?? false;
 }
 
@@ -282,8 +283,8 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(req) });
   if (req.method !== "POST") return json(req, { error: "method_not_allowed" }, 405);
   try {
-    if (!(await paymentsOn())) throw new HttpError(503, "payments_off");
     const user = await signedInUser(req);
+    if (!(await paymentsOnFor(user.id))) throw new HttpError(503, "payments_off");
     const body = await readJson(req);
     switch (body.action) {
       case "connect":
