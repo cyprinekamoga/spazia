@@ -222,6 +222,7 @@ export function PayoutsPage() {
         ) : (
           <>
             <p className="mt-1 leading-relaxed text-muted">{t.bankText}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t.bankIban}</p>
             {!setup.enabled ? null : tax ? (
               <button type="button" disabled={busy} onClick={() => stripeAction("connect")} className="btn btn-primary mt-4">
                 <Landmark size={18} aria-hidden="true" />

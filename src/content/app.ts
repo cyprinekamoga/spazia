@@ -554,6 +554,7 @@ export const appText = {
     changeTax: "Ändra",
     bankTitle: "2. Koppla ditt bankkonto",
     bankText: "Du kopplar bankkontot hos Stripe, som sköter betalningarna åt Spazia. Stripe kontrollerar också vem du är. Det tar några minuter.",
+    bankIban: "Stripe frågar efter kontonumret i IBAN-format (börjar med SE). Det är ditt vanliga bankkonto, skrivet på det internationella sättet. Du hittar det i din bankapp eller internetbank under kontouppgifter.",
     bankStart: "Koppla bankkonto",
     bankContinue: "Fortsätt hos Stripe",
     bankPending: "Stripe granskar dina uppgifter. Det brukar gå på några minuter men kan ta ett par dagar.",
