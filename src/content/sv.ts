@@ -621,6 +621,8 @@ export const sv = {
         text: "Värden sätter priset. Hyresgästen betalar värdens pris plus Spazias serviceavgift på 15 %, och värden får sitt pris minus Spazias avgift på 5 %. Spazia står för kortavgifterna. Betalning i appen startar inom kort. Tills den är igång gör värd och hyresgäst upp om betalningen direkt med varandra, och Spazia tar ingen avgift. När den är igång gäller följande:",
         bullets: [
           "Du betalar med kort, Apple Pay eller Google Pay via vår betalleverantör Stripe. Spazia tar emot betalningen och för över värdens del.",
+          "Spazia tar emot hyran i värdens namn och för värdens räkning. Kvittot visar hyran och Spazias serviceavgift var för sig.",
+          "Spazias avgifter (15 % och 5 %) inkluderar 25 % moms. Spazia tar inte ut moms på hyran. Värden ansvarar själv för skatt och eventuell moms på sina hyresintäkter, och Spazia drar ingen skatt från utbetalningarna.",
           "Förvaring per månad: kortet debiteras när värden godkänner förfrågan och sedan samma datum varje månad tills hyran avslutas. Sista månaden för en hyra med slutdatum debiteras per dag.",
           "Parkering per timme betalas när du bokar. Platsen hålls åt dig i 30 minuter medan du betalar.",
           "Värden får sin del ett dygn efter att uthyrningen eller bokningen har börjat. Stripe betalar ut till värdens bankkonto varje måndag.",

@@ -5,7 +5,7 @@
  *  1. Your account, snapshot events (signing secret: STRIPE_WEBHOOK_SECRET):
  *     checkout.session.completed, checkout.session.async_payment_succeeded,
  *     payment_intent.succeeded, payment_intent.payment_failed,
- *     invoice.paid, invoice.payment_failed, customer.subscription.deleted,
+ *     invoice.created, invoice.paid, invoice.payment_failed, customer.subscription.deleted,
  *     charge.refunded, charge.dispute.created, radar.early_fraud_warning.created
  *  2. Connected accounts, thin v2 events (signing secret: STRIPE_CONNECT_WEBHOOK_SECRET):
  *     v2.core.account[configuration.recipient].capability_status_updated,
@@ -17,7 +17,7 @@
  */
 import { Stripe } from "../_shared/deps.ts";
 import { sql, stripe } from "../_shared/config.ts";
-import { ACCOUNT_INCLUDE, chargeId, paymentFailed, paymentSucceeded, saveCard, syncAccount } from "../_shared/payments.ts";
+import { ACCOUNT_INCLUDE, chargeId, invoicePaid, paymentFailed, paymentSucceeded, saveCard, syncAccount } from "../_shared/payments.ts";
 
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 const id = (v: string | { id: string } | null | undefined) => (typeof v === "string" ? v : (v?.id ?? null));
@@ -79,9 +79,31 @@ async function handleSnapshot(event: Stripe.Event): Promise<void> {
       }
       return;
     }
-    case "invoice.paid":
-      await recordInvoice(event.data.object, true);
+    case "invoice.created": {
+      // Monthly invoices name the place and the host, like the first month's.
+      const invoice = event.data.object;
+      const subscriptionId = id(invoice.parent?.subscription_details?.subscription);
+      if (invoice.id && invoice.status === "draft" && subscriptionId && !invoice.description) {
+        const sub = await s.subscriptions.retrieve(subscriptionId);
+        if (sub.description) await s.invoices.update(invoice.id, { description: sub.description });
+      }
       return;
+    }
+    case "invoice.paid": {
+      const invoice = event.data.object;
+      if (invoice.parent?.subscription_details?.subscription) {
+        await recordInvoice(invoice, true);
+      } else if (invoice.id) {
+        // A first month, charged by payments-worker or paid on the invoice page.
+        const [p] = await sql<{ id: string }[]>`
+          select id from public.payments
+           where stripe_invoice = ${invoice.id}
+              or (stripe_invoice is null and id::text = ${invoice.metadata?.payment_id ?? ""})
+           limit 1`;
+        if (p) await invoicePaid(p.id, invoice.id);
+      }
+      return;
+    }
     case "invoice.payment_failed":
       await recordInvoice(event.data.object, false);
       return;

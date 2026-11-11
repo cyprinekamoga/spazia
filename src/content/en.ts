@@ -623,6 +623,8 @@ export const en: Dictionary = {
         text: "The host sets the price. The renter pays the host's price plus Spazia's 15% service fee, and the host receives their price minus Spazia's 5% fee. Spazia covers the card fees. Payment in the app starts soon. Until it does, host and renter settle payment directly with each other, and Spazia charges no fee. Once it has started, the following applies:",
         bullets: [
           "You pay by card, Apple Pay or Google Pay through our payment provider Stripe. Spazia receives the payment and transfers the host's share.",
+          "Spazia collects the rent in the host's name and on the host's behalf. The receipt shows the rent and Spazia's service fee separately.",
+          "Spazia's fees (15% and 5%) include 25% Swedish VAT. Spazia charges no VAT on the rent. The host is responsible for any tax and VAT on their rental income, and Spazia withholds no tax from payouts.",
           "Monthly storage: your card is charged when the host accepts the request, and then on the same date every month until the rental ends. The last month of a rental with an end date is charged per day.",
           "Hourly parking is paid when you book. The space is held for you for 30 minutes while you pay.",
           "The host receives their share one day after the rental or booking starts. Stripe pays out to the host's bank account every Monday.",

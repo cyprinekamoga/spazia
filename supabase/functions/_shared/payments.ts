@@ -13,10 +13,36 @@ export interface UserRow {
 }
 
 /**
- * Text at the bottom of every Stripe invoice and receipt. Spazia is below the
- * VAT threshold, so no VAT is charged. Override with INVOICE_FOOTER.
+ * Text at the bottom of every Stripe invoice. Spazia acts in the host's name:
+ * the rent is the host's and carries no VAT from Spazia; Spazia's fee includes
+ * 25 % VAT. Spazia's VAT number is added to invoices in Stripe's Dashboard.
+ * Override with INVOICE_FOOTER.
  */
-export const INVOICE_FOOTER = Deno.env.get("INVOICE_FOOTER") ?? "Momsbefriad. Spazia omfattas av undantaget från mervärdesskatt för små företag.";
+export const INVOICE_FOOTER =
+  Deno.env.get("INVOICE_FOOTER") ?? "Hyran förmedlas i värdens namn och för värdens räkning. Moms tas ut på Spazias serviceavgift.";
+
+/** Stripe tax codes (from Stripe's list, https://docs.stripe.com/tax/tax-codes). */
+export const TAX_CODES = {
+  /** The host's rent, passed on in the host's name: no VAT from Spazia. */
+  rent: "txcd_00000000",
+  /** Spazia's service fee: General – Services, 25 % VAT. */
+  fee: "txcd_20030000",
+};
+
+/**
+ * Whether Stripe Tax should calculate VAT. Off until 'stripe_tax' = 'on' in
+ * private.settings, which is set once the Swedish VAT registration is in Stripe
+ * (without a registration Stripe would silently charge no VAT).
+ */
+export async function taxOn(): Promise<boolean> {
+  const [row] = await sql<{ on: boolean }[]>`select coalesce(private.setting('stripe_tax'), 'off') = 'on' as on`;
+  return row?.on ?? false;
+}
+
+/** automatic_tax for Checkout, invoices and subscriptions: Spazia's own registration. */
+export async function automaticTax(): Promise<{ enabled: true; liability: { type: "self" } } | undefined> {
+  return (await taxOn()) ? { enabled: true, liability: { type: "self" } } : undefined;
+}
 
 export async function getUser(userId: string): Promise<UserRow | null> {
   const [row] = await sql<UserRow[]>`
@@ -36,6 +62,8 @@ export async function ensureCustomer(user: UserRow): Promise<string> {
       name: user.first_name || undefined,
       metadata: { user_id: user.id },
       preferred_locales: ["sv"],
+      // Renters rent space in Sweden; Stripe Tax needs at least the country.
+      address: { country: "SE" },
       invoice_settings: { footer: INVOICE_FOOTER },
     },
     { idempotencyKey: `customer-${user.id}` },
@@ -87,17 +115,22 @@ export async function syncAccount(account: Stripe.V2.Core.Account): Promise<void
              where account_id = ${account.id}`;
 }
 
-/** The product all monthly storage invoices are for (created once). */
-export async function storageProduct(): Promise<string> {
-  const [row] = await sql<{ value: string }[]>`select value from private.settings where key = 'stripe_storage_product'`;
+/** A product created once and remembered in private.settings. */
+async function product(key: string, name: string, taxCode: string): Promise<string> {
+  const [row] = await sql<{ value: string }[]>`select value from private.settings where key = ${key}`;
   if (row) return row.value;
-  const product = await stripe().products.create(
-    { name: "Förvaring via Spazia", description: "Månadshyra för förvaring hos en värd via Spazia." },
-    { idempotencyKey: "spazia-storage-product" },
-  );
-  await sql`insert into private.settings (key, value) values ('stripe_storage_product', ${product.id})
+  const created = await stripe().products.create({ name, tax_code: taxCode }, { idempotencyKey: `spazia-${key}` });
+  await sql`insert into private.settings (key, value) values (${key}, ${created.id})
             on conflict (key) do update set value = excluded.value`;
-  return product.id;
+  return created.id;
+}
+
+/** The two parts of every monthly invoice: the host's rent and Spazia's fee. */
+export async function storageProducts(): Promise<{ rent: string; fee: string }> {
+  return {
+    rent: await product("stripe_product_rent", "Hyra till värden", TAX_CODES.rent),
+    fee: await product("stripe_product_fee", "Spazias serviceavgift", TAX_CODES.fee),
+  };
 }
 
 /** The charge behind a PaymentIntent (needed to tie the transfer to it). */
@@ -115,6 +148,20 @@ export async function paymentSucceeded(paymentId: string, pi: Stripe.PaymentInte
     const [row] = await sql<{ payment_method: string | null }[]>`select payment_method from private.stripe_customers where customer_id = ${customer}`;
     if (row && !row.payment_method) await saveCard(customer, pm).catch((err) => console.error("saveCard", err));
   }
+}
+
+/** The PaymentIntent that paid an invoice (null if paid outside Stripe). */
+export async function invoiceIntent(invoiceId: string): Promise<Stripe.PaymentIntent | null> {
+  const payments = await stripe().invoicePayments.list({ invoice: invoiceId, expand: ["data.payment.payment_intent"] });
+  const pi = payments.data.find((p) => p.status === "paid")?.payment.payment_intent;
+  return pi && typeof pi !== "string" ? pi : null;
+}
+
+/** A one-off invoice (a first month) was paid: by the saved card or on the invoice page. */
+export async function invoicePaid(paymentId: string, invoiceId: string): Promise<void> {
+  const pi = await invoiceIntent(invoiceId);
+  if (pi) await paymentSucceeded(paymentId, pi);
+  else await sql`select private.payment_succeeded(${paymentId}::uuid, null, null)`;
 }
 
 export async function paymentFailed(paymentId: string, reason: string): Promise<void> {

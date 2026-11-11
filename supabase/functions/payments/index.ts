@@ -14,7 +14,18 @@
 import { createClient } from "../_shared/deps.ts";
 import { APP_URL, ore, sql, stripe } from "../_shared/config.ts";
 import { cors, json, readJson, UUID_RE } from "../_shared/http.ts";
-import { ACCOUNT_INCLUDE, ensureCustomer, getUser, paymentSucceeded, saveCard, syncAccount, type UserRow } from "../_shared/payments.ts";
+import {
+  ACCOUNT_INCLUDE,
+  automaticTax,
+  ensureCustomer,
+  getUser,
+  invoicePaid,
+  paymentSucceeded,
+  saveCard,
+  syncAccount,
+  TAX_CODES,
+  type UserRow,
+} from "../_shared/payments.ts";
 
 /** Labels for comparing the Checkout flows in Stripe's Dashboard. */
 const FLOW = { card: "spazia_card_qmvxtrkb", pay: "spazia_pay_hzlwnfcd" };
@@ -165,22 +176,27 @@ interface PaymentRow {
   renter_id: string;
   status: string;
   amount: number;
+  base_amount: number | null;
   pay_by: Date;
   period_start: string;
   period_end: string;
   kind: "month" | "hour";
   request_status: string;
   title: string;
+  host_name: string;
   stripe_checkout_session: string | null;
+  stripe_invoice: string | null;
   hosted_invoice_url: string | null;
 }
 
 async function loadPayment(user: UserRow, value: unknown): Promise<PaymentRow> {
   if (typeof value !== "string" || !UUID_RE.test(value)) throw new HttpError(400, "bad_request");
   const [p] = await sql<PaymentRow[]>`
-    select p.id, p.request_id, p.renter_id, p.status::text as status, p.amount, p.pay_by,
+    select p.id, p.request_id, p.renter_id, p.status::text as status, p.amount, p.base_amount, p.pay_by,
            p.period_start::text as period_start, p.period_end::text as period_end,
-           r.kind, r.status::text as request_status, l.title, p.stripe_checkout_session, p.hosted_invoice_url
+           r.kind, r.status::text as request_status, l.title,
+           coalesce((select pr.first_name from public.profiles pr where pr.id = p.host_id), '') as host_name,
+           p.stripe_checkout_session, p.stripe_invoice, p.hosted_invoice_url
       from public.payments p
       join public.requests r on r.id = p.request_id
       join public.listings l on l.id = r.listing_id
@@ -194,7 +210,7 @@ async function pay(user: UserRow, body: Record<string, unknown>): Promise<{ url:
   if (!["due", "failed"].includes(p.status)) throw new HttpError(409, "not_payable");
   if (p.kind === "hour" && (p.request_status !== "pending" || new Date(p.pay_by) <= new Date())) throw new HttpError(409, "expired");
   if (p.kind === "month" && p.request_status !== "accepted") throw new HttpError(409, "not_payable");
-  // Months 2 onwards are Stripe invoices: pay on the invoice page so the subscription recovers.
+  // Already invoiced (a first month the card didn't cover, or month 2 onwards): pay on the invoice page.
   if (p.hosted_invoice_url) return { url: p.hosted_invoice_url };
 
   // Stripe Checkout lasts at least 30 minutes: keep the parking hold that long.
@@ -206,12 +222,25 @@ async function pay(user: UserRow, body: Record<string, unknown>): Promise<{ url:
 
   const customer = await ensureCustomer(user);
   const what = p.kind === "hour" ? `Parkering: ${p.title}` : `Förvaring: ${p.title} (${p.period_start} – ${p.period_end})`;
+  // Two lines, VAT included: the host's rent (passed on in the host's name, no VAT
+  // from Spazia) and Spazia's service fee (VAT).
+  const rent = Math.min(p.base_amount ?? p.amount, p.amount);
+  const line = (kr: number, name: string, taxCode: string) => ({
+    quantity: 1,
+    price_data: { currency: "sek", unit_amount: ore(kr), tax_behavior: "inclusive" as const, product_data: { name, tax_code: taxCode } },
+  });
+  const lineItems = [
+    ...(rent > 0 ? [line(rent, `${what}, hyra till värden${p.host_name ? ` ${p.host_name}` : ""}`, TAX_CODES.rent)] : []),
+    ...(p.amount - rent > 0 ? [line(p.amount - rent, "Spazias serviceavgift", TAX_CODES.fee)] : []),
+  ];
+  const tax = await automaticTax();
   const session = await stripe().checkout.sessions.create({
     mode: "payment",
     customer,
     locale: "sv",
     client_reference_id: p.id,
-    line_items: [{ quantity: 1, price_data: { currency: "sek", unit_amount: ore(p.amount), product_data: { name: what } } }],
+    line_items: lineItems,
+    ...(tax ? { automatic_tax: tax } : {}),
     payment_intent_data: {
       setup_future_usage: "off_session",
       transfer_group: p.request_id,
@@ -231,6 +260,14 @@ async function pay(user: UserRow, body: Record<string, unknown>): Promise<{ url:
 async function payDone(user: UserRow, body: Record<string, unknown>): Promise<{ paid: boolean }> {
   const p = await loadPayment(user, body.payment);
   if (p.status === "paid") return { paid: true };
+  if (p.stripe_invoice) {
+    // Paid on the invoice page.
+    const invoice = await stripe().invoices.retrieve(p.stripe_invoice);
+    if (invoice.status === "paid" && invoice.metadata?.payment_id === p.id) {
+      await invoicePaid(p.id, p.stripe_invoice);
+      return { paid: true };
+    }
+  }
   if (!p.stripe_checkout_session) return { paid: false };
   const session = await stripe().checkout.sessions.retrieve(p.stripe_checkout_session, { expand: ["payment_intent"] });
   const pi = session.payment_intent;

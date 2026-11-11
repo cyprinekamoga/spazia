@@ -168,6 +168,7 @@ export function PayoutsPage() {
       <section className="card p-5">
         <h2 className="text-xl font-bold text-night">{t.taxTitle}</h2>
         <p className="mt-1 leading-relaxed text-muted">{t.taxText}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t.taxNote}</p>
         {tax && !editingTax ? (
           <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
             <p className="leading-relaxed text-ink">
