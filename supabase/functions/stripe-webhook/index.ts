@@ -1,41 +1,67 @@
 /**
- * Stripe → Spazia. Two endpoints in Stripe (Developers → Webhooks), both to
- *   https://<project>.supabase.co/functions/v1/stripe-webhook
- *  - events from your account: checkout.session.completed,
- *    payment_intent.succeeded, payment_intent.payment_failed
- *    → its signing secret as STRIPE_WEBHOOK_SECRET
- *  - events from connected accounts: account.updated
- *    → its signing secret as STRIPE_CONNECT_WEBHOOK_SECRET
- * Deployed without JWT check (Stripe signs instead).
+ * Stripe → Spazia, at https://<project>.supabase.co/functions/v1/stripe-webhook.
+ * Two destinations in Stripe (Developers → Webhooks / Event destinations):
  *
- * Every handler is safe to run twice: Stripe retries, and the app also checks
- * payments itself when the renter comes back from Checkout.
+ *  1. Your account, snapshot events (signing secret: STRIPE_WEBHOOK_SECRET):
+ *     checkout.session.completed, checkout.session.async_payment_succeeded,
+ *     payment_intent.succeeded, payment_intent.payment_failed,
+ *     invoice.paid, invoice.payment_failed, customer.subscription.deleted,
+ *     charge.refunded, charge.dispute.created, radar.early_fraud_warning.created
+ *  2. Connected accounts, thin v2 events (signing secret: STRIPE_CONNECT_WEBHOOK_SECRET):
+ *     v2.core.account[configuration.recipient].capability_status_updated,
+ *     v2.core.account[requirements].updated, v2.core.account.updated
+ *
+ * Deployed without JWT check (Stripe signs instead). Every handler is safe to
+ * run twice: Stripe retries, and the app also checks payments itself when the
+ * renter comes back from Checkout.
  */
 import { Stripe } from "../_shared/deps.ts";
-import { stripe } from "../_shared/config.ts";
-import { paymentFailed, paymentSucceeded, saveCard, syncAccount } from "../_shared/payments.ts";
-
-export const EVENTS = [
-  "checkout.session.completed",
-  "payment_intent.succeeded",
-  "payment_intent.payment_failed",
-  "account.updated",
-];
+import { sql, stripe } from "../_shared/config.ts";
+import { ACCOUNT_INCLUDE, chargeId, paymentFailed, paymentSucceeded, saveCard, syncAccount } from "../_shared/payments.ts";
 
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
+const id = (v: string | { id: string } | null | undefined) => (typeof v === "string" ? v : (v?.id ?? null));
+const swedishDate = (unix: number) => new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Stockholm" }).format(new Date(unix * 1000));
 
-async function handle(event: Stripe.Event): Promise<void> {
+/** A subscription invoice (month 2 onwards): find the rental through the subscription's schedule. */
+async function recordInvoice(invoice: Stripe.Invoice, paid: boolean): Promise<void> {
+  const subscriptionId = id(invoice.parent?.subscription_details?.subscription);
+  if (!subscriptionId || !invoice.id) return;
+  const s = stripe();
+  const subscription = await s.subscriptions.retrieve(subscriptionId);
+  const line = invoice.lines.data[0];
+  if (!line) return;
+  // The charge behind the invoice, to tie the host's transfer to it.
+  let intent: string | null = null;
+  let charge: string | null = null;
+  if (paid) {
+    const payments = await s.invoicePayments.list({ invoice: invoice.id, expand: ["data.payment.payment_intent"] });
+    const pi = payments.data.find((p) => p.status === "paid")?.payment.payment_intent;
+    if (pi && typeof pi !== "string") {
+      intent = pi.id;
+      charge = chargeId(pi);
+    }
+  }
+  const reason = paid ? "" : (invoice.last_finalization_error?.code ?? "payment_failed");
+  await sql`select private.record_invoice(
+    ${id(subscription.schedule)}, ${subscription.id}, ${invoice.id}, ${swedishDate(line.period.start)}::date,
+    ${Math.round((invoice.amount_paid || invoice.amount_due) / 100)}, ${paid}, ${intent}, ${charge},
+    ${invoice.hosted_invoice_url ?? null}, ${reason})`;
+}
+
+async function handleSnapshot(event: Stripe.Event): Promise<void> {
   const s = stripe();
   switch (event.type) {
-    case "checkout.session.completed": {
+    case "checkout.session.completed":
+    case "checkout.session.async_payment_succeeded": {
       const session = event.data.object;
-      const customer = typeof session.customer === "string" ? session.customer : session.customer?.id;
+      const customer = id(session.customer);
       if (session.mode === "setup" && session.setup_intent && customer) {
-        const si = await s.setupIntents.retrieve(typeof session.setup_intent === "string" ? session.setup_intent : session.setup_intent.id);
-        const pm = typeof si.payment_method === "string" ? si.payment_method : si.payment_method?.id;
+        const si = await s.setupIntents.retrieve(id(session.setup_intent)!);
+        const pm = id(si.payment_method);
         if (si.status === "succeeded" && pm) await saveCard(customer, pm);
       } else if (session.mode === "payment" && session.payment_status === "paid" && session.metadata?.payment_id && session.payment_intent) {
-        const pi = await s.paymentIntents.retrieve(typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent.id);
+        const pi = await s.paymentIntents.retrieve(id(session.payment_intent)!);
         await paymentSucceeded(session.metadata.payment_id, pi);
       }
       return;
@@ -53,37 +79,86 @@ async function handle(event: Stripe.Event): Promise<void> {
       }
       return;
     }
-    case "account.updated":
-      await syncAccount(event.data.object);
+    case "invoice.paid":
+      await recordInvoice(event.data.object, true);
       return;
+    case "invoice.payment_failed":
+      await recordInvoice(event.data.object, false);
+      return;
+    case "customer.subscription.deleted": {
+      const sub = event.data.object;
+      const unpaid = sub.cancellation_details?.reason === "payment_failed";
+      await sql`select private.subscription_ended(${id(sub.schedule)}, ${sub.id}, ${unpaid})`;
+      return;
+    }
+    case "charge.refunded": {
+      // Refunds made in Stripe's Dashboard too.
+      const charge = event.data.object;
+      if (charge.refunded) {
+        await sql`update public.payments set status = 'refunded', refunded_at = coalesce(refunded_at, now()),
+                         refund_amount = greatest(refund_amount, amount)
+                   where stripe_charge = ${charge.id} and status = 'paid'`;
+      }
+      return;
+    }
+    case "charge.dispute.created": {
+      const charge = id(event.data.object.charge);
+      if (charge) await sql`select private.payment_disputed(${charge})`;
+      console.warn(`stripe-webhook: dispute on ${charge}; the host's share is held`);
+      return;
+    }
+    case "radar.early_fraud_warning.created": {
+      const charge = id(event.data.object.charge);
+      if (charge) await sql`select private.payment_disputed(${charge})`;
+      console.warn(`stripe-webhook: early fraud warning on ${charge}; the host's share is held`);
+      return;
+    }
   }
+}
+
+/** Thin v2 events about hosts' connected accounts: fetch the account and copy its state. */
+async function handleThin(notification: Stripe.V2.Core.EventNotification): Promise<void> {
+  if (!notification.type.startsWith("v2.core.account") || !("related_object" in notification)) return;
+  const accountId = (notification.related_object as { id?: string } | null)?.id;
+  if (!accountId) return;
+  await syncAccount(await stripe().v2.core.accounts.retrieve(accountId, { include: ACCOUNT_INCLUDE }));
 }
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("method not allowed", { status: 405 });
-  const secrets = [Deno.env.get("STRIPE_WEBHOOK_SECRET"), Deno.env.get("STRIPE_CONNECT_WEBHOOK_SECRET")].filter((s): s is string => Boolean(s));
   const signature = req.headers.get("stripe-signature");
-  if (secrets.length === 0 || !signature) return new Response("not configured", { status: 400 });
+  const snapshotSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+  const thinSecret = Deno.env.get("STRIPE_CONNECT_WEBHOOK_SECRET");
+  if (!signature || (!snapshotSecret && !thinSecret)) return new Response("not configured", { status: 400 });
   const body = await req.text();
-  let event: Stripe.Event | null = null;
-  for (const secret of secrets) {
-    try {
-      event = await stripe().webhooks.constructEventAsync(body, signature, secret, undefined, cryptoProvider);
-      break;
-    } catch {
-      /* try the other endpoint's secret */
-    }
-  }
-  if (!event) {
-    console.error("stripe-webhook: bad signature");
-    return new Response("bad signature", { status: 400 });
-  }
+  let kind: string | undefined;
   try {
-    await handle(event);
+    kind = (JSON.parse(body) as { object?: string }).object;
+  } catch {
+    return new Response("bad request", { status: 400 });
+  }
+
+  try {
+    if (kind === "v2.core.event") {
+      if (!thinSecret) return new Response("not configured", { status: 400 });
+      const notification = await stripe().parseEventNotificationAsync(body, signature, thinSecret, undefined, cryptoProvider);
+      await handleThin(notification);
+    } else {
+      if (!snapshotSecret) return new Response("not configured", { status: 400 });
+      let event: Stripe.Event;
+      try {
+        event = await stripe().webhooks.constructEventAsync(body, signature, snapshotSecret, undefined, cryptoProvider);
+      } catch (err) {
+        console.error("stripe-webhook: bad signature", err);
+        return new Response("bad signature", { status: 400 });
+      }
+      await handleSnapshot(event);
+    }
     return new Response(JSON.stringify({ received: true }), { headers: { "content-type": "application/json" } });
   } catch (err) {
+    if (err instanceof Error && /signature/i.test(err.message)) return new Response("bad signature", { status: 400 });
     // 500 makes Stripe retry later.
-    console.error(`stripe-webhook: ${event.type} failed`, err);
+    console.error("stripe-webhook: failed", err);
     return new Response("error", { status: 500 });
   }
 });

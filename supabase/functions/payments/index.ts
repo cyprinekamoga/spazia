@@ -14,7 +14,10 @@
 import { createClient } from "../_shared/deps.ts";
 import { APP_URL, ore, sql, stripe } from "../_shared/config.ts";
 import { cors, json, readJson, UUID_RE } from "../_shared/http.ts";
-import { ensureCustomer, getUser, paymentSucceeded, saveCard, syncAccount, type UserRow } from "../_shared/payments.ts";
+import { ACCOUNT_INCLUDE, ensureCustomer, getUser, paymentSucceeded, saveCard, syncAccount, type UserRow } from "../_shared/payments.ts";
+
+/** Labels for comparing the Checkout flows in Stripe's Dashboard. */
+const FLOW = { card: "spazia_card_qmvxtrkb", pay: "spazia_pay_hzlwnfcd" };
 
 class HttpError extends Error {
   constructor(public status: number, public code: string) {
@@ -56,39 +59,55 @@ async function connect(user: UserRow): Promise<{ url: string }> {
   const s = stripe();
   let [acct] = await sql<{ account_id: string }[]>`select account_id from private.stripe_accounts where user_id = ${user.id}`;
   if (!acct) {
-    const [first, ...rest] = tax.full_name.trim().split(/\s+/);
-    const account = await s.accounts.create(
+    const [given, ...rest] = tax.full_name.trim().split(/\s+/);
+    // Accounts v2, marketplace setup: Express Dashboard, Spazia pays Stripe's fees and carries
+    // the risk, and the host's account only receives transfers from Spazia.
+    const account = await s.v2.core.accounts.create(
       {
-        type: "express",
-        country: "SE",
-        email: user.email ?? undefined,
-        business_type: "individual",
-        capabilities: { transfers: { requested: true } },
-        business_profile: {
-          product_description: "Uthyrning av förvaring och parkering via Spazia",
-          url: "https://spazia.se",
+        contact_email: user.email ?? undefined,
+        display_name: tax.full_name,
+        dashboard: "express",
+        identity: {
+          country: "se",
+          entity_type: "individual",
+          individual: {
+            given_name: given,
+            surname: rest.join(" ") || undefined,
+            email: user.email ?? undefined,
+            address: { line1: tax.street_address, postal_code: tax.postal_code.replace(/\s/g, ""), city: tax.city, country: "se" },
+          },
         },
-        individual: {
-          first_name: first,
-          last_name: rest.join(" ") || undefined,
-          email: user.email ?? undefined,
-          address: { line1: tax.street_address, postal_code: tax.postal_code.replace(/\s/g, ""), city: tax.city, country: "SE" },
+        defaults: {
+          currency: "sek",
+          locales: ["sv-SE"],
+          responsibilities: { fees_collector: "application", losses_collector: "application" },
         },
-        settings: { payouts: { schedule: { interval: "weekly", weekly_anchor: "monday" } } },
+        configuration: {
+          recipient: { capabilities: { stripe_balance: { stripe_transfers: { requested: true } } } },
+        },
         metadata: { user_id: user.id },
+        include: ACCOUNT_INCLUDE,
       },
-      { idempotencyKey: `account-${user.id}` },
+      { idempotencyKey: `account-v2-${user.id}` },
     );
     await sql`insert into private.stripe_accounts (user_id, account_id) values (${user.id}, ${account.id})
               on conflict (user_id) do nothing`;
     [acct] = await sql<{ account_id: string }[]>`select account_id from private.stripe_accounts where user_id = ${user.id}`;
+    // Payouts every Monday (Accounts v2 accounts accept v1 settings updates).
+    await s.accounts
+      .update(acct.account_id, { settings: { payouts: { schedule: { interval: "weekly", weekly_anchor: "monday" } } } })
+      .catch((err) => console.error("payments: payout schedule", err));
   }
-  const link = await s.accountLinks.create({
+  const link = await s.v2.core.accountLinks.create({
     account: acct.account_id,
-    type: "account_onboarding",
-    refresh_url: `${APP_URL}/vard/utbetalningar?stripe=igen`,
-    return_url: `${APP_URL}/vard/utbetalningar?stripe=klar`,
-    collection_options: { fields: "eventually_due" },
+    use_case: {
+      type: "account_onboarding",
+      account_onboarding: {
+        refresh_url: `${APP_URL}/vard/utbetalningar?stripe=igen`,
+        return_url: `${APP_URL}/vard/utbetalningar?stripe=klar`,
+        collection_options: { fields: "eventually_due" },
+      },
+    },
   });
   return { url: link.url };
 }
@@ -103,7 +122,7 @@ async function dashboard(user: UserRow): Promise<{ url: string }> {
 
 async function sync(user: UserRow): Promise<{ ok: true }> {
   const [acct] = await sql<{ account_id: string }[]>`select account_id from private.stripe_accounts where user_id = ${user.id}`;
-  if (acct) await syncAccount(await stripe().accounts.retrieve(acct.account_id));
+  if (acct) await syncAccount(await stripe().v2.core.accounts.retrieve(acct.account_id, { include: ACCOUNT_INCLUDE }));
   return { ok: true };
 }
 
@@ -120,6 +139,7 @@ async function card(user: UserRow, body: Record<string, unknown>): Promise<{ url
     success_url: withParam(back, "kort={CHECKOUT_SESSION_ID}"),
     cancel_url: `${APP_URL}${back}`,
     metadata: { user_id: user.id, purpose: "card" },
+    integration_identifier: FLOW.card,
   });
   return { url: session.url! };
 }
@@ -152,6 +172,7 @@ interface PaymentRow {
   request_status: string;
   title: string;
   stripe_checkout_session: string | null;
+  hosted_invoice_url: string | null;
 }
 
 async function loadPayment(user: UserRow, value: unknown): Promise<PaymentRow> {
@@ -159,7 +180,7 @@ async function loadPayment(user: UserRow, value: unknown): Promise<PaymentRow> {
   const [p] = await sql<PaymentRow[]>`
     select p.id, p.request_id, p.renter_id, p.status::text as status, p.amount, p.pay_by,
            p.period_start::text as period_start, p.period_end::text as period_end,
-           r.kind, r.status::text as request_status, l.title, p.stripe_checkout_session
+           r.kind, r.status::text as request_status, l.title, p.stripe_checkout_session, p.hosted_invoice_url
       from public.payments p
       join public.requests r on r.id = p.request_id
       join public.listings l on l.id = r.listing_id
@@ -173,6 +194,8 @@ async function pay(user: UserRow, body: Record<string, unknown>): Promise<{ url:
   if (!["due", "failed"].includes(p.status)) throw new HttpError(409, "not_payable");
   if (p.kind === "hour" && (p.request_status !== "pending" || new Date(p.pay_by) <= new Date())) throw new HttpError(409, "expired");
   if (p.kind === "month" && p.request_status !== "accepted") throw new HttpError(409, "not_payable");
+  // Months 2 onwards are Stripe invoices: pay on the invoice page so the subscription recovers.
+  if (p.hosted_invoice_url) return { url: p.hosted_invoice_url };
 
   // Stripe Checkout lasts at least 30 minutes: keep the parking hold that long.
   const expiresAt = new Date(Math.max(new Date(p.pay_by).getTime(), Date.now() + 31 * 60_000));
@@ -196,6 +219,7 @@ async function pay(user: UserRow, body: Record<string, unknown>): Promise<{ url:
       metadata: { payment_id: p.id, request_id: p.request_id },
     },
     metadata: { payment_id: p.id, purpose: "payment" },
+    integration_identifier: FLOW.pay,
     expires_at: Math.floor((p.kind === "hour" ? expiresAt.getTime() : Date.now() + 23 * 3600_000) / 1000),
     success_url: `${APP_URL}/kund/bokning?id=${p.request_id}&betald=${p.id}`,
     cancel_url: `${APP_URL}/kund/bokning?id=${p.request_id}`,
