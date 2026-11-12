@@ -19,7 +19,8 @@ export type NotificationKind =
   | "cancelled_by_host"
   | "payment_failed"
   | "payment_lapsed"
-  | "rental_ending";
+  | "rental_ending"
+  | "new_message";
 
 export interface NotificationItem {
   category: CategoryId;
@@ -51,6 +52,9 @@ export interface NotificationPayload {
   listing_city: string;
   listing_area: string;
   items: NotificationItem[];
+  /** Message emails: the conversation and the unread messages (oldest first). */
+  conversation_id?: string | null;
+  unread?: { body: string; created_at: string }[] | null;
   /** The latest payment for the request, when payments apply. */
   payment?: {
     amount: number;
@@ -256,6 +260,20 @@ export function buildBookingEmail(p: NotificationPayload, opts: { appUrl: string
               rows: [["Plats", place(p)], ["Sista dag", end], ...reason],
               button: { href: renterLink, label: "Visa i appen" },
             };
+      break;
+    }
+    case "new_message": {
+      const unread = (p.unread ?? []).filter((m) => m.body.trim());
+      if (unread.length === 0) return null;
+      const time = new Intl.DateTimeFormat("sv-SE", { timeZone: TIME_ZONE, day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+      const area = p.role === "host" ? "vard" : "kund";
+      d = {
+        subject: unread.length === 1 ? `Nytt meddelande från ${name}` : `${unread.length} nya meddelanden från ${name}`,
+        intro: [hello, `${name} har skrivit till dig om ”${p.listing_title}”.`],
+        rows: unread.map((m) => [time.format(new Date(m.created_at)), m.body.length > 600 ? `${m.body.slice(0, 600)} …` : m.body] as [string, string]),
+        after: ["Svara i appen, så ser ni hela konversationen på ett ställe. Svar på det här mejlet går till Spazia, inte till " + name + "."],
+        button: { href: `${opts.appUrl}/${area}/meddelanden${p.conversation_id ? `?id=${p.conversation_id}` : ""}`, label: "Svara i appen" },
+      };
       break;
     }
     default:
