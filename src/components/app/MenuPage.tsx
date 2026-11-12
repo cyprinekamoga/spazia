@@ -16,6 +16,7 @@ import { Spinner, useAppSession } from "./AppShell";
 import { DeleteAccount } from "./DeleteAccount";
 import { LanguageSwitch } from "./LanguageSwitch";
 import { PushSection } from "./PushSection";
+import { AlertsSection } from "./SearchAlerts";
 import { CardSection } from "./renter/CardSection";
 import { Avatar } from "./ui";
 
@@ -180,6 +181,8 @@ export function MenuPage({ mode }: { mode: AppMode }) {
       )}
 
       {mode === "renter" && pay.data?.enabled && <CardSection setup={pay.data} onChange={pay.reload} returnTo="/kund/meny" />}
+
+      {mode === "renter" && <AlertsSection uid={uid} />}
 
       <PushSection uid={uid} />
 

@@ -18,6 +18,7 @@ import { Spinner, useOptionalSession } from "../AppShell";
 import { CoverPhoto } from "../ui";
 import { supabase } from "@/lib/supabase";
 import { RatingBadge } from "../Reviews";
+import { AlertButton } from "../SearchAlerts";
 import { activeFilterCount, FilterPanel, filterKey, filtersFromParams, filtersToParams, SORT_KEYS, type SortKey } from "./SearchFilters";
 import type { SearchFilters } from "@/lib/app/data";
 
@@ -226,18 +227,30 @@ export function SearchPage() {
         <div className="mt-8 card flex flex-col items-start gap-3 p-6">
           <SearchX size={28} className="text-brand" aria-hidden="true" />
           <p className="text-lg font-semibold text-night">{t.noMatch}</p>
-          <button type="button" onClick={() => go({ filters: { maxPrice: null, minSize: null, heated: false, anytime: false, features: [] } })} className="btn btn-primary mt-1">
-            {t.clear}
-          </button>
+          <div className="mt-1 flex flex-wrap items-start gap-3">
+            <button type="button" onClick={() => go({ filters: { maxPrice: null, minSize: null, heated: false, anytime: false, features: [] } })} className="btn btn-secondary">
+              {t.clear}
+            </button>
+            {place && <AlertButton uid={uid} place={place} category={category} maxPrice={filters.maxPrice} primary />}
+          </div>
         </div>
       ) : results.length === 0 ? (
         <div className="mt-8 card flex flex-col items-start gap-3 p-6">
           <SearchX size={28} className="text-brand" aria-hidden="true" />
           <p className="text-lg font-semibold text-night">{t.empty}</p>
-          <p className="text-muted">{t.emptyHint}</p>
-          <a href={`${site.url}/hitta-forvaring${place ? `?ort=${encodeURIComponent(place)}` : ""}#anmalan`} className="btn btn-primary mt-1">
-            {t.emptyCta}
-          </a>
+          {place ? (
+            <>
+              <p className="text-muted">{appText.alerts.text}</p>
+              <AlertButton uid={uid} place={place} category={category} maxPrice={filters.maxPrice} primary />
+            </>
+          ) : (
+            <>
+              <p className="text-muted">{t.emptyHint}</p>
+              <a href={`${site.url}/hitta-forvaring#anmalan`} className="btn btn-primary mt-1">
+                {t.emptyCta}
+              </a>
+            </>
+          )}
         </div>
       ) : (
         <>
@@ -261,6 +274,11 @@ export function SearchPage() {
               ))}
             </div>
           </div>
+          {place && (
+            <div className="mt-3">
+              <AlertButton uid={uid} place={place} category={category} maxPrice={filters.maxPrice} />
+            </div>
+          )}
           {showMap ? (
             <div className="mt-3">
               <SearchMap listings={results} />

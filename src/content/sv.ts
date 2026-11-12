@@ -481,6 +481,11 @@ export const sv = {
         bullets: [] as string[],
       },
       {
+        title: "Bevakningar",
+        text: "Bevakar du en ort sparar vi orten, vad du vill förvara och ditt högsta pris, så att vi kan mejla dig när en ny plats dyker upp. Står du på väntelistan på spazia.se mejlar vi dig när det dyker upp platser i din ort, högst en gång i veckan. Bevakningar tar du bort i appen, och från väntelistan tar vi bort dig om du svarar på mejlet.",
+        bullets: [] as string[],
+      },
+      {
         title: "Betalningar",
         text: "Betalningar sköts av vår betalleverantör Stripe. Ditt kortnummer hamnar aldrig hos Spazia: vi sparar bara korttyp, de sista fyra siffrorna och utgångsdatum, för att visa vilket kort som används. Vi sparar också vad som har betalats, när och för vilken bokning.",
         bullets: [

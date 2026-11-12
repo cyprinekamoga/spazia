@@ -103,6 +103,18 @@ export const appTextEn: AppText = {
     busy: "Something changed since you opened this. Please try again.",
     done: "Your account has been deleted. Thanks for your time with us!",
   },
+  alerts: {
+    watch: "Watch {place}",
+    watching: "You're watching {place}",
+    saved: "Done! You'll hear when new spaces come up in {place}.",
+    tooMany: "You already have ten alerts. Remove one under Menu → Alerts first.",
+    title: "Alerts",
+    text: "You get an email, and a notification if you've turned them on, when a new space comes up where you're watching.",
+    none: "No alerts yet. Search for a town and tap Watch.",
+    remove: "Remove the alert for {place}",
+    allTypes: "Everything",
+    maxPrice: "at most {price} kr/month",
+  },
   links: { terms: "/en/terms", privacy: "/en/privacy", trust: "/en/trust-and-safety" },
   ui: {
     fewer: "Fewer, {what}",

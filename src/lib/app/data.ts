@@ -233,3 +233,28 @@ export async function fetchMyOpenRequest(listingId: string, uid: string): Promis
   ) as Pick<RequestRow, "id" | "status" | "expires_at">[];
   return rows.find((r) => r.status === "accepted" || Date.parse(r.expires_at) > Date.now()) ?? null;
 }
+
+/* ---------- Search alerts ("Bevaka") ---------- */
+
+export interface SearchAlert {
+  id: string;
+  place: string;
+  category: CategoryId | null;
+  max_price: number | null;
+  created_at: string;
+}
+
+export async function fetchAlerts(): Promise<SearchAlert[]> {
+  return must(await supabase().from("search_alerts").select("id, place, category, max_price, created_at").order("created_at", { ascending: false })) as SearchAlert[];
+}
+
+/** Save a search; saving the same place and type again is fine. Throws "too_many_alerts" at ten. */
+export async function saveAlert(alert: { place: string; category: CategoryId | null; max_price: number | null }): Promise<void> {
+  const { error } = await supabase().from("search_alerts").insert(alert);
+  if (!error || error.code === "23505") return;
+  throw new Error(error.message.includes("too_many_alerts") ? "too_many_alerts" : error.message);
+}
+
+export async function deleteAlert(id: string): Promise<void> {
+  must(await supabase().from("search_alerts").delete().eq("id", id));
+}

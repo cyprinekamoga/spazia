@@ -483,6 +483,11 @@ export const en: Dictionary = {
         bullets: [],
       },
       {
+        title: "Alerts",
+        text: "If you watch a town, we save the town, what you want to store and your highest price, so we can email you when a new space comes up. If you're on the waitlist at spazia.se, we email you when spaces come up in your town, at most once a week. You remove alerts in the app, and we take you off the waitlist if you reply to the email.",
+        bullets: [] as string[],
+      },
+      {
         title: "Payments",
         text: "Payments are handled by our payment provider Stripe. Your card number never reaches Spazia: we only store the card type, the last four digits and the expiry date, to show which card is used. We also store what has been paid, when and for which booking.",
         bullets: [

@@ -105,6 +105,18 @@ const appTextSv = {
     busy: "Något har ändrats sedan du öppnade det här. Försök igen.",
     done: "Ditt konto är raderat. Tack för den här tiden!",
   },
+  alerts: {
+    watch: "Bevaka {place}",
+    watching: "Du bevakar {place}",
+    saved: "Klart! Du får besked när nya platser dyker upp i {place}.",
+    tooMany: "Du har redan tio bevakningar. Ta bort någon under Meny → Bevakningar först.",
+    title: "Bevakningar",
+    text: "Du får ett mejl, och en avisering om du har slagit på det, när en ny plats dyker upp där du bevakar.",
+    none: "Inga bevakningar än. Sök på en ort och tryck på Bevaka.",
+    remove: "Ta bort bevakningen av {place}",
+    allTypes: "Allt",
+    maxPrice: "högst {price} kr/mån",
+  },
   links: { terms: "/anvandarvillkor", privacy: "/integritetspolicy", trust: "/trygghet" },
   ui: {
     fewer: "Färre, {what}",
