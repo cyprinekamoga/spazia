@@ -7,6 +7,7 @@ import { appText } from "@/content/app";
 import { fetchListingBundle, fetchMyOpenRequest } from "@/lib/app/data";
 import { useLoad } from "@/lib/app/session";
 import { ListingView } from "../ListingView";
+import { ReportButton } from "../Report";
 import { Spinner, useOptionalSession } from "../AppShell";
 
 const t = appText.renterListing;
@@ -78,6 +79,11 @@ export function RenterListingPage() {
     <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">
       <div className="mb-4">{backButton}</div>
       <ListingView listing={listing} spaces={bundle.spaces} photos={bundle.photos} host={bundle.host} actions={actions} notice={notice} />
+      {uid && !own && (
+        <div className="mt-8 border-t border-line pt-4">
+          <ReportButton kind="listing" targetId={listing.id} label={appText.report.listing} />
+        </div>
+      )}
     </div>
   );
 }

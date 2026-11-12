@@ -12,6 +12,7 @@ import { MODE_HOME } from "@/lib/app/mode";
 import { must, useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "./AppShell";
+import { ReportButton } from "./Report";
 import { Avatar, itemsText } from "./ui";
 
 const t = appText.messages;
@@ -84,7 +85,7 @@ function Inbox({ uid, mode }: { uid: string; mode: AppMode }) {
 }
 
 type Thread = {
-  conversation: { id: string; listing: { id: string; title: string } | null; other: { first_name: string; avatar_url: string | null } | null };
+  conversation: { id: string; listing: { id: string; title: string } | null; other: { id: string; first_name: string; avatar_url: string | null } | null };
   requests: RequestRow[];
 };
 
@@ -92,7 +93,7 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
   const head = useLoad(async (): Promise<Thread> => {
     const db = supabase();
     const conversation = must(
-      await db.from("conversations").select(`id, listing:listings(id, title), ${otherProfile(mode)}(first_name, avatar_url)`).eq("id", id).single(),
+      await db.from("conversations").select(`id, listing:listings(id, title), ${otherProfile(mode)}(id, first_name, avatar_url)`).eq("id", id).single(),
     ) as unknown as Thread["conversation"];
     const requests = must(await db.from("requests").select("*, request_items(category, quantity, host_price_month, hourly_price, daily_max)").eq("conversation_id", id).order("created_at", { ascending: false })) as RequestRow[];
     return { conversation, requests };
@@ -201,6 +202,11 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
           <Send size={18} aria-hidden="true" />
         </button>
       </form>
+      {head.data.conversation.other?.id && (
+        <div className="mt-6 mb-4">
+          <ReportButton kind="user" targetId={head.data.conversation.other.id} label={fill(appText.report.user, { name })} />
+        </div>
+      )}
     </div>
   );
 }
