@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { MapPin, SearchX } from "lucide-react";
+import dynamic from "next/dynamic";
+import { List, Map as MapIcon, MapPin, SearchX } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { categoryIcons } from "@/components/Icons";
 import { appText } from "@/content/app";
@@ -16,6 +17,9 @@ import { Spinner, useOptionalSession } from "../AppShell";
 import { CoverPhoto } from "../ui";
 import { supabase } from "@/lib/supabase";
 import { RatingBadge } from "../Reviews";
+
+// The map library is large: load it only when the map is shown, in the browser.
+const SearchMap = dynamic(() => import("./SearchMap").then((m) => m.SearchMap), { ssr: false, loading: () => <Spinner /> });
 
 const t = appText.search;
 
@@ -66,6 +70,13 @@ export function SearchPage() {
     return Object.fromEntries(((res.data ?? []) as { listing_id: string; average: number; count: number }[]).map((r) => [r.listing_id, r]));
   }, `ratings-${results.map((r) => r.id).join(",")}`);
   const count = results.length === 1 ? t.countOne : fill(t.countMany, { count: results.length });
+  const showMap = params.get("vy") === "karta";
+  function setView(map: boolean) {
+    const q = new URLSearchParams(params.toString());
+    if (map) q.set("vy", "karta");
+    else q.delete("vy");
+    router.replace(`/sok${q.toString() ? `?${q}` : ""}`);
+  }
 
   return (
     <div>
@@ -135,17 +146,39 @@ export function SearchPage() {
         </div>
       ) : (
         <>
-          <p className="mt-6 font-semibold text-muted" aria-live="polite">
-            {count}
-            {place ? ` ${fill(t.in, { place })}` : ""}
-          </p>
-          <ul className="mt-3 grid gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
-            {results.map((l) => (
-              <li key={l.id}>
-                <ResultCard listing={l} rating={ratings.data?.[l.id]} />
-              </li>
-            ))}
-          </ul>
+          <div className="mt-6 flex items-center justify-between gap-3">
+            <p className="font-semibold text-muted" aria-live="polite">
+              {count}
+              {place ? ` ${fill(t.in, { place })}` : ""}
+            </p>
+            <div className="flex rounded-full border border-line bg-paper p-1" role="group">
+              {[false, true].map((m) => (
+                <button
+                  key={String(m)}
+                  type="button"
+                  aria-pressed={showMap === m}
+                  onClick={() => setView(m)}
+                  className="flex min-h-9 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-muted aria-pressed:bg-night aria-pressed:text-white"
+                >
+                  {m ? <MapIcon size={16} aria-hidden="true" /> : <List size={16} aria-hidden="true" />}
+                  {m ? t.showMap : t.showList}
+                </button>
+              ))}
+            </div>
+          </div>
+          {showMap ? (
+            <div className="mt-3">
+              <SearchMap listings={results} />
+            </div>
+          ) : (
+            <ul className="mt-3 grid gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+              {results.map((l) => (
+                <li key={l.id}>
+                  <ResultCard listing={l} rating={ratings.data?.[l.id]} />
+                </li>
+              ))}
+            </ul>
+          )}
         </>
       )}
     </div>

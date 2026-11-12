@@ -149,7 +149,7 @@ export async function fetchCounterpartPrivate(userId: string): Promise<ProfilePr
   return must(await supabase().from("profile_private").select("id, last_name, phone").eq("id", userId).maybeSingle()) as ProfilePrivate | null;
 }
 
-export type SearchResult = Pick<Listing, "id" | "host_id" | "title" | "city" | "area_name" | "space_type" | "size_m2" | "heated" | "published_at"> & {
+export type SearchResult = Pick<Listing, "id" | "host_id" | "title" | "city" | "area_name" | "space_type" | "size_m2" | "heated" | "published_at" | "approx_lat" | "approx_lng"> & {
   listing_photos: Pick<ListingPhoto, "path" | "position">[];
   listing_spaces: Pick<ListingSpace, "category" | "capacity" | "host_price_month" | "hourly_price">[];
 };
@@ -166,7 +166,7 @@ function cleanTerm(term: string): string {
 export async function searchListings({ place, category, exclude }: { place: string; category: CategoryId | null; exclude: string }): Promise<SearchResult[]> {
   let q = supabase()
     .from("listings")
-    .select("id, host_id, title, city, area_name, space_type, size_m2, heated, published_at, listing_photos(path, position), listing_spaces!inner(category, capacity, host_price_month, hourly_price)")
+    .select("id, host_id, title, city, area_name, space_type, size_m2, heated, published_at, approx_lat, approx_lng, listing_photos(path, position), listing_spaces!inner(category, capacity, host_price_month, hourly_price)")
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(60);

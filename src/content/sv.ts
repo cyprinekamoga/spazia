@@ -531,6 +531,7 @@ export const sv = {
           "Stripe: tar emot betalningar och betalar ut till värdar. Stripe kontrollerar också värdars identitet och bankkonto.",
           "Netlify: webbhotell för spazia.se och appen, och lagring av intresseanmälningar inom EU.",
           "Strato: skickar våra mejl.",
+          "OpenStreetMap och OpenFreeMap: när en värd sparar adressen skickas bara postnummer och ort till OpenStreetMap för att få ett ungefärligt läge till sökkartan, och kartbilderna hämtas från OpenFreeMap när du öppnar kartan. Gatuadressen skickas aldrig.",
           "Google: om du väljer att logga in med Google. Då gäller också Googles egna villkor.",
           "Meta: bara om du godkänner marknadsföringscookies på spazia.se, för att mäta våra annonser.",
           "Vissa leverantörer kan behandla uppgifter utanför EU/EES. Då sker det med stöd av EU-kommissionens standardavtalsklausuler eller EU–US Data Privacy Framework.",

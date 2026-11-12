@@ -408,6 +408,10 @@ export const appText = {
     emptyHint: "Lämna dina uppgifter, så hör vi av oss när en plats dyker upp nära dig.",
     from: "från {price} kr/mån",
     fromHour: "från {price} kr/tim",
+    showList: "Lista",
+    showMap: "Karta",
+    mapNote: "Platserna visas ungefärligt, inom ungefär en kilometer. Adressen ser du när bokningen är klar.",
+    mapMissing: "{count} platser saknar läge och syns bara i listan.",
   },
   renterListing: {
     back: "Tillbaka",

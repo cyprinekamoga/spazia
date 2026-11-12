@@ -50,6 +50,9 @@ export interface Listing {
   created_at: string;
   updated_at: string;
   published_at: string | null;
+  /** Approximate position for the search map (rounded to about a kilometre). */
+  approx_lat?: number | null;
+  approx_lng?: number | null;
 }
 
 export interface ListingPrivate {

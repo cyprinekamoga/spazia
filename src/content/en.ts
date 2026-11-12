@@ -533,6 +533,7 @@ export const en: Dictionary = {
           "Stripe: receives payments and pays out to hosts. Stripe also checks hosts' identity and bank account.",
           "Netlify: hosting for spazia.se and the app, and storage of sign-ups within the EU.",
           "Strato: sends our emails.",
+          "OpenStreetMap and OpenFreeMap: when a host saves the address, only the postal code and town are sent to OpenStreetMap to get an approximate position for the search map, and the map images are loaded from OpenFreeMap when you open the map. The street address is never sent.",
           "Google: if you choose to log in with Google. Google's own terms then also apply.",
           "Meta: only if you accept marketing cookies on spazia.se, to measure our ads.",
           "Some suppliers may process data outside the EU/EEA. When they do, it is under the European Commission's standard contractual clauses or the EU–US Data Privacy Framework.",

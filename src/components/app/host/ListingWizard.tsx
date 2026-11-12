@@ -268,6 +268,30 @@ function HourlySettings({ s, onChange }: { s: SpaceDraft; onChange: (patch: Part
   );
 }
 
+/**
+ * Approximate position for the search map, from the postal code and town
+ * (never the street), via OpenStreetMap's Nominatim. Rounded to about a
+ * kilometre. Null if it can't be found; the map then uses the town centre.
+ */
+async function approxPosition(postalCode: string, town: string): Promise<{ lat: number; lng: number } | null> {
+  const params = new URLSearchParams({ format: "jsonv2", countrycodes: "se", country: "Sverige", limit: "1" });
+  const postal = postalCode.replace(/\s/g, "");
+  if (/^\d{5}$/.test(postal)) params.set("postalcode", postal);
+  if (town.trim()) params.set("city", town.trim());
+  if (!params.has("postalcode") && !params.has("city")) return null;
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?${params}`, { signal: AbortSignal.timeout(5000) });
+    if (!res.ok) return null;
+    const [hit] = (await res.json()) as { lat: string; lon: string }[];
+    if (!hit) return null;
+    const lat = Math.round(Number(hit.lat) * 100) / 100;
+    const lng = Math.round(Number(hit.lon) * 100) / 100;
+    return lat >= 55 && lat <= 69.5 && lng >= 10.5 && lng <= 24.5 ? { lat, lng } : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Resize a photo in the browser before upload (max 1600 px, JPEG). */
 async function resizeImage(file: File): Promise<Blob> {
   const bitmap = await createImageBitmap(file);
@@ -380,7 +404,8 @@ export function ListingWizard() {
     let patch: Partial<Listing> = {};
     if (current === "type") patch = { space_type: l.space_type };
     if (current === "place") {
-      patch = { city: tidyTown(l.city ?? ""), area_name: (l.area_name ?? "").trim() };
+      const pos = await approxPosition(draft.priv.postal_code ?? "", tidyTown(l.city ?? ""));
+      patch = { city: tidyTown(l.city ?? ""), area_name: (l.area_name ?? "").trim(), approx_lat: pos?.lat ?? null, approx_lng: pos?.lng ?? null };
       const r = await db.from("listing_private").upsert({
         listing_id: listingId,
         street_address: (draft.priv.street_address ?? "").trim(),
