@@ -367,6 +367,7 @@ export const appText = {
     terms: "Användarvillkor",
     privacy: "Integritetspolicy",
     logout: "Logga ut",
+    admin: "Admin",
     renter: {
       profileHint: "Värdar ser ditt förnamn, din bild och det du skriver om dig själv när du skickar en förfrågan.",
       phoneHint: "Visas bara för värdar som har godkänt din förfrågan.",

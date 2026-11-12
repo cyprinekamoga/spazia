@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeftRight, Camera, ChevronRight, Loader2, LogOut } from "lucide-react";
+import { ArrowLeftRight, Camera, ChevronRight, Loader2, LogOut, ShieldCheck } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { appText } from "@/content/app";
 import { fetchMyProfile } from "@/lib/app/data";
@@ -35,6 +35,11 @@ export function MenuPage({ mode }: { mode: AppMode }) {
   const router = useRouter();
   const { data, loading } = useLoad(() => fetchMyProfile(uid), uid);
   const pay = useLoad(fetchPaymentSetup, `pay-${uid}`);
+  // The team's admin page (the database decides who is an admin).
+  const admin = useLoad(async () => {
+    const res = await supabase().rpc("am_i_admin");
+    return !res.error && res.data === true;
+  }, `admin-${uid}`);
   const [form, setForm] = useState({ first_name: "", last_name: "", phone: "", about: "", avatar_url: "" as string | null });
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [uploading, setUploading] = useState(false);
@@ -174,6 +179,17 @@ export function MenuPage({ mode }: { mode: AppMode }) {
       {mode === "renter" && pay.data?.enabled && <CardSection setup={pay.data} onChange={pay.reload} returnTo="/kund/meny" />}
 
       <ul className="card divide-y divide-line">
+        {admin.data && (
+          <li>
+            <Link prefetch={false} href="/admin" className="flex min-h-14 items-center justify-between px-5 font-semibold text-night">
+              <span className="flex items-center gap-2">
+                <ShieldCheck size={18} className="text-brand" aria-hidden="true" />
+                {t.admin}
+              </span>
+              <ChevronRight size={18} className="text-muted" aria-hidden="true" />
+            </Link>
+          </li>
+        )}
         <li>
           <Link prefetch={false} href={MODE_HOME[mode === "host" ? "renter" : "host"]} className="flex min-h-14 items-center justify-between px-5 font-semibold text-night">
             <span className="flex items-center gap-2">
