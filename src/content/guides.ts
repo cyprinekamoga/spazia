@@ -226,7 +226,7 @@ export const guides: Guide[] = [
             "Du anmäler ditt utrymme. Det är gratis och inte bindande.",
             "Vi hör av oss och hjälper dig att räkna ut hur mycket plats du kan hyra ut. Du fotograferar utrymmet själv, och vi hjälper dig med annonsen.",
             "Du bestämmer vad du tar emot och när hyresgästerna får komma.",
-            "Hyresgästen verifieras med BankID, ni skriver ett standardavtal och hyran betalas automatiskt varje månad.",
+            "Du godkänner hyresgästen, ni godkänner samma hyresavtal i appen och hyran betalas automatiskt varje månad.",
           ],
         },
         { type: "h2", text: "Det här ska du tänka på" },
@@ -276,7 +276,7 @@ export const guides: Guide[] = [
             "You register your space. It's free and non-binding.",
             "We get in touch and help you work out how much you can rent out. You photograph the space yourself, and we help you with the listing.",
             "You decide what you accept and when renters can come.",
-            "The renter is verified with BankID, you sign a standard agreement and the rent is paid automatically every month.",
+            "You approve the renter, you both accept the same rental agreement in the app and the rent is paid automatically every month.",
           ],
         },
         { type: "h2", text: "Things to think about" },
@@ -491,7 +491,7 @@ export const guides: Guide[] = [
         { type: "h2", text: "Saknar du svenskt BankID?" },
         {
           type: "p",
-          text: "Många internationella studenter har inget svenskt BankID. Hos Spazia kan du verifiera dig med Freja eID och ditt pass i stället.",
+          text: "Många internationella studenter har inget svenskt BankID. Hos Spazia behövs det inte: du loggar in med e-post eller Google och betalar med kort, även ett utländskt.",
         },
         { type: "h2", text: "Så packar du inför sommaren" },
         {
@@ -545,7 +545,7 @@ export const guides: Guide[] = [
         { type: "h2", text: "No Swedish BankID?" },
         {
           type: "p",
-          text: "Many international students don't have a Swedish BankID. With Spazia you can verify yourself with Freja eID and your passport instead.",
+          text: "Many international students don't have a Swedish BankID. With Spazia you don't need one: you log in with email or Google and pay by card, including a foreign card.",
         },
         { type: "h2", text: "How to pack for the summer" },
         {

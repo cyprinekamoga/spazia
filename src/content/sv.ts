@@ -3,7 +3,7 @@ export const sv = {
   meta: {
     homeTitle: "Spazia – förvaring och parkering hos grannen",
     homeDescription:
-      "Förvara däck, skidor, skoter och flyttlådor i grannens garage, eller hyr en p-plats på uppfarten. Verifierade villaägare, standardavtal och ingen bindningstid, i hela Sverige.",
+      "Förvara däck, skidor, skoter och flyttlådor i grannens garage, eller hyr en p-plats på uppfarten. ID-kontrollerade värdar, ett gemensamt hyresavtal och ingen bindningstid, i hela Sverige.",
     titleTemplate: "%s | Spazia",
     locale: "sv_SE",
   },
@@ -52,7 +52,7 @@ export const sv = {
     ctaFind: "Jag behöver förvaring",
     ctaHost: "Jag har plats över",
     chipsLabel: "Vad behöver du plats för?",
-    trustline: ["Verifiering med BankID", "Standardavtal", "Ingen bindningstid"],
+    trustline: ["ID-kontrollerade värdar", "Hyresavtal i appen", "Ingen bindningstid"],
     illustrationAlt:
       "Ett upplyst garage en snöig vinterkväll – Spazia, förvaring och parkering hos grannen.",
   },
@@ -73,11 +73,11 @@ export const sv = {
       },
       {
         title: "Välj en verifierad värd",
-        text: "Alla värdar är verifierade med BankID, och varje annons har bilder på utrymmet.",
+        text: "Värdarnas identitet kontrolleras av vår betalpartner Stripe innan de kan få betalt, och varje annons har bilder på utrymmet.",
       },
       {
         title: "Lämna in och slappna av",
-        text: "Ni signerar standardavtalet digitalt och hyran dras automatiskt varje månad. Säg upp när du vill.",
+        text: "Ni godkänner samma hyresavtal i appen och hyran dras automatiskt varje månad. Säg upp när du vill.",
       },
     ],
     hostSteps: [
@@ -149,8 +149,8 @@ export const sv = {
     items: [
       {
         icon: "id",
-        title: "Verifierade med BankID",
-        text: "Alla värdar och hyresgäster identifierar sig med BankID. Saknar du svenskt BankID kan du använda Freja eID med pass.",
+        title: "ID-kontrollerade värdar",
+        text: "Värdarna identitetskontrolleras av vår betalpartner Stripe innan de kan få betalt. Hyresgäster betalar med kort i eget namn.",
       },
       {
         icon: "photos",
@@ -160,12 +160,12 @@ export const sv = {
       {
         icon: "contract",
         title: "Standardavtal",
-        text: "Ett tydligt avtal som signeras digitalt och reglerar tillträde, uppsägning och ansvar.",
+        text: "Ett tydligt hyresavtal som ni båda godkänner i appen. Det reglerar tillträde, uppsägning och ansvar.",
       },
       {
         icon: "camera",
         title: "Inventarielista med bilder",
-        text: "Ni fotograferar sakerna vid inlämning och hämtning, så att det aldrig råder tvekan om vad som lämnats.",
+        text: "Ni fotograferar sakerna i appen vid inlämning och hämtning och bekräftar listan, så att det aldrig råder tvekan om vad som lämnats.",
       },
       {
         icon: "card",
@@ -191,7 +191,7 @@ export const sv = {
     general: [
       {
         q: "Vad är Spazia?",
-        a: "En marknadsplats där privatpersoner hyr ut torr förvaringsplats i garage, källare och uthus, eller en p-plats på uppfarten, till den som behöver plats för däck, skidor, flyttlådor eller bilen. Vi sköter verifiering, avtal och betalning.",
+        a: "En marknadsplats där privatpersoner hyr ut torr förvaringsplats i garage, källare och uthus, eller en p-plats på uppfarten, till den som behöver plats för däck, skidor, flyttlådor eller bilen. Vi sköter avtal och betalning, och värdarna ID-kontrolleras innan de får betalt.",
       },
       {
         q: "Hur kommer jag igång?",
@@ -207,7 +207,7 @@ export const sv = {
       },
       {
         q: "Är det säkert?",
-        a: "Alla verifieras med BankID eller Freja eID, varje annons har bilder på utrymmet, ni skriver ett standardavtal och fotograferar sakerna vid inlämning. Betalningen går via Spazia, så ingen behöver hantera kontanter.",
+        a: "Värdarna ID-kontrolleras av vår betalpartner Stripe, varje annons har bilder på utrymmet, ni godkänner samma hyresavtal i appen och fotograferar sakerna vid inlämning. Betalningen går via Spazia, så ingen behöver hantera kontanter.",
       },
       {
         q: "Är mina saker försäkrade?",
@@ -215,7 +215,7 @@ export const sv = {
       },
       {
         q: "Jag har inget svenskt BankID. Kan jag ändå hyra?",
-        a: "Ja. Internationella studenter och nyinflyttade kan verifiera sig med Freja eID, som fungerar med pass.",
+        a: "Ja. Du behöver inget BankID. Du loggar in med e-post eller Google och betalar med kort, även med ett utländskt kort.",
       },
       {
         q: "Hur kommer jag åt mina saker?",
@@ -249,7 +249,7 @@ export const sv = {
       },
       {
         q: "Vem ansvarar om något skadas?",
-        a: "Standardavtalet reglerar ansvaret. Som värd ansvarar du för att utrymmet är torrt och låst som beskrivet. Hyresgästen ansvarar för sina saker och ska ha en hemförsäkring.",
+        a: "Hyresavtalet reglerar ansvaret. Som värd ansvarar du för att utrymmet är torrt och låst som beskrivet. Hyresgästen ansvarar för sina saker och ska ha en hemförsäkring.",
       },
       {
         q: "Måste jag skatta för hyran?",
@@ -282,10 +282,10 @@ export const sv = {
   hostPage: {
     metaTitle: "Hyr ut ditt garage, förråd eller p-plats",
     metaDescription:
-      "Tjäna pengar på ditt tomma garage, källare, uthus eller en p-plats på uppfarten. Gratis att annonsera, BankID-verifierade hyresgäster, standardavtal och automatisk månadsbetalning.",
+      "Tjäna pengar på ditt tomma garage, källare, uthus eller en p-plats på uppfarten. Gratis att annonsera, du godkänner varje hyresgäst, hyresavtal i appen och automatisk månadsbetalning.",
     eyebrow: "Bli värd",
     title: "Tjäna pengar på ditt tomma garage.",
-    lead: "Hyr ut torr plats i garage, källare eller uthus, eller en p-plats på uppfarten. Vi sköter verifiering, avtal och betalning, och du låser upp dörren några gånger om året.",
+    lead: "Hyr ut torr plats i garage, källare eller uthus, eller en p-plats på uppfarten. Vi sköter avtal och betalning, och du låser upp dörren några gånger om året.",
     ctaForm: "Anmäl ditt utrymme",
     ctaCalc: "Räkna på det",
     benefitsTitle: "Det här ingår",
@@ -307,8 +307,8 @@ export const sv = {
         text: "Du väljer vad du tar emot, godkänner varje hyresgäst och bestämmer när de får lämna och hämta.",
       },
       {
-        title: "Verifierade hyresgäster",
-        text: "Alla hyresgäster identifierar sig med BankID eller Freja eID innan de kan boka.",
+        title: "Du ser vem som frågar",
+        text: "Hyresgäster loggar in och sparar ett betalkort i eget namn innan de kan skicka en förfrågan. Du ser namn och meddelande innan du svarar.",
       },
       {
         title: "Hjälp med annonsen",
@@ -325,7 +325,7 @@ export const sv = {
       },
       {
         title: "Första hyresgästen",
-        text: "Du godkänner förfrågan, ni signerar avtalet och den första hyran betalas ut.",
+        text: "Du godkänner förfrågan och därmed hyresavtalet, och den första hyran betalas ut.",
       },
     ],
     requirementsTitle: "Vad krävs av utrymmet?",
@@ -356,7 +356,7 @@ export const sv = {
     heatedNote: "Uppvärmd plats kostar ca 25 % mer för fordon, möbler och lådor.",
     studentTitle: "Student?",
     studentText:
-      "Lämna lådorna och möblerna i studentstaden över sommaren i stället för att frakta hem dem. Saknar du svenskt BankID kan du verifiera dig med Freja eID och ditt pass.",
+      "Lämna lådorna och möblerna i studentstaden över sommaren i stället för att frakta hem dem. Du behöver inget svenskt BankID: logga in med e-post och betala med kort.",
     formTitle: "Hitta plats",
     formLead: "Det är gratis och inte bindande. Vi hör av oss när vi har hittat en värd nära dig.",
     faqTitle: "Vanliga frågor",
@@ -364,14 +364,14 @@ export const sv = {
   trustPage: {
     metaTitle: "Trygghet – så skyddar vi värdar och hyresgäster",
     metaDescription:
-      "BankID-verifiering, bilder på varje utrymme, standardavtal, inventarielista med bilder och betalning via plattformen. Så fungerar tryggheten på Spazia.",
+      "ID-kontrollerade värdar, bilder på varje utrymme, hyresavtal i appen, inventarielista med bilder och betalning via plattformen. Så fungerar tryggheten på Spazia.",
     eyebrow: "Trygghet",
     title: "Förtroende är grunden.",
     lead: "Att lämna sina saker hos någon man inte känner, eller släppa in någon i sitt garage, kräver förtroende. Så här bygger vi det.",
     sections: [
       {
-        title: "Verifiering med BankID och Freja eID",
-        text: "Alla som hyr ut eller hyr via Spazia identifierar sig med svenskt BankID. Internationella studenter och nyinflyttade utan BankID kan använda Freja eID, som fungerar med pass. Vi vet alltså alltid vem som är vem.",
+        title: "ID-kontroll av värdarna",
+        text: "Innan en värd kan få betalt kontrollerar vår betalpartner Stripe vem hen är: namn, personnummer, adress och bankkonto. Hyresgäster loggar in och betalar med kort i eget namn, och värden godkänner varje hyresgäst innan något bokas.",
         bullets: [] as string[],
       },
       {
@@ -381,7 +381,7 @@ export const sv = {
       },
       {
         title: "Ett standardavtal för alla",
-        text: "Värd och hyresgäst signerar samma tydliga avtal digitalt. Det reglerar:",
+        text: "Värd och hyresgäst godkänner samma tydliga hyresavtal i appen, med datum och tid sparade. Det reglerar:",
         bullets: [
           "vad som förvaras och var",
           "när det går att lämna och hämta",
@@ -392,7 +392,7 @@ export const sv = {
       },
       {
         title: "Inventarielista med bilder",
-        text: "Vid inlämning fotograferar ni sakerna och bekräftar listan tillsammans. Samma sak vid hämtning. Då råder det aldrig tvekan om vad som lämnats in.",
+        text: "Vid inlämning fotograferar ni sakerna i appen och den andra bekräftar listan. Samma sak vid hämtning. Då råder det aldrig tvekan om vad som lämnats in.",
         bullets: [] as string[],
       },
       {
@@ -431,7 +431,7 @@ export const sv = {
     title: "Plats finns. Den är bara på fel ställe.",
     paragraphs: [
       "Många av oss äger saker som bara används halva året: dubbdäck, skidor, skotrar och sommarmöbler. Samtidigt är kön till extra förråd i hyreshusen lång, studentrummen har knappt plats för en resväska och förrådsföretagen ligger ofta i industriområden utanför stan.",
-      "I villaområdena finns samtidigt garage, källare och uthus med plats över. Spazia kopplar ihop de två, med BankID, standardavtal och automatisk betalning. Det ska kännas lika tryggt som ett förrådsföretag, men vara närmare och billigare.",
+      "I villaområdena finns samtidigt garage, källare och uthus med plats över. Spazia kopplar ihop de två, med ID-kontrollerade värdar, ett gemensamt hyresavtal och automatisk betalning. Det ska kännas lika tryggt som ett förrådsföretag, men vara närmare och billigare.",
       "Spazia drivs av ett litet team. Vi finns i hela Sverige, och vi svarar själva när du hör av dig.",
     ],
     creditsTitle: "Bildkällor",

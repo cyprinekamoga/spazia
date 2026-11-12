@@ -5,7 +5,7 @@ export const en: Dictionary = {
   meta: {
     homeTitle: "Spazia – storage and parking with your neighbours",
     homeDescription:
-      "Store tyres, skis, snowmobiles and boxes in a neighbour's garage, or rent a driveway parking space. Verified homeowners, a standard agreement and no long-term commitment, all over Sweden.",
+      "Store tyres, skis, snowmobiles and boxes in a neighbour's garage, or rent a driveway parking space. ID-checked hosts, one rental agreement for everyone and no long-term commitment, all over Sweden.",
     titleTemplate: "%s | Spazia",
     locale: "en_GB",
   },
@@ -54,7 +54,7 @@ export const en: Dictionary = {
     ctaFind: "I need storage",
     ctaHost: "I have spare space",
     chipsLabel: "What do you need space for?",
-    trustline: ["BankID verification", "Standard agreement", "Cancel any month"],
+    trustline: ["ID-checked hosts", "Agreement in the app", "Cancel any month"],
     illustrationAlt:
       "A lit garage on a snowy winter evening – Spazia, storage and parking with your neighbours.",
   },
@@ -75,11 +75,11 @@ export const en: Dictionary = {
       },
       {
         title: "Pick a verified host",
-        text: "Every host is verified with BankID, and every listing has photos of the space.",
+        text: "Hosts have their identity checked by our payment partner Stripe before they can be paid, and every listing has photos of the space.",
       },
       {
         title: "Drop off and relax",
-        text: "You both sign the standard agreement digitally and rent is charged automatically each month. Cancel whenever you like.",
+        text: "You both accept the same rental agreement in the app and rent is charged automatically each month. Cancel whenever you like.",
       },
     ],
     hostSteps: [
@@ -151,8 +151,8 @@ export const en: Dictionary = {
     items: [
       {
         icon: "id",
-        title: "Verified with BankID",
-        text: "Every host and renter identifies with BankID. No Swedish BankID? You can use Freja eID with your passport.",
+        title: "ID-checked hosts",
+        text: "Hosts have their identity checked by our payment partner Stripe before they can be paid. Renters pay by card in their own name.",
       },
       {
         icon: "photos",
@@ -162,12 +162,12 @@ export const en: Dictionary = {
       {
         icon: "contract",
         title: "Standard agreement",
-        text: "A clear agreement, signed digitally, covering access, cancellation and responsibility.",
+        text: "A clear rental agreement you both accept in the app, covering access, cancellation and responsibility.",
       },
       {
         icon: "camera",
         title: "Photo inventory",
-        text: "You photograph your things at drop-off and collection, so there is never any doubt about what was left.",
+        text: "You photograph your things in the app at drop-off and collection and confirm the list, so there is never any doubt about what was left.",
       },
       {
         icon: "card",
@@ -193,7 +193,7 @@ export const en: Dictionary = {
     general: [
       {
         q: "What is Spazia?",
-        a: "A marketplace where people rent out dry storage space in garages, basements and outbuildings, or a parking space on their driveway, to anyone who needs room for tyres, skis, boxes or a car. We handle verification, the agreement and payments.",
+        a: "A marketplace where people rent out dry storage space in garages, basements and outbuildings, or a parking space on their driveway, to anyone who needs room for tyres, skis, boxes or a car. We handle the agreement and payments, and hosts are ID-checked before they get paid.",
       },
       {
         q: "How do I get started?",
@@ -209,7 +209,7 @@ export const en: Dictionary = {
       },
       {
         q: "Is it safe?",
-        a: "Everyone is verified with BankID or Freja eID, every listing has photos of the space, you sign a standard agreement and photograph your things at drop-off. Payment goes through Spazia, so nobody handles cash.",
+        a: "Hosts are ID-checked by our payment partner Stripe, every listing has photos of the space, you both accept the same rental agreement in the app and photograph your things at drop-off. Payment goes through Spazia, so nobody handles cash.",
       },
       {
         q: "Are my things insured?",
@@ -217,7 +217,7 @@ export const en: Dictionary = {
       },
       {
         q: "I don't have Swedish BankID. Can I still rent?",
-        a: "Yes. International students and newcomers can verify with Freja eID, which works with a passport.",
+        a: "Yes. You don't need BankID. You log in with email or Google and pay by card, including a foreign card.",
       },
       {
         q: "How do I get to my things?",
@@ -251,7 +251,7 @@ export const en: Dictionary = {
       },
       {
         q: "Who is responsible if something is damaged?",
-        a: "The standard agreement sets out responsibility. As a host you are responsible for the space being dry and locked as described. The renter is responsible for their things and should have home insurance.",
+        a: "The rental agreement sets out responsibility. As a host you are responsible for the space being dry and locked as described. The renter is responsible for their things and should have home insurance.",
       },
       {
         q: "Do I pay tax on the rent?",
@@ -284,10 +284,10 @@ export const en: Dictionary = {
   hostPage: {
     metaTitle: "Rent out your garage, storeroom or parking space",
     metaDescription:
-      "Earn money from your empty garage, basement, outbuilding or a driveway parking space. Free to list, BankID-verified renters, a standard agreement and automatic monthly payments.",
+      "Earn money from your empty garage, basement, outbuilding or a driveway parking space. Free to list, you approve every renter, an agreement in the app and automatic monthly payments.",
     eyebrow: "Become a host",
     title: "Make money from your empty garage.",
-    lead: "Rent out dry space in your garage, basement or outbuilding, or a parking space on your driveway. We handle verification, the agreement and payments, and you unlock the door a few times a year.",
+    lead: "Rent out dry space in your garage, basement or outbuilding, or a parking space on your driveway. We handle the agreement and payments, and you unlock the door a few times a year.",
     ctaForm: "Register your space",
     ctaCalc: "Run the numbers",
     benefitsTitle: "What's included",
@@ -309,8 +309,8 @@ export const en: Dictionary = {
         text: "You choose what you accept, approve every renter and decide when they can drop off and collect.",
       },
       {
-        title: "Verified renters",
-        text: "Every renter identifies with BankID or Freja eID before they can book.",
+        title: "You see who is asking",
+        text: "Renters log in and save a payment card in their own name before they can send a request. You see their name and message before you answer.",
       },
       {
         title: "Help with your listing",
@@ -327,7 +327,7 @@ export const en: Dictionary = {
       },
       {
         title: "Your first renter",
-        text: "You approve the request, you both sign the agreement and the first rent is paid out.",
+        text: "You approve the request, which also accepts the rental agreement, and the first rent is paid out.",
       },
     ],
     requirementsTitle: "What does the space need?",
@@ -358,7 +358,7 @@ export const en: Dictionary = {
     heatedNote: "Heated space costs about 25% more for vehicles, furniture and boxes.",
     studentTitle: "Student?",
     studentText:
-      "Leave your boxes and furniture in your student city over the summer instead of shipping them home. No Swedish BankID? You can verify with Freja eID and your passport.",
+      "Leave your boxes and furniture in your student city over the summer instead of shipping them home. You don't need a Swedish BankID: log in with email and pay by card.",
     formTitle: "Find space",
     formLead: "It's free and non-binding. We'll get in touch when we've found a host near you.",
     faqTitle: "Frequently asked questions",
@@ -366,14 +366,14 @@ export const en: Dictionary = {
   trustPage: {
     metaTitle: "Trust & safety – how we protect hosts and renters",
     metaDescription:
-      "BankID verification, photos of every space, a standard agreement, a photo inventory and payments through the platform. This is how trust works on Spazia.",
+      "ID-checked hosts, photos of every space, a rental agreement in the app, a photo inventory and payments through the platform. This is how trust works on Spazia.",
     eyebrow: "Trust & safety",
     title: "Trust comes first.",
     lead: "Leaving your things with someone you don't know, or letting someone into your garage, takes trust. This is how we build it.",
     sections: [
       {
-        title: "Verification with BankID and Freja eID",
-        text: "Everyone who hosts or rents through Spazia identifies with Swedish BankID. International students and newcomers without BankID can use Freja eID, which works with a passport. So we always know who is who.",
+        title: "ID checks for hosts",
+        text: "Before a host can be paid, our payment partner Stripe checks who they are: name, personal identity number, address and bank account. Renters log in and pay by card in their own name, and the host approves every renter before anything is booked.",
         bullets: [],
       },
       {
@@ -383,7 +383,7 @@ export const en: Dictionary = {
       },
       {
         title: "One standard agreement for everyone",
-        text: "Host and renter sign the same clear agreement digitally. It covers:",
+        text: "Host and renter accept the same clear rental agreement in the app, with the date and time saved. It covers:",
         bullets: [
           "what is stored and where",
           "when you can drop off and collect",
@@ -394,7 +394,7 @@ export const en: Dictionary = {
       },
       {
         title: "Photo inventory",
-        text: "At drop-off you photograph the items and confirm the list together. The same at collection. That way there is never any doubt about what was left.",
+        text: "At drop-off you photograph the items in the app and the other person confirms the list. The same at collection. That way there is never any doubt about what was left.",
         bullets: [],
       },
       {
@@ -433,7 +433,7 @@ export const en: Dictionary = {
     title: "The space exists. It's just in the wrong place.",
     paragraphs: [
       "Lots of us own things we only use half the year: studded tyres, skis, snowmobiles and summer furniture. Meanwhile the queue for extra storerooms in apartment buildings is long, student rooms barely fit a suitcase, and storage companies are often on industrial estates out of town.",
-      "At the same time, residential areas are full of garages, basements and outbuildings with room to spare. Spazia connects the two, with BankID, a standard agreement and automatic payments. It should feel as safe as a storage company, but be closer and cheaper.",
+      "At the same time, residential areas are full of garages, basements and outbuildings with room to spare. Spazia connects the two, with ID-checked hosts, one rental agreement and automatic payments. It should feel as safe as a storage company, but be closer and cheaper.",
       "Spazia is run by a small team. We're all over Sweden, and we answer ourselves when you get in touch.",
     ],
     creditsTitle: "Photo credits",
