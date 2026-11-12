@@ -477,7 +477,7 @@ export const sv = {
       },
       {
         title: "Förfrågningar, bokningar och meddelanden",
-        text: "När du skickar en förfrågan eller bokar sparar vi vad det gäller, datum eller tider, pris, ditt meddelande och om någon avbokar. Meddelanden mellan värd och hyresgäst sparas så att ni båda kan läsa dem. Vi läser inte era meddelanden, utom när det behövs för att utreda en anmälan om bedrägeri eller missbruk, eller en tvist som någon av er har bett oss om hjälp med. Ni godkänner hyresavtalet i appen, och vi sparar när och vilken version. Inventarielistan med bilder från inlämning och hämtning sparas också. Den syns bara för värden och hyresgästen i hyran, och för oss om någon ber om hjälp med en tvist. Undvik bilder där personer syns.",
+        text: "När du skickar en förfrågan eller bokar sparar vi vad det gäller, datum eller tider, pris, ditt meddelande och om någon avbokar. Meddelanden och bilder mellan värd och hyresgäst sparas så att ni båda kan läsa dem. Bilderna i chatten kan bara ni två öppna. Blockerar du någon sparar vi det, så att ni inte kan skriva till varandra. Vi läser inte era meddelanden, utom när det behövs för att utreda en anmälan om bedrägeri eller missbruk, eller en tvist som någon av er har bett oss om hjälp med. Ni godkänner hyresavtalet i appen, och vi sparar när och vilken version. Inventarielistan med bilder från inlämning och hämtning sparas också. Den syns bara för värden och hyresgästen i hyran, och för oss om någon ber om hjälp med en tvist. Undvik bilder där personer syns.",
         bullets: [] as string[],
       },
       {

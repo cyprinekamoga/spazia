@@ -55,6 +55,7 @@ import {
   type SpaceType,
 } from "@/lib/app/model";
 import { supabase, photoUrl } from "@/lib/supabase";
+import { useLoad } from "@/lib/app/session";
 
 const t = appText;
 const w = appText.wizard.steps;
@@ -328,6 +329,22 @@ function Field({ id, label, hint, children }: { id: string; label: string; hint?
       {hint && <p className="mt-1.5 text-sm text-muted">{hint}</p>}
     </div>
   );
+}
+
+/** What other hosts in the same town charge (only shown when there are at least three). */
+function MarketHint({ city, category, unit }: { city: string; category: CategoryId; unit: string }) {
+  const hint = useLoad(async () => {
+    if (!city.trim()) return null;
+    const { data } = await supabase().rpc("price_hint", { p_city: city.trim(), p_category: category });
+    return data as { count: number; low: number; median: number; high: number } | null;
+  }, `hint-${city}-${category}`);
+  const h = hint.data;
+  if (!h) return null;
+  const text =
+    h.low === h.high
+      ? fill(w.spaces.marketOne, { city, price: formatKr(h.median), unit })
+      : fill(w.spaces.market, { city, low: formatKr(h.low), high: formatKr(h.high), unit });
+  return <p className="mt-1 text-sm leading-relaxed text-muted">{text}</p>;
 }
 
 export function ListingWizard() {
@@ -716,6 +733,7 @@ export function ListingWizard() {
                               <button type="button" className="mt-1.5 text-sm font-semibold text-brand underline underline-offset-4" onClick={() => setSpace(c.id, { price: String(suggestedHostPrice(c.id)) })}>
                                 {fill(w.spaces.suggested, { price: suggestedHostPrice(c.id) })}
                               </button>
+                              <MarketHint city={draft.listing.city ?? ""} category={c.id} unit={L(c.unit)} />
                             </div>
                             {price >= 10 && (
                               <p className="text-sm leading-relaxed text-muted sm:col-span-2">

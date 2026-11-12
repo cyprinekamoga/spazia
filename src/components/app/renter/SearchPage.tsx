@@ -19,6 +19,8 @@ import { CoverPhoto } from "../ui";
 import { supabase } from "@/lib/supabase";
 import { RatingBadge } from "../Reviews";
 import { AlertButton } from "../SearchAlerts";
+import { FavouriteButton } from "../Favourites";
+import { fetchBlockedIds, fetchFavouriteIds } from "@/lib/app/data";
 import { activeFilterCount, FilterPanel, filterKey, filtersFromParams, filtersToParams, SORT_KEYS, type SortKey } from "./SearchFilters";
 import type { SearchFilters } from "@/lib/app/data";
 
@@ -50,13 +52,18 @@ function sortResults(rows: SearchResult[], sort: SortKey, here: { lat: number; l
   return list;
 }
 
-function ResultCard({ listing, rating, distance }: { listing: SearchResult; rating?: { average: number; count: number }; distance?: number }) {
+function ResultCard({ listing, rating, distance, uid, saved }: { listing: SearchResult; rating?: { average: number; count: number }; distance?: number; uid: string; saved: boolean }) {
   const place = [listing.area_name, listing.city].filter(Boolean).join(", ");
   const type = listing.space_type ? appText.spaceTypes[listing.space_type] : "";
   const from = fromPrice(listing.listing_spaces);
   return (
     <Link prefetch={false} href={`/annons?id=${listing.id}`} className="group block">
-      <CoverPhoto photos={listing.listing_photos} className="aspect-[4/3] w-full rounded-2xl transition-opacity group-hover:opacity-90" />
+      <span className="relative block">
+        <CoverPhoto photos={listing.listing_photos} className="aspect-[4/3] w-full rounded-2xl transition-opacity group-hover:opacity-90" />
+        <span className="absolute top-2.5 right-2.5">
+          <FavouriteButton uid={uid} listingId={listing.id} title={listing.title} saved={saved} overlay />
+        </span>
+      </span>
       <span className="mt-2.5 flex items-start justify-between gap-2">
         <span className="font-bold text-night">{listing.title || appText.listings.untitled}</span>
         {rating && <RatingBadge average={rating.average} count={rating.count} />}
@@ -126,7 +133,15 @@ export function SearchPage() {
     go({ place: input });
   }
 
-  const results = useMemo(() => sortResults(data ?? [], sort, here), [data, sort, here]);
+  const mine = useLoad(async () => {
+    if (!uid) return { saved: [] as string[], blocked: [] as string[] };
+    const [saved, blocked] = await Promise.all([fetchFavouriteIds(), fetchBlockedIds()]);
+    return { saved, blocked };
+  }, `mine-${uid}`);
+  const results = useMemo(() => {
+    const blocked = new Set(mine.data?.blocked ?? []);
+    return sortResults((data ?? []).filter((r) => !blocked.has(r.host_id)), sort, here);
+  }, [data, sort, here, mine.data]);
   const filtered = activeFilterCount(filters) > 0;
   const ratings = useLoad(async () => {
     if (!results.length) return {} as Record<string, { average: number; count: number }>;
@@ -287,7 +302,14 @@ export function SearchPage() {
             <ul className="mt-3 grid gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
               {results.map((l) => (
                 <li key={l.id}>
-                  <ResultCard listing={l} rating={ratings.data?.[l.id]} distance={sort === "near" ? l.distance : undefined} />
+                  <ResultCard
+                    listing={l}
+                    rating={ratings.data?.[l.id]}
+                    distance={sort === "near" ? l.distance : undefined}
+                    uid={uid}
+                    saved={(mine.data?.saved ?? []).includes(l.id)}
+                    key={`${l.id}-${mine.loading ? "loading" : "ready"}`}
+                  />
                 </li>
               ))}
             </ul>

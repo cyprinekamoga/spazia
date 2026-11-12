@@ -297,7 +297,7 @@ export function buildBookingEmail(p: NotificationPayload, opts: { appUrl: string
       d = {
         subject: unread.length === 1 ? `Nytt meddelande från ${name}` : `${unread.length} nya meddelanden från ${name}`,
         intro: [hello, `${name} har skrivit till dig om ”${p.listing_title}”.`],
-        rows: unread.map((m) => [time.format(new Date(m.created_at)), m.body.length > 600 ? `${m.body.slice(0, 600)} …` : m.body] as [string, string]),
+        rows: unread.map((m) => [time.format(new Date(m.created_at)), m.body === "[image]" ? "Skickade en bild" : m.body.length > 600 ? `${m.body.slice(0, 600)} …` : m.body] as [string, string]),
         after: ["Svara i appen, så ser ni hela konversationen på ett ställe. Svar på det här mejlet går till Spazia, inte till " + name + "."],
         button: { href: `${opts.appUrl}/${area}/meddelanden${p.conversation_id ? `?id=${p.conversation_id}` : ""}`, label: "Svara i appen" },
       };

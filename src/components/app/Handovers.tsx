@@ -28,7 +28,7 @@ export interface Handover {
 }
 
 /** Resize a photo in the browser before upload (max 1600 px, JPEG). */
-async function resizeImage(file: File): Promise<Blob> {
+export async function resizeImage(file: File): Promise<Blob> {
   const bitmap = await createImageBitmap(file);
   const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement("canvas");

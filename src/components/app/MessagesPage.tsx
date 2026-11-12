@@ -3,7 +3,7 @@
 import { appLocale } from "@/lib/app/lang";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Ban, ImagePlus, Send } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { appText } from "@/content/app";
 import { fill } from "@/lib/i18n";
@@ -13,6 +13,7 @@ import { MODE_HOME } from "@/lib/app/mode";
 import { must, useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "./AppShell";
+import { resizeImage } from "./Handovers";
 import { ReportButton } from "./Report";
 import { Avatar, itemsText } from "./ui";
 
@@ -70,7 +71,7 @@ function Inbox({ uid, mode }: { uid: string; mode: AppMode }) {
                     <span className="block truncate text-sm text-muted">{c.listing?.title}</span>
                     {last && (
                       <span className={`block truncate text-[0.95rem] ${unread ? "font-semibold text-night" : "text-ink/80"}`}>
-                        {last.kind === "event" ? eventText(last.body, name, last.sender_id === uid) : last.body}
+                        {last.kind === "event" ? eventText(last.body, name, last.sender_id === uid) : last.kind === "image" ? `📷 ${t.photoPreview}` : last.body}
                       </span>
                     )}
                   </span>
@@ -88,6 +89,9 @@ function Inbox({ uid, mode }: { uid: string; mode: AppMode }) {
 type Thread = {
   conversation: { id: string; listing: { id: string; title: string } | null; other: { id: string; first_name: string; avatar_url: string | null } | null };
   requests: RequestRow[];
+  /** Either of the two has blocked the other; iBlocked: it was me. */
+  blocked: boolean;
+  iBlocked: boolean;
 };
 
 function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode }) {
@@ -97,8 +101,16 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
       await db.from("conversations").select(`id, listing:listings(id, title), ${otherProfile(mode)}(id, first_name, avatar_url)`).eq("id", id).single(),
     ) as unknown as Thread["conversation"];
     const requests = must(await db.from("requests").select("*, request_items(category, quantity, host_price_month, hourly_price, daily_max)").eq("conversation_id", id).order("created_at", { ascending: false })) as RequestRow[];
-    return { conversation, requests };
+    const otherId = conversation.other?.id;
+    const [blocked, mine] = await Promise.all([
+      db.rpc("conversation_blocked", { p_conversation: id }),
+      otherId ? db.from("user_blocks").select("blocked_id").eq("blocked_id", otherId) : Promise.resolve({ data: [] }),
+    ]);
+    return { conversation, requests, blocked: Boolean(blocked.data), iBlocked: (mine.data ?? []).length > 0 };
   }, `${id}:${mode}`);
+  const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
@@ -122,6 +134,25 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
     };
   }, [id, uid]);
 
+  // Photos are private: short-lived links for the ones on screen.
+  useEffect(() => {
+    const missing = messages.filter((m) => m.kind === "image" && !photoUrls[m.body]).map((m) => m.body);
+    if (missing.length === 0) return;
+    let active = true;
+    supabase()
+      .storage.from("chat-photos")
+      .createSignedUrls(missing, 3600)
+      .then(({ data }) => {
+        if (!active || !data) return;
+        const fresh: Record<string, string> = {};
+        for (const d of data) if (d.path && d.signedUrl) fresh[d.path] = d.signedUrl;
+        setPhotoUrls((prev) => ({ ...prev, ...fresh }));
+      });
+    return () => {
+      active = false;
+    };
+  }, [messages, photoUrls]);
+
   // Scroll to the newest message once the thread is on screen, and after each new one.
   useEffect(() => {
     if (!head.loading) endRef.current?.scrollIntoView({ block: "end" });
@@ -137,7 +168,36 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
     if (!res.error) {
       setText("");
       setMessages((m) => [...m, res.data as Message]);
+    } else if (res.error.message.includes("blocked")) {
+      await head.reload();
     }
+  }
+
+  async function sendPhoto(file: File | undefined) {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const blob = await resizeImage(file);
+      const path = `${id}/${crypto.randomUUID()}.jpg`;
+      const up = await supabase().storage.from("chat-photos").upload(path, blob, { contentType: "image/jpeg" });
+      if (up.error) throw up.error;
+      const res = await supabase().from("messages").insert({ conversation_id: id, sender_id: uid, kind: "image", body: path }).select("*").single();
+      if (res.error) throw res.error;
+      setMessages((m) => [...m, res.data as Message]);
+    } catch (err) {
+      console.error(err);
+      await head.reload();
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  async function toggleBlock(otherId: string, block: boolean, otherName: string) {
+    if (block && !window.confirm(fill(t.blockConfirm, { name: otherName }))) return;
+    const db = supabase();
+    const res = block ? await db.from("user_blocks").insert({ blocked_id: otherId }) : await db.from("user_blocks").delete().eq("blocked_id", otherId);
+    if (!res.error || res.error.code === "23505") await head.reload();
   }
 
   if (head.loading) return <Spinner />;
@@ -176,7 +236,18 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
           ) : (
             <li key={m.id} className={`flex ${m.sender_id === uid ? "justify-end" : "justify-start"}`}>
               <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${m.sender_id === uid ? "rounded-br-md bg-night text-white" : "rounded-bl-md border border-line bg-paper text-ink"}`}>
-                <p className="leading-relaxed whitespace-pre-line">{m.body}</p>
+                {m.kind === "image" ? (
+                  photoUrls[m.body] ? (
+                    <a href={photoUrls[m.body]} target="_blank" rel="noopener" className="-mx-1.5 -mt-0.5 block">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- private photo behind a signed link */}
+                      <img src={photoUrls[m.body]} alt={t.photoAlt} className="max-h-72 w-auto rounded-xl" />
+                    </a>
+                  ) : (
+                    <p className="text-sm opacity-80">📷 {t.photoPreview}</p>
+                  )
+                ) : (
+                  <p className="leading-relaxed whitespace-pre-line">{m.body}</p>
+                )}
                 <p className={`mt-1 text-right text-xs ${m.sender_id === uid ? "text-frost-2" : "text-muted"}`}>{timeLabel(m.created_at)}</p>
               </div>
             </li>
@@ -186,7 +257,24 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
       {/* Keep the newest message clear of the message box and the tab bar when scrolled into view. */}
       <div ref={endRef} className="scroll-mb-44 md:scroll-mb-24" />
 
+      {head.data.blocked ? (
+        <p className="mt-5 flex items-center gap-2 rounded-2xl bg-frost p-4 font-medium text-night">
+          <Ban size={18} className="shrink-0" aria-hidden="true" />
+          {head.data.iBlocked ? fill(t.blockedByYou, { name }) : t.blocked}
+        </p>
+      ) : (
       <form onSubmit={send} className="sticky bottom-20 mt-5 flex items-end gap-2 rounded-2xl border border-line bg-paper p-2 md:bottom-4">
+        <input ref={fileRef} type="file" accept="image/*" className="sr-only" tabIndex={-1} aria-hidden="true" onChange={(e) => sendPhoto(e.target.files?.[0])} />
+        <button
+          type="button"
+          disabled={uploading}
+          onClick={() => fileRef.current?.click()}
+          aria-label={uploading ? t.uploading : t.photo}
+          title={t.photo}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-brand hover:bg-frost disabled:opacity-40"
+        >
+          <ImagePlus size={20} aria-hidden="true" />
+        </button>
         <label htmlFor="message" className="sr-only">
           {t.placeholder}
         </label>
@@ -203,9 +291,21 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
           <Send size={18} aria-hidden="true" />
         </button>
       </form>
+      )}
+      {uploading && <p className="mt-2 text-sm text-muted">{t.uploading}</p>}
       {head.data.conversation.other?.id && (
-        <div className="mt-6 mb-4">
+        <div className="mt-6 mb-4 flex flex-wrap items-center gap-x-5 gap-y-2">
           <ReportButton kind="user" targetId={head.data.conversation.other.id} label={fill(appText.report.user, { name })} />
+          {(!head.data.blocked || head.data.iBlocked) && (
+            <button
+              type="button"
+              onClick={() => toggleBlock(head.data!.conversation.other!.id, !head.data!.iBlocked, name)}
+              className="flex min-h-11 items-center gap-1.5 text-sm font-semibold text-muted underline-offset-4 hover:text-[#b42318] hover:underline"
+            >
+              <Ban size={16} aria-hidden="true" />
+              {head.data.iBlocked ? fill(t.unblock, { name }) : fill(t.block, { name })}
+            </button>
+          )}
         </div>
       )}
     </div>

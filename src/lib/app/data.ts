@@ -258,3 +258,29 @@ export async function saveAlert(alert: { place: string; category: CategoryId | n
 export async function deleteAlert(id: string): Promise<void> {
   must(await supabase().from("search_alerts").delete().eq("id", id));
 }
+
+/* ---------- Favourites and blocks ---------- */
+
+export async function fetchFavouriteIds(): Promise<string[]> {
+  return (must(await supabase().from("favourites").select("listing_id")) as { listing_id: string }[]).map((f) => f.listing_id);
+}
+
+export type SavedListing = Pick<Listing, "id" | "title" | "city" | "area_name" | "status"> & { listing_photos: Pick<ListingPhoto, "path" | "position">[] };
+
+export async function fetchFavourites(): Promise<SavedListing[]> {
+  const rows = must(
+    await supabase().from("favourites").select("created_at, listing:listings(id, title, city, area_name, status, listing_photos(path, position))").order("created_at", { ascending: false }),
+  ) as unknown as { listing: SavedListing | null }[];
+  return rows.map((r) => r.listing).filter((l): l is SavedListing => l !== null);
+}
+
+export async function setFavourite(listingId: string, on: boolean): Promise<void> {
+  const db = supabase();
+  const res = on ? await db.from("favourites").insert({ listing_id: listingId }) : await db.from("favourites").delete().eq("listing_id", listingId);
+  if (res.error && res.error.code !== "23505") throw new Error(res.error.message);
+}
+
+/** People I have blocked (their listings are left out of my searches). */
+export async function fetchBlockedIds(): Promise<string[]> {
+  return (must(await supabase().from("user_blocks").select("blocked_id")) as { blocked_id: string }[]).map((b) => b.blocked_id);
+}

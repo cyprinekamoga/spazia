@@ -9,7 +9,8 @@ import { FEES } from "@/content/pricing";
 import { appLang } from "@/lib/app/lang";
 import { listingSeo } from "@/lib/listing-seo";
 import { site } from "@/lib/site";
-import { fetchListingBundle, fetchMyOpenRequest } from "@/lib/app/data";
+import { fetchFavouriteIds, fetchListingBundle, fetchMyOpenRequest } from "@/lib/app/data";
+import { FavouriteButton } from "../Favourites";
 import { useLoad } from "@/lib/app/session";
 import { ListingView } from "../ListingView";
 import { ReportButton } from "../Report";
@@ -27,8 +28,12 @@ export function RenterListingPage() {
   const id = useSearchParams().get("id") ?? "";
   const router = useRouter();
   const { data, loading } = useLoad(async () => {
-    const [bundle, open] = await Promise.all([fetchListingBundle(id), uid ? fetchMyOpenRequest(id, uid) : Promise.resolve(null)]);
-    return { bundle, open };
+    const [bundle, open, saved] = await Promise.all([
+      fetchListingBundle(id),
+      uid ? fetchMyOpenRequest(id, uid) : Promise.resolve(null),
+      uid ? fetchFavouriteIds().catch(() => [] as string[]) : Promise.resolve([] as string[]),
+    ]);
+    return { bundle, open, saved: saved.includes(id) };
   }, `${id}:${uid ?? ""}`);
 
   // The same title and description the edge function serves to search engines
@@ -102,7 +107,10 @@ export function RenterListingPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 pt-4 sm:px-6">
-      <div className="mb-4">{backButton}</div>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        {backButton}
+        {!own && !unavailable && <FavouriteButton uid={uid ?? ""} listingId={listing.id} title={listing.title} saved={data?.saved ?? false} />}
+      </div>
       <ListingView listing={listing} spaces={bundle.spaces} photos={bundle.photos} host={bundle.host} actions={actions} notice={notice} />
       <ListingReviewsSection listingId={listing.id} />
       {uid && !own && (

@@ -171,7 +171,8 @@ export interface Message {
   id: string;
   conversation_id: string;
   sender_id: string;
-  kind: "text" | "event";
+  /** image: body is the photo's path in the private chat-photos bucket. */
+  kind: "text" | "event" | "image";
   body: string;
   created_at: string;
 }

@@ -479,7 +479,7 @@ export const en: Dictionary = {
       },
       {
         title: "Requests, bookings and messages",
-        text: "When you send a request or make a booking we store what it covers, the dates or times, the price, your message and whether anyone cancels. Messages between host and renter are stored so you can both read them. We don't read your messages, except when we need to look into a report of fraud or abuse, or a dispute one of you has asked us to help with. You accept the rental agreement in the app, and we store when and which version. The inventory list with photos from drop-off and pickup is stored too. Only the host and the renter of that rental can see it, and we can when someone asks us for help with a dispute. Avoid photos where people can be seen.",
+        text: "When you send a request or make a booking we store what it covers, the dates or times, the price, your message and whether anyone cancels. Messages and photos between host and renter are stored so you can both read them. Only the two of you can open the photos in the chat. If you block someone we store that, so you can't write to each other. We don't read your messages, except when we need to look into a report of fraud or abuse, or a dispute one of you has asked us to help with. You accept the rental agreement in the app, and we store when and which version. The inventory list with photos from drop-off and pickup is stored too. Only the host and the renter of that rental can see it, and we can when someone asks us for help with a dispute. Avoid photos where people can be seen.",
         bullets: [],
       },
       {

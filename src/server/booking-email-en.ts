@@ -178,7 +178,7 @@ export function englishDraft(p: NotificationPayload, links: { host: string; rent
       return {
         subject: unread.length === 1 ? `New message from ${name}` : `${unread.length} new messages from ${name}`,
         intro: [hello, `${name} has written to you about “${p.listing_title}”.`],
-        rows: unread.map((m) => [time.format(new Date(m.created_at)), m.body.length > 600 ? `${m.body.slice(0, 600)} …` : m.body] as [string, string]),
+        rows: unread.map((m) => [time.format(new Date(m.created_at)), m.body === "[image]" ? "Sent a photo" : m.body.length > 600 ? `${m.body.slice(0, 600)} …` : m.body] as [string, string]),
         after: [`Reply in the app so you both see the whole conversation in one place. Replies to this email go to Spazia, not to ${name}.`],
         button: { href: `${links.appUrl}/${area}/meddelanden${p.conversation_id ? `?id=${p.conversation_id}` : ""}`, label: "Reply in the app" },
       };
