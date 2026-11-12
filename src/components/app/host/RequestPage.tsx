@@ -12,7 +12,8 @@ import { effectiveStatus, formatDay, formatKr, formatMoment, hostCanCancel, host
 import { fetchPaymentSetup, fetchRequestPayments, type Payment, type PaymentSetup } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
-import { Spinner } from "../AppShell";
+import { Spinner, useAppSession } from "../AppShell";
+import { HandoverSection } from "../Handovers";
 import { Avatar } from "./RequestCard";
 
 const t = appText.request;
@@ -22,6 +23,7 @@ function memberSince(iso: string): string {
 }
 
 export function RequestPage() {
+  const uid = useAppSession().user.id;
   const id = useSearchParams().get("id") ?? "";
   const { data: r, loading, reload } = useLoad(async () => {
     const req = await fetchRequest(id);
@@ -205,6 +207,12 @@ export function RequestPage() {
             </p>
           )}
           {ending && r.end_date && <p className="mt-1">{fill(appText.payments.ending, { date: formatDay(r.end_date, true) })}</p>}
+        </div>
+      )}
+
+      {status === "accepted" && !isHour && (!r.payment_required || r.paid_through) && (
+        <div className="mt-6">
+          <HandoverSection requestId={r.id} uid={uid} hostId={r.host_id} names={{ host: appText.handover.youObject, renter: name }} />
         </div>
       )}
 

@@ -443,7 +443,7 @@ export const sv = {
     metaTitle: "Integritetspolicy",
     metaDescription: "Så hanterar Spazia dina personuppgifter på spazia.se och i appen: väntelistan, kontot, annonser, bokningar, meddelanden och cookies.",
     title: "Integritetspolicy",
-    updated: "Senast uppdaterad: 9 november 2026",
+    updated: "Senast uppdaterad: 13 november 2026",
     lead: "Policyn gäller spazia.se och appen på app.spazia.se, där värdar och hyresgäster har sina konton.",
     analytics: {
       title: "Besöksstatistik",
@@ -476,7 +476,7 @@ export const sv = {
       },
       {
         title: "Förfrågningar, bokningar och meddelanden",
-        text: "När du skickar en förfrågan eller bokar sparar vi vad det gäller, datum eller tider, pris, ditt meddelande och om någon avbokar. Meddelanden mellan värd och hyresgäst sparas så att ni båda kan läsa dem. Vi läser inte era meddelanden, utom när det behövs för att utreda en anmälan om bedrägeri eller missbruk, eller en tvist som någon av er har bett oss om hjälp med.",
+        text: "När du skickar en förfrågan eller bokar sparar vi vad det gäller, datum eller tider, pris, ditt meddelande och om någon avbokar. Meddelanden mellan värd och hyresgäst sparas så att ni båda kan läsa dem. Vi läser inte era meddelanden, utom när det behövs för att utreda en anmälan om bedrägeri eller missbruk, eller en tvist som någon av er har bett oss om hjälp med. Ni godkänner hyresavtalet i appen, och vi sparar när och vilken version. Inventarielistan med bilder från inlämning och hämtning sparas också. Den syns bara för värden och hyresgästen i hyran, och för oss om någon ber om hjälp med en tvist. Undvik bilder där personer syns.",
         bullets: [] as string[],
       },
       {

@@ -20,7 +20,9 @@ export type NotificationKind =
   | "payment_failed"
   | "payment_lapsed"
   | "rental_ending"
-  | "new_message";
+  | "new_message"
+  | "handover_new"
+  | "handover_answered";
 
 export interface NotificationItem {
   category: CategoryId;
@@ -273,6 +275,33 @@ export function buildBookingEmail(p: NotificationPayload, opts: { appUrl: string
         rows: unread.map((m) => [time.format(new Date(m.created_at)), m.body.length > 600 ? `${m.body.slice(0, 600)} …` : m.body] as [string, string]),
         after: ["Svara i appen, så ser ni hela konversationen på ett ställe. Svar på det här mejlet går till Spazia, inte till " + name + "."],
         button: { href: `${opts.appUrl}/${area}/meddelanden${p.conversation_id ? `?id=${p.conversation_id}` : ""}`, label: "Svara i appen" },
+      };
+      break;
+    }
+    case "handover_new": {
+      const pickup = p.prev_status === "pickup";
+      const what = pickup ? "hämtningen" : "inlämningen";
+      d = {
+        subject: `${name} har registrerat ${what}: bekräfta listan`,
+        intro: [hello, `${name} har listat och fotograferat sakerna vid ${what} för ”${p.listing_title}”. Titta igenom listan och bilderna i appen och bekräfta att den stämmer, eller skriv vad som inte stämmer.`],
+        rows: [["Plats", place(p)], ["Period", period(p)]],
+        after: ["Listan hör till hyresavtalet. Bekräfta den så snart du kan, medan ni båda minns hur det såg ut."],
+        button: { href: p.role === "host" ? hostLink : renterLink, label: "Visa listan" },
+      };
+      break;
+    }
+    case "handover_answered": {
+      const ok = p.prev_status === "ok";
+      d = {
+        subject: ok ? `${name} har bekräftat listan` : `${name} säger att listan inte stämmer`,
+        intro: [
+          hello,
+          ok
+            ? `${name} har bekräftat inventarielistan för ”${p.listing_title}”. Den är nu en del av hyresavtalet.`
+            : `${name} säger att inventarielistan för ”${p.listing_title}” inte stämmer, och har skrivit vad som skiljer i appen. Prata ihop er där och rätta listan.`,
+        ],
+        rows: [["Plats", place(p)]],
+        button: { href: p.role === "host" ? hostLink : renterLink, label: "Visa i appen" },
       };
       break;
     }

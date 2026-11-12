@@ -12,7 +12,8 @@ import { bookingHours, effectiveStatus, formatDay, formatKr, formatMoment, perio
 import { fetchRequestPayments, type Payment } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
-import { Spinner } from "../AppShell";
+import { Spinner, useAppSession } from "../AppShell";
+import { HandoverSection } from "../Handovers";
 import { Avatar, CoverPhoto } from "../ui";
 import { PaymentPanel } from "./PaymentPanel";
 
@@ -35,6 +36,7 @@ function Row({ icon: Icon, label, children }: { icon: typeof MapPin; label: stri
 }
 
 export function BookingPage() {
+  const uid = useAppSession().user.id;
   const params = useSearchParams();
   const id = params.get("id") ?? "";
   const justSent = params.get("skickad") === "1";
@@ -234,6 +236,10 @@ export function BookingPage() {
           <p className="text-sm text-muted">{appText.requestForm.includesFee}</p>
         </div>
       </div>
+
+      {status === "accepted" && !unpaid && r.kind !== "hour" && (
+        <HandoverSection requestId={r.id} uid={uid} hostId={r.host_id} names={{ host: hostName, renter: appText.handover.youObject }} />
+      )}
 
       {r.host && (
         <div className="card flex flex-wrap items-center justify-between gap-4 p-4">

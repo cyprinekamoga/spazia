@@ -445,7 +445,7 @@ export const en: Dictionary = {
     metaTitle: "Privacy policy",
     metaDescription: "How Spazia handles your personal data on spazia.se and in the app: the waitlist, your account, listings, bookings, messages and cookies.",
     title: "Privacy policy",
-    updated: "Last updated: 9 November 2026",
+    updated: "Last updated: 13 November 2026",
     lead: "This policy covers spazia.se and the app at app.spazia.se, where hosts and renters have their accounts.",
     analytics: {
       title: "Visitor statistics",
@@ -478,7 +478,7 @@ export const en: Dictionary = {
       },
       {
         title: "Requests, bookings and messages",
-        text: "When you send a request or make a booking we store what it covers, the dates or times, the price, your message and whether anyone cancels. Messages between host and renter are stored so you can both read them. We don't read your messages, except when we need to look into a report of fraud or abuse, or a dispute one of you has asked us to help with.",
+        text: "When you send a request or make a booking we store what it covers, the dates or times, the price, your message and whether anyone cancels. Messages between host and renter are stored so you can both read them. We don't read your messages, except when we need to look into a report of fraud or abuse, or a dispute one of you has asked us to help with. You accept the rental agreement in the app, and we store when and which version. The inventory list with photos from drop-off and pickup is stored too. Only the host and the renter of that rental can see it, and we can when someone asks us for help with a dispute. Avoid photos where people can be seen.",
         bullets: [],
       },
       {
