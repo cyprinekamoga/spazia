@@ -14,6 +14,7 @@ import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "../AppShell";
 import { HandoverSection } from "../Handovers";
+import { RenterRating, ReviewSection } from "../Reviews";
 import { Avatar } from "./RequestCard";
 
 const t = appText.request;
@@ -122,6 +123,7 @@ export function RequestPage() {
         <div>
           <h1 className="text-[1.9rem] leading-tight text-night">{fill(t.from, { name })}</h1>
           {r.renter && <p className="text-muted">{fill(t.memberSince, { date: memberSince(r.renter.created_at) })}</p>}
+          <RenterRating renterId={r.renter_id} />
         </div>
       </div>
       {r.renter?.about && <p className="mt-4 leading-relaxed text-ink/90">{r.renter.about}</p>}
@@ -213,6 +215,11 @@ export function RequestPage() {
       {status === "accepted" && !isHour && (!r.payment_required || r.paid_through) && (
         <div className="mt-6">
           <HandoverSection requestId={r.id} uid={uid} hostId={r.host_id} names={{ host: appText.handover.youObject, renter: name }} />
+        </div>
+      )}
+      {status === "accepted" && (
+        <div className="mt-6">
+          <ReviewSection requestId={r.id} otherName={name} role="host" />
         </div>
       )}
 

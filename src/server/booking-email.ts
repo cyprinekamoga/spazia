@@ -22,7 +22,8 @@ export type NotificationKind =
   | "rental_ending"
   | "new_message"
   | "handover_new"
-  | "handover_answered";
+  | "handover_answered"
+  | "review_invite";
 
 export interface NotificationItem {
   category: CategoryId;
@@ -305,6 +306,19 @@ export function buildBookingEmail(p: NotificationPayload, opts: { appUrl: string
       };
       break;
     }
+    case "review_invite":
+      d = {
+        subject: p.role === "host" ? `Hur var det att hyra ut till ${name}?` : `Hur var det att hyra hos ${name}?`,
+        intro: [
+          hello,
+          p.role === "host"
+            ? `Lämna gärna ett kort omdöme om ${name}. Det hjälper andra värdar, och ditt omdöme visas först när ${name} har lämnat sitt, eller om 14 dagar.`
+            : `Lämna gärna ett kort omdöme om ${name} och ”${p.listing_title}”. Det hjälper andra som letar plats, och ditt omdöme visas först när ${name} har lämnat sitt, eller om 14 dagar.`,
+        ],
+        rows: [["Plats", place(p)], ["Period", period(p)]],
+        button: { href: p.role === "host" ? hostLink : renterLink, label: "Lämna omdöme" },
+      };
+      break;
     default:
       return null;
   }

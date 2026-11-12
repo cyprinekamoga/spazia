@@ -14,6 +14,7 @@ import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "../AppShell";
 import { HandoverSection } from "../Handovers";
+import { ReviewSection } from "../Reviews";
 import { Avatar, CoverPhoto } from "../ui";
 import { PaymentPanel } from "./PaymentPanel";
 
@@ -240,6 +241,7 @@ export function BookingPage() {
       {status === "accepted" && !unpaid && r.kind !== "hour" && (
         <HandoverSection requestId={r.id} uid={uid} hostId={r.host_id} names={{ host: hostName, renter: appText.handover.youObject }} />
       )}
+      {status === "accepted" && <ReviewSection requestId={r.id} otherName={hostName} role="renter" />}
 
       {r.host && (
         <div className="card flex flex-wrap items-center justify-between gap-4 p-4">

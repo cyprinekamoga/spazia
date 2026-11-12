@@ -14,17 +14,22 @@ import { useLoad } from "@/lib/app/session";
 import { site } from "@/lib/site";
 import { Spinner, useOptionalSession } from "../AppShell";
 import { CoverPhoto } from "../ui";
+import { supabase } from "@/lib/supabase";
+import { RatingBadge } from "../Reviews";
 
 const t = appText.search;
 
-function ResultCard({ listing }: { listing: SearchResult }) {
+function ResultCard({ listing, rating }: { listing: SearchResult; rating?: { average: number; count: number } }) {
   const place = [listing.area_name, listing.city].filter(Boolean).join(", ");
   const type = listing.space_type ? appText.spaceTypes[listing.space_type] : "";
   const from = fromPrice(listing.listing_spaces);
   return (
     <Link prefetch={false} href={`/annons?id=${listing.id}`} className="group block">
       <CoverPhoto photos={listing.listing_photos} className="aspect-[4/3] w-full rounded-2xl transition-opacity group-hover:opacity-90" />
-      <span className="mt-2.5 block font-bold text-night">{listing.title || appText.listings.untitled}</span>
+      <span className="mt-2.5 flex items-start justify-between gap-2">
+        <span className="font-bold text-night">{listing.title || appText.listings.untitled}</span>
+        {rating && <RatingBadge average={rating.average} count={rating.count} />}
+      </span>
       <span className="block text-[0.95rem] text-muted">{[type, place].filter(Boolean).join(" i ")}</span>
       {from !== null && <span className="mt-1 block font-semibold text-night">{fill(from.per === "hour" ? t.fromHour : t.from, { price: formatKr(from.amount) })}</span>}
     </Link>
@@ -55,6 +60,11 @@ export function SearchPage() {
   }
 
   const results = data ?? [];
+  const ratings = useLoad(async () => {
+    if (!results.length) return {} as Record<string, { average: number; count: number }>;
+    const res = await supabase().rpc("listing_ratings", { p_listings: results.map((r) => r.id) });
+    return Object.fromEntries(((res.data ?? []) as { listing_id: string; average: number; count: number }[]).map((r) => [r.listing_id, r]));
+  }, `ratings-${results.map((r) => r.id).join(",")}`);
   const count = results.length === 1 ? t.countOne : fill(t.countMany, { count: results.length });
 
   return (
@@ -132,7 +142,7 @@ export function SearchPage() {
           <ul className="mt-3 grid gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((l) => (
               <li key={l.id}>
-                <ResultCard listing={l} />
+                <ResultCard listing={l} rating={ratings.data?.[l.id]} />
               </li>
             ))}
           </ul>
