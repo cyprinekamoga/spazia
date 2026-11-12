@@ -12,7 +12,7 @@
  * Secrets: STRIPE_SECRET_KEY. Optional: APP_URL (default https://app.spazia.se).
  */
 import { createClient } from "../_shared/deps.ts";
-import { APP_URL, ore, sql, stripe } from "../_shared/config.ts";
+import { alertTeam, APP_URL, ore, sql, stripe } from "../_shared/config.ts";
 import { cors, json, readJson, UUID_RE } from "../_shared/http.ts";
 import {
   ACCOUNT_INCLUDE,
@@ -307,6 +307,7 @@ Deno.serve(async (req) => {
   } catch (err) {
     if (err instanceof HttpError) return json(req, { error: err.code }, err.status);
     console.error("payments:", err);
+    await alertTeam("payments_api", "Ett anrop från appen till betalningarna misslyckades", err);
     return json(req, { error: "server_error" }, 500);
   }
 });

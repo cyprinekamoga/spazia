@@ -7,7 +7,7 @@
  * Deployed without JWT check; the token is the check.
  */
 import type { Stripe } from "../_shared/deps.ts";
-import { ore, sql, stripe } from "../_shared/config.ts";
+import { alertTeam, ore, sql, stripe } from "../_shared/config.ts";
 import { automaticTax, ensureCustomer, getUser, invoicePaid, paymentFailed, storageProducts, TAX_CODES } from "../_shared/payments.ts";
 import { scheduleParams, type SchedulePlan } from "../_shared/schedule.ts";
 
@@ -116,7 +116,10 @@ async function charge(): Promise<number> {
       // Declined, or the bank wants the renter to confirm (3-D Secure): the renter
       // is emailed a link to the invoice page (hosted_invoice_url).
       const e = err as { type?: string; code?: string; decline_code?: string; message?: string };
-      if (e.type !== "StripeCardError") console.error("payments-worker: charge", p.id, err);
+      if (e.type !== "StripeCardError") {
+        console.error("payments-worker: charge", p.id, err);
+        await alertTeam("worker_charge", "En första månadsbetalning gick inte att dra (inte ett kortfel)", err);
+      }
       // An unfinished draft is removed; the renter can then pay in Checkout instead.
       if (invoiceId) {
         const draft = await s.invoices.retrieve(invoiceId).catch(() => null);
@@ -156,6 +159,7 @@ async function transfer(): Promise<number> {
       await sql`update public.payments set stripe_transfer = ${t.id}, transferred_at = now() where id = ${p.id}`;
     } catch (err) {
       console.error("payments-worker: transfer", p.id, err);
+      await alertTeam("worker_transfer", "En överföring till en värd misslyckades", err);
     }
   }
   return due.length;
@@ -214,6 +218,7 @@ async function syncSchedules(): Promise<number> {
       await sql`update public.requests set stripe_sync_needed = false where id = ${r.id}`;
     } catch (err) {
       console.error("payments-worker: schedule", r.id, err);
+      await alertTeam("worker_schedule", "Ett betalschema för månadshyra gick inte att skapa eller stoppa", err);
     }
   }
   return due.length;
@@ -237,6 +242,7 @@ async function voidInvoices(): Promise<number> {
       await sql`update public.payments set hosted_invoice_url = null where id = ${p.id}`;
     } catch (err) {
       console.error("payments-worker: void", p.id, err);
+      await alertTeam("worker_void", "En faktura för en avbokad månad gick inte att makulera", err);
     }
   }
   return due.length;
@@ -274,6 +280,7 @@ async function refund(): Promise<number> {
       await sql`update public.payments set status = 'refunded', refunded_at = now(), stripe_refund = ${refundId} where id = ${p.id}`;
     } catch (err) {
       console.error("payments-worker: refund", p.id, err);
+      await alertTeam("worker_refund", "En återbetalning misslyckades", err);
     }
   }
   return due.length;
@@ -294,6 +301,7 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify(done), { headers: { "content-type": "application/json" } });
   } catch (err) {
     console.error("payments-worker:", err);
+    await alertTeam("worker_failed", "Betalningsjobbet (payments-worker) kraschade", err);
     return new Response("error", { status: 500 });
   }
 });

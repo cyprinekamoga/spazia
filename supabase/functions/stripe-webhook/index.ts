@@ -17,7 +17,7 @@
  * renter comes back from Checkout.
  */
 import { Stripe } from "../_shared/deps.ts";
-import { sql, stripe } from "../_shared/config.ts";
+import { alertTeam, sql, stripe } from "../_shared/config.ts";
 import { ACCOUNT_INCLUDE, chargeId, invoicePaid, paymentFailed, paymentSucceeded, saveCard, syncAccount } from "../_shared/payments.ts";
 
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
@@ -182,6 +182,7 @@ Deno.serve(async (req) => {
     if (err instanceof Error && /signature/i.test(err.message)) return new Response("bad signature", { status: 400 });
     // 500 makes Stripe retry later.
     console.error("stripe-webhook: failed", err);
+    await alertTeam("webhook_failed", "En händelse från Stripe gick inte att hantera (Stripe försöker igen)", err);
     return new Response("error", { status: 500 });
   }
 });

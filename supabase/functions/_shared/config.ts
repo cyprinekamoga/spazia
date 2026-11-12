@@ -21,5 +21,18 @@ export function stripe(): Stripe {
 /** Direct database connection (the functions run as the database owner). */
 export const sql = postgres(Deno.env.get("SUPABASE_DB_URL") ?? "", { prepare: false, max: 3, idle_timeout: 20 });
 
+/**
+ * Tell the team that something failed (an email via private.raise_alert,
+ * at most once an hour per key). Never throws.
+ */
+export async function alertTeam(key: string, subject: string, err: unknown): Promise<void> {
+  const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+  try {
+    await sql`select private.raise_alert('function_error', ${subject}, ${`${subject}\n\n${detail.slice(0, 2000)}\n\nSe loggen för funktionen i Supabase (Edge Functions → Logs).`}, ${key}, interval '1 hour')`;
+  } catch (e) {
+    console.error("alertTeam failed", e);
+  }
+}
+
 /** Kronor → öre, as Stripe wants amounts. */
 export const ore = (kr: number) => Math.round(kr * 100);
