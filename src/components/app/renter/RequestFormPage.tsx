@@ -13,6 +13,8 @@ import { addDays, formatDay, formatKr, minEndDate, renterMonthly, renterPrice, t
 import { fetchPaymentSetup } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
+import { AGREEMENT_VERSION } from "@/content/agreement";
+import { AgreementConsent, draftAgreement } from "../Agreement";
 import { CardSection } from "./CardSection";
 import { Spinner, useAppSession } from "../AppShell";
 import { CoverPhoto } from "../ui";
@@ -70,6 +72,7 @@ export function RequestFormPage() {
   const [qty, setQty] = useState<Record<string, number>>({});
   const [message, setMessage] = useState("");
   const [firstName, setFirstName] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -129,7 +132,7 @@ export function RequestFormPage() {
   // With payments on, a saved card is needed (it's charged when the host accepts).
   const payments = pay.data?.enabled ?? false;
   const needsCard = payments && !pay.data?.card;
-  const canSend = !busy && !needsCard && !dateProblem && !needsEnd && chosen.length > 0 && (!needName || firstName.trim().length > 0);
+  const canSend = !busy && !needsCard && !dateProblem && !needsEnd && chosen.length > 0 && (!needName || firstName.trim().length > 0) && agreed;
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -159,6 +162,8 @@ export function RequestFormPage() {
       await avail.reload();
       return;
     }
+    // The renter accepts the rental agreement for this request (the host does by accepting it).
+    await db.rpc("agree_to_rental", { p_request: res.data as string, p_version: AGREEMENT_VERSION });
     router.replace(`/kund/bokning?id=${res.data as string}&skickad=1`);
   }
 
@@ -205,6 +210,22 @@ export function RequestFormPage() {
         </>
       ) : (
         <p className="rounded-xl bg-frost/70 p-3 text-sm text-ink">{t.noPayment}</p>
+      )}
+      {chosen.length > 0 && (
+        <AgreementConsent
+          checked={agreed}
+          onChange={setAgreed}
+          data={draftAgreement({
+            kind: "month",
+            listing,
+            hostName,
+            renterName: base.data?.me.profile?.first_name || firstName.trim() || appText.agreement.renterFallback,
+            items: chosen.map((i) => ({ category: i.category, quantity: i.quantity, host_price_month: i.host_price_month, hourly_price: null, daily_max: null })),
+            start_date: start,
+            end_date: endDate,
+            paymentRequired: payments,
+          })}
+        />
       )}
       {error && (
         <p role="alert" className="rounded-xl bg-[#fef3f2] p-3 text-[0.95rem] font-medium text-[#b42318]">

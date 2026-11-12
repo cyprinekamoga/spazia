@@ -127,7 +127,38 @@ export interface RequestRow {
   paid_through?: string | null;
   ended_by?: string | null;
   ended_at?: string | null;
+  /** Rental agreement: the version the renter accepted, when each side accepted, and the frozen deal. */
+  agreement_version?: string | null;
+  renter_agreed_at?: string | null;
+  host_agreed_at?: string | null;
+  agreement?: AgreementSnapshot | null;
   request_items: RequestItem[];
+}
+
+/** The deal as it stood when the host accepted (private.agreement_snapshot). */
+export interface AgreementSnapshot {
+  kind: "month" | "hour";
+  start_date: string;
+  end_date: string | null;
+  start_at: string | null;
+  end_at: string | null;
+  payment_required: boolean | null;
+  host_first_name: string | null;
+  renter_first_name: string | null;
+  listing: {
+    title: string;
+    space_type: string | null;
+    city: string;
+    area_name: string;
+    size_m2: number | null;
+    heated: string | null;
+    features: string[] | null;
+    access: string | null;
+    access_notes: string | null;
+    min_period: string | null;
+    rules: string | null;
+  };
+  items: { category: CategoryId; quantity: number; host_price_month: number | null; hourly_price: number | null; daily_max: number | null }[];
 }
 
 export interface Message {

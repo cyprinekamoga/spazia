@@ -11,6 +11,8 @@ import { formatDay, formatKr, hourLabel, hoursText, renterHourlyTotal, renterPri
 import { fetchPaymentsEnabled, goToStripe } from "@/lib/app/payments";
 import { must, useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
+import { AGREEMENT_VERSION } from "@/content/agreement";
+import { AgreementConsent, draftAgreement } from "../Agreement";
 import { Spinner, useAppSession } from "../AppShell";
 import { CoverPhoto } from "../ui";
 
@@ -90,6 +92,7 @@ export function ParkingBookingPage() {
   const [qty, setQty] = useState(1);
   const [message, setMessage] = useState("");
   const [firstName, setFirstName] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -129,7 +132,7 @@ export function ParkingBookingPage() {
   const quantity = Math.max(1, Math.min(qty, Math.max(1, freeNow)));
   const renterTotal = hours > 0 ? renterHourlyTotal(hours, space.hourly_price!, space.daily_max, quantity) : 0;
   const full = !timeProblem && !free.loading && freeNow < 1;
-  const canBook = !busy && !timeProblem && !full && hours >= 1 && (!needName || firstName.trim().length > 0);
+  const canBook = !busy && !timeProblem && !full && hours >= 1 && (!needName || firstName.trim().length > 0) && agreed;
   const place = [listing.area_name, listing.city].filter(Boolean).join(", ");
   const payments = base.data?.payments ?? false;
 
@@ -156,6 +159,8 @@ export function ParkingBookingPage() {
       return;
     }
     const requestId = res.data as string;
+    // The renter accepts the rental agreement; the host has by letting the space be booked directly.
+    await db.rpc("agree_to_rental", { p_request: requestId, p_version: AGREEMENT_VERSION });
     if (payments) {
       // The space is held for 30 minutes while the renter pays in Stripe Checkout.
       try {
@@ -290,6 +295,24 @@ export function ParkingBookingPage() {
             <p className="text-sm text-muted">
               {t.cancelRule} {payments ? "" : t.noPayment}
             </p>
+            {hours >= 1 && !timeProblem && (
+              <AgreementConsent
+                checked={agreed}
+                onChange={setAgreed}
+                data={draftAgreement({
+                  kind: "hour",
+                  listing,
+                  hostName,
+                  renterName: base.data?.me.profile?.first_name || firstName.trim() || appText.agreement.renterFallback,
+                  items: [{ category: "parking", quantity, host_price_month: null, hourly_price: space.hourly_price ?? null, daily_max: space.daily_max ?? null }],
+                  start_date: new Date(startMs).toISOString().slice(0, 10),
+                  end_date: null,
+                  start_at: new Date(startMs).toISOString(),
+                  end_at: new Date(endMs).toISOString(),
+                  paymentRequired: payments,
+                })}
+              />
+            )}
             {error && (
               <p role="alert" className="rounded-xl bg-[#fef3f2] p-3 text-[0.95rem] font-medium text-[#b42318]">
                 {error}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Check, Hourglass, MessageSquare, X } from "lucide-react";
+import { ArrowLeft, Check, FileText, Hourglass, MessageSquare, X } from "lucide-react";
 import { useState } from "react";
 import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
@@ -225,6 +225,12 @@ export function RequestPage() {
                 {t.decline}
               </button>
             </div>
+            <p className="text-sm text-muted">
+              {appText.agreement.hostNote}{" "}
+              <Link prefetch={false} href={`/vard/avtal?id=${r.id}`} className="font-semibold text-brand underline-offset-2 hover:underline">
+                {appText.agreement.read}
+              </Link>
+            </p>
           </>
         )}
         {status === "pending" && declining && (
@@ -287,6 +293,10 @@ export function RequestPage() {
           <Link prefetch={false} href={`/vard/meddelanden?id=${r.conversation_id}`} className="btn btn-secondary">
             <MessageSquare size={18} aria-hidden="true" />
             {t.message_renter}
+          </Link>
+          <Link prefetch={false} href={`/vard/avtal?id=${r.id}`} className="btn btn-secondary">
+            <FileText size={18} aria-hidden="true" />
+            {appText.agreement.link}
           </Link>
           {endInstead && !ending && (
             <button type="button" disabled={busy} onClick={endRental} className="btn text-[#b42318] hover:bg-[#fef3f2]">

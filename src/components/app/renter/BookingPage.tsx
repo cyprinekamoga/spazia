@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, CircleCheck, Clock3, Hourglass, KeyRound, MapPin, MessageSquare, Phone } from "lucide-react";
+import { ArrowLeft, CircleCheck, Clock3, FileText, Hourglass, KeyRound, MapPin, MessageSquare, Phone } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
@@ -246,10 +246,16 @@ export function BookingPage() {
               <p className="text-sm text-muted">{fill(appText.request.memberSince, { date: memberSince(r.host.created_at) })}</p>
             </div>
           </div>
-          <Link prefetch={false} href={`/kund/meddelanden?id=${r.conversation_id}`} className="btn btn-secondary">
-            <MessageSquare size={18} aria-hidden="true" />
-            {t.messageHost}
-          </Link>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Link prefetch={false} href={`/kund/meddelanden?id=${r.conversation_id}`} className="btn btn-secondary">
+              <MessageSquare size={18} aria-hidden="true" />
+              {t.messageHost}
+            </Link>
+            <Link prefetch={false} href={`/kund/avtal?id=${r.id}`} className="btn btn-secondary">
+              <FileText size={18} aria-hidden="true" />
+              {appText.agreement.link}
+            </Link>
+          </div>
         </div>
       )}
 
