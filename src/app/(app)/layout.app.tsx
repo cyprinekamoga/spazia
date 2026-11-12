@@ -3,6 +3,7 @@ import "@fontsource-variable/fraunces/opsz.css";
 import "../globals.css";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { AppLanguageGate } from "@/components/app/LanguageGate";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -17,7 +18,9 @@ export const viewport: Viewport = { themeColor: "#f6f8f9", viewportFit: "cover" 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="sv">
-      <body className="min-h-dvh bg-snow text-ink">{children}</body>
+      <body className="min-h-dvh bg-snow text-ink">
+        <AppLanguageGate>{children}</AppLanguageGate>
+      </body>
     </html>
   );
 }

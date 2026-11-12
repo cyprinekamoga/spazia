@@ -1,6 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- photos come from Google or Supabase Storage */
+import { L } from "@/lib/app/lang";
 import { ImageOff } from "lucide-react";
 import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
@@ -12,7 +13,7 @@ export function itemsText(items: Pick<RequestItem, "category" | "quantity">[]): 
   return items
     .map((i) => {
       const c = getCategory(i.category);
-      return `${i.quantity} ${i.quantity === 1 ? c.unit.sv : c.unitPlural.sv}`;
+      return `${i.quantity} ${i.quantity === 1 ? L(c.unit) : L(c.unitPlural)}`;
     })
     .join(", ");
 }
@@ -38,7 +39,7 @@ const STATUS_STYLE: Record<RequestStatus, string> = {
 /** Status label; an accepted hourly parking booking reads "Bokad". */
 export function StatusChip({ status, kind }: { status: RequestStatus; kind?: "month" | "hour" }) {
   const label =
-    kind === "hour" && status === "accepted" ? "Bokad" : kind === "hour" && status === "pending" ? appText.payments.statuses.due : appText.requestStatus[status];
+    kind === "hour" && status === "accepted" ? appText.ui.booked : kind === "hour" && status === "pending" ? appText.payments.statuses.due : appText.requestStatus[status];
   return <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold whitespace-nowrap ${STATUS_STYLE[status]}`}>{label}</span>;
 }
 

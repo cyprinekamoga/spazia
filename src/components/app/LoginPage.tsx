@@ -1,5 +1,6 @@
 "use client";
 
+import { LanguageSwitch } from "./LanguageSwitch";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, Mail } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
@@ -206,15 +207,16 @@ export function LoginPage() {
 
         <p className="mt-8 text-center text-sm leading-relaxed text-muted">
           {t.terms}{" "}
-          <a href={`${site.url}/anvandarvillkor`} className="underline underline-offset-4">
+          <a href={`${site.url}${appText.links.terms}`} className="underline underline-offset-4">
             {t.termsLink}
           </a>{" "}
           {t.termsAnd}{" "}
-          <a href={`${site.url}/integritetspolicy`} className="underline underline-offset-4">
+          <a href={`${site.url}${appText.links.privacy}`} className="underline underline-offset-4">
             {t.privacyLink}
           </a>
           .
         </p>
+        <LanguageSwitch className="mt-6 justify-center" />
       </div>
     </main>
   );

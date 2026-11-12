@@ -1,5 +1,6 @@
 "use client";
 
+import { L, appLocale } from "@/lib/app/lang";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, CircleCheck, Clock3, FileText, Hourglass, KeyRound, MapPin, MessageSquare, Phone } from "lucide-react";
@@ -21,7 +22,7 @@ import { PaymentPanel } from "./PaymentPanel";
 const t = appText.booking;
 
 function memberSince(iso: string): string {
-  return new Intl.DateTimeFormat("sv-SE", { month: "long", year: "numeric" }).format(new Date(iso));
+  return new Intl.DateTimeFormat(appLocale, { month: "long", year: "numeric" }).format(new Date(iso));
 }
 
 function Row({ icon: Icon, label, children }: { icon: typeof MapPin; label: string; children: ReactNode }) {
@@ -214,7 +215,7 @@ export function BookingPage() {
               return (
                 <li key={i.category} className="flex justify-between gap-3 text-night">
                   <span>
-                    {i.quantity} {i.quantity === 1 ? c.unit.sv : c.unitPlural.sv} ({c.name.sv.toLowerCase()})
+                    {i.quantity} {i.quantity === 1 ? L(c.unit) : L(c.unitPlural)} ({L(c.name).toLowerCase()})
                   </span>
                   <span className="shrink-0 whitespace-nowrap text-muted">
                     {i.host_price_month != null

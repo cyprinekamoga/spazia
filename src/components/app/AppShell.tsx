@@ -8,7 +8,9 @@ import type { Session } from "@supabase/supabase-js";
 import { LogoMark } from "@/components/Logo";
 import { appText } from "@/content/app";
 import type { AppMode } from "@/lib/app/model";
+import { appLang } from "@/lib/app/lang";
 import { MODE_HOME, rememberMode } from "@/lib/app/mode";
+import { supabase } from "@/lib/supabase";
 import { useSession } from "@/lib/app/session";
 import { site } from "@/lib/site";
 
@@ -119,6 +121,19 @@ export function AppShell({ mode, children, bare = false, open = false }: { mode:
   useEffect(() => {
     if (session.status === "signedIn") rememberMode(mode);
   }, [mode, session.status]);
+
+  // Emails follow the language the app is used in: keep it on the profile (once per visit).
+  const uid = session.status === "signedIn" ? session.session.user.id : null;
+  useEffect(() => {
+    if (!uid) return;
+    try {
+      if (window.sessionStorage.getItem("spazia-lang-synced") === appLang) return;
+      window.sessionStorage.setItem("spazia-lang-synced", appLang);
+    } catch {
+      // No session storage: sync anyway.
+    }
+    void supabase().from("profiles").update({ lang: appLang }).eq("id", uid).neq("lang", appLang);
+  }, [uid]);
 
   if (session.status === "signedOut" && open) {
     return (

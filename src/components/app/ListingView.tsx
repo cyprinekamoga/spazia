@@ -1,6 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- photos come from Supabase Storage, not the build */
+import { L, appLocale } from "@/lib/app/lang";
 import Link from "next/link";
 import { CalendarClock, Clock3, DoorOpen, KeyRound, Ruler, ShieldCheck, Thermometer } from "lucide-react";
 import type { ReactNode } from "react";
@@ -14,7 +15,7 @@ import { photoUrl } from "@/lib/supabase";
 const t = appText;
 
 function memberSince(iso: string): string {
-  return new Intl.DateTimeFormat("sv-SE", { month: "long", year: "numeric" }).format(new Date(iso));
+  return new Intl.DateTimeFormat(appLocale, { month: "long", year: "numeric" }).format(new Date(iso));
 }
 
 /** Grid layout by number of photos (1–5). */
@@ -28,7 +29,7 @@ const GRID: Record<number, string> = {
 
 function Gallery({ photos, title }: { photos: ListingPhoto[]; title: string }) {
   if (photos.length === 0) {
-    return <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-frost text-muted sm:aspect-[16/7]">Inga bilder än</div>;
+    return <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-frost text-muted sm:aspect-[16/7]">{t.ui.noPhotos}</div>;
   }
   const urls = photos.map((p) => photoUrl(p.path));
   return (
@@ -112,7 +113,7 @@ export function ListingView({
   const place = [listing.area_name, listing.city].filter(Boolean).join(", ");
   const type = listing.space_type ? t.spaceTypes[listing.space_type] : "";
   const from = fromPrice(spaces);
-  const per = from?.per === "hour" ? "tim" : "mån";
+  const per = from?.per === "hour" ? t.ui.perHourShort : t.ui.perMonthShort;
   const previewLabels = [
     ...(spaces.some((s) => s.host_price_month) ? [t.renterListing.request] : []),
     ...(spaces.some((s) => s.hourly_price) ? [t.renterListing.bookParking] : []),
@@ -160,7 +161,7 @@ export function ListingView({
           )}
 
           <section className="mt-6">
-            <h2 className="text-2xl text-night">Det här får plats</h2>
+            <h2 className="text-2xl text-night">{t.ui.fits}</h2>
             <ul className="mt-3 divide-y divide-line rounded-2xl border border-line bg-paper">
               {spaces.map((s) => {
                 const c = getCategory(s.category);
@@ -170,9 +171,9 @@ export function ListingView({
                     <span className="flex items-center gap-3">
                       <Icon size={22} className="text-brand" />
                       <span>
-                        <span className="block font-semibold text-night">{c.name.sv}</span>
+                        <span className="block font-semibold text-night">{L(c.name)}</span>
                         <span className="block text-sm text-muted">
-                          {s.capacity} {s.capacity === 1 ? c.unit.sv : c.unitPlural.sv}
+                          {s.capacity} {s.capacity === 1 ? L(c.unit) : L(c.unitPlural)}
                         </span>
                         {s.hourly_price != null && <span className="block text-sm text-muted">{fill(t.renterListing.bookable, { hours: hoursText(s) })}</span>}
                         {s.hourly_price != null && <span className="block text-sm text-muted">{t.parkingForm.cancelRule}</span>}
@@ -182,7 +183,7 @@ export function ListingView({
                       {s.host_price_month != null && (
                         <>
                           <span className="block font-bold text-night">{formatKr(renterPrice(s.host_price_month))} kr</span>
-                          <span className="block text-sm text-muted">per {c.unit.sv} och månad</span>
+                          <span className="block text-sm text-muted">{fill(t.ui.perUnitMonth, { unit: L(c.unit) })}</span>
                         </>
                       )}
                       {s.hourly_price != null && (
@@ -201,7 +202,7 @@ export function ListingView({
 
           {listing.features.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-2xl text-night">Det här finns</h2>
+              <h2 className="text-2xl text-night">{t.ui.hasFeatures}</h2>
               <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                 {listing.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-ink">
@@ -222,7 +223,7 @@ export function ListingView({
 
           {listing.access && (
             <section className="mt-8">
-              <h2 className="text-2xl text-night">Tillgång</h2>
+              <h2 className="text-2xl text-night">{t.ui.access}</h2>
               <p className="mt-3 flex items-start gap-2 text-ink">
                 <Clock3 size={18} className="mt-0.5 shrink-0 text-brand" aria-hidden="true" />
                 <span>
@@ -264,13 +265,13 @@ export function ListingView({
           <div className="sticky top-24 rounded-2xl border border-line bg-paper p-5 shadow-sm">
             {from !== null && (
               <p className="text-night">
-                <span className="text-sm text-muted">från </span>
+                <span className="text-sm text-muted">{t.common.from} </span>
                 <span className="text-2xl font-bold">{formatKr(from.amount)} kr</span>
                 <span className="text-muted"> / {per}</span>
               </p>
             )}
             <Actions preview={preview} actions={actions} previewLabels={previewLabels} notice={notice} />
-            {preview && <p className="mt-2 text-center text-sm text-muted">Förhandsvisning</p>}
+            {preview && <p className="mt-2 text-center text-sm text-muted">{t.ui.preview}</p>}
           </div>
         </aside>
       </div>
@@ -281,12 +282,12 @@ export function ListingView({
           <p className="text-night">
             {from !== null && (
               <>
-                <span className="text-sm text-muted">från </span>
+                <span className="text-sm text-muted">{t.common.from} </span>
                 <span className="text-lg font-bold">{formatKr(from.amount)} kr</span>
                 <span className="text-sm text-muted"> / {per}</span>
               </>
             )}
-            {preview && <span className="block text-xs text-muted">Förhandsvisning</span>}
+            {preview && <span className="block text-xs text-muted">{t.ui.preview}</span>}
           </p>
           <Actions preview={preview} actions={actions} previewLabels={previewLabels} notice={notice} compact />
         </div>

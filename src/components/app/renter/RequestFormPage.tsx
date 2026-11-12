@@ -1,5 +1,6 @@
 "use client";
 
+import { L } from "@/lib/app/lang";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Minus, Plus } from "lucide-react";
@@ -33,7 +34,7 @@ function Stepper({ value, max, onChange, label }: { value: number; max: number; 
         type="button"
         onClick={() => onChange(Math.max(0, value - 1))}
         disabled={value <= 0}
-        aria-label={`Färre, ${label}`}
+        aria-label={fill(appText.ui.fewer, { what: label })}
         className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-night hover:border-night disabled:opacity-30"
       >
         <Minus size={18} aria-hidden="true" />
@@ -45,7 +46,7 @@ function Stepper({ value, max, onChange, label }: { value: number; max: number; 
         type="button"
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={value >= max}
-        aria-label={`Fler, ${label}`}
+        aria-label={fill(appText.ui.more, { what: label })}
         className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-night hover:border-night disabled:opacity-30"
       >
         <Plus size={18} aria-hidden="true" />
@@ -189,7 +190,7 @@ export function RequestFormPage() {
               return (
                 <li key={i.category} className="flex justify-between gap-3 text-[0.95rem] text-ink">
                   <span>
-                    {i.quantity} {i.quantity === 1 ? c.unit.sv : c.unitPlural.sv}
+                    {i.quantity} {i.quantity === 1 ? L(c.unit) : L(c.unitPlural)}
                   </span>
                   <span className="shrink-0 whitespace-nowrap">{formatKr(renterPrice(i.host_price_month) * i.quantity)} kr/mån</span>
                 </li>
@@ -309,12 +310,12 @@ export function RequestFormPage() {
                     <span className="flex min-w-0 items-center gap-3">
                       <Icon size={24} className="shrink-0 text-brand" />
                       <span>
-                        <span className="block font-semibold text-night">{c.name.sv}</span>
-                        <span className="block text-sm text-muted">{fill(t.perUnit, { price: formatKr(renterPrice(s.host_price_month)), unit: c.unit.sv })}</span>
+                        <span className="block font-semibold text-night">{L(c.name)}</span>
+                        <span className="block text-sm text-muted">{fill(t.perUnit, { price: formatKr(renterPrice(s.host_price_month)), unit: L(c.unit) })}</span>
                         <span className={`block text-sm font-semibold ${free > 0 ? "text-pine" : "text-[#b42318]"}`}>{free > 0 ? fill(t.available, { count: free }) : t.full}</span>
                       </span>
                     </span>
-                    <Stepper value={value} max={free} label={c.name.sv} onChange={(n) => setQty({ ...qty, [s.category]: n })} />
+                    <Stepper value={value} max={free} label={L(c.name)} onChange={(n) => setQty({ ...qty, [s.category]: n })} />
                   </li>
                 );
               })}

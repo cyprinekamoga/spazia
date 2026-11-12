@@ -237,11 +237,11 @@ export function ParkingBookingPage() {
             <section className="card flex flex-wrap items-center justify-between gap-3 p-5">
               <h2 className="text-xl font-bold text-night">{t.spots}</h2>
               <div className="flex items-center gap-1" role="group" aria-label={t.spots}>
-                <button type="button" onClick={() => setQty(Math.max(1, quantity - 1))} disabled={quantity <= 1} aria-label={`Färre, ${t.spots}`} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-night hover:border-night disabled:opacity-30">
+                <button type="button" onClick={() => setQty(Math.max(1, quantity - 1))} disabled={quantity <= 1} aria-label={fill(appText.ui.fewer, { what: t.spots })} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-night hover:border-night disabled:opacity-30">
                   <Minus size={18} aria-hidden="true" />
                 </button>
                 <span className="w-8 text-center text-lg font-bold text-night tabular-nums">{quantity}</span>
-                <button type="button" onClick={() => setQty(Math.min(Math.max(1, freeNow), quantity + 1))} disabled={quantity >= freeNow} aria-label={`Fler, ${t.spots}`} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-night hover:border-night disabled:opacity-30">
+                <button type="button" onClick={() => setQty(Math.min(Math.max(1, freeNow), quantity + 1))} disabled={quantity >= freeNow} aria-label={fill(appText.ui.more, { what: t.spots })} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-night hover:border-night disabled:opacity-30">
                   <Plus size={18} aria-hidden="true" />
                 </button>
               </div>

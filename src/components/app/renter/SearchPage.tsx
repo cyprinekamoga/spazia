@@ -1,5 +1,6 @@
 "use client";
 
+import { L } from "@/lib/app/lang";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -123,7 +124,7 @@ export function SearchPage() {
                   className="flex min-h-11 items-center gap-2 rounded-full border border-line bg-paper px-3.5 text-[0.95rem] font-semibold whitespace-nowrap text-ink aria-pressed:border-night aria-pressed:bg-night aria-pressed:text-white"
                 >
                   <Icon size={18} aria-hidden="true" />
-                  {c.name.sv}
+                  {L(c.name)}
                 </button>
               </li>
             );

@@ -1,5 +1,6 @@
 "use client";
 
+import { appLocale } from "@/lib/app/lang";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, CircleCheck, ExternalLink, Hourglass, Landmark } from "lucide-react";
@@ -23,7 +24,7 @@ import { Spinner, useAppSession } from "../AppShell";
 
 const t = appText.payments;
 
-const day = (iso: string) => new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Stockholm", day: "numeric", month: "short" }).format(new Date(iso));
+const day = (iso: string) => new Intl.DateTimeFormat(appLocale, { timeZone: "Europe/Stockholm", day: "numeric", month: "short" }).format(new Date(iso));
 
 const EMPTY: HostTaxInfo = { full_name: "", personal_number: "", street_address: "", postal_code: "", city: "" };
 

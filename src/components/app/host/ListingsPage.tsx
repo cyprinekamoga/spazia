@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ImageOff, Plus } from "lucide-react";
 import { useState } from "react";
 import { appText } from "@/content/app";
+import { fill } from "@/lib/i18n";
 import { fetchMyListings } from "@/lib/app/data";
 import { useLoad } from "@/lib/app/session";
 import { formatKr, fromPrice } from "@/lib/app/model";
@@ -82,7 +83,7 @@ export function ListingsPage() {
                   <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${STATUS_STYLE[l.status]}`}>{appText.status[l.status]}</span>
                   <h2 className="mt-2 text-lg leading-snug font-bold text-night">{l.title || t.untitled}</h2>
                   <p className="text-sm text-muted">{[l.area_name, l.city].filter(Boolean).join(", ") || "–"}</p>
-                  {from !== null && <p className="text-sm text-muted">från {formatKr(from.amount)} {from.per === "hour" ? "kr/tim" : "kr/mån"}</p>}
+                  {from !== null && <p className="text-sm text-muted">{fill(from.per === "hour" ? appText.search.fromHour : appText.search.from, { price: formatKr(from.amount) })}</p>}
                   <div className="mt-3 flex flex-wrap gap-2">
                     {l.status === "draft" ? (
                       <>

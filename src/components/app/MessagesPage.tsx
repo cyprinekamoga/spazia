@@ -1,5 +1,6 @@
 "use client";
 
+import { appLocale } from "@/lib/app/lang";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Send } from "lucide-react";
@@ -32,7 +33,7 @@ function requestHref(mode: AppMode, id: string): string {
 function timeLabel(iso: string): string {
   const d = new Date(iso);
   const sameDay = d.toDateString() === new Date().toDateString();
-  return new Intl.DateTimeFormat("sv-SE", sameDay ? { hour: "2-digit", minute: "2-digit" } : { day: "numeric", month: "short" }).format(d);
+  return new Intl.DateTimeFormat(appLocale, sameDay ? { hour: "2-digit", minute: "2-digit" } : { day: "numeric", month: "short" }).format(d);
 }
 
 function isUnread(c: ConversationSummary, uid: string): boolean {
@@ -73,7 +74,7 @@ function Inbox({ uid, mode }: { uid: string; mode: AppMode }) {
                       </span>
                     )}
                   </span>
-                  {unread && <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-brand" aria-label="Oläst" />}
+                  {unread && <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-brand" aria-label={appText.ui.unread} />}
                 </Link>
               </li>
             );

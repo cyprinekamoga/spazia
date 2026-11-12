@@ -9,6 +9,7 @@ import { getCategory, type CategoryId } from "../content/categories";
 import { FEES } from "../content/pricing";
 import { buttonHtml, escapeHtml, htmlLayout, htmlTable, paragraphsHtml } from "../lib/lead-emails";
 import type { OutgoingMail } from "./mailer";
+import { englishDraft, FOOTER_EN } from "./booking-email-en";
 
 export type NotificationKind =
   | "request_new"
@@ -35,6 +36,8 @@ export interface NotificationItem {
 
 export interface NotificationPayload {
   kind: NotificationKind;
+  /** The recipient's language (profiles.lang). */
+  lang?: "sv" | "en" | null;
   prev_status: string | null;
   role: "host" | "renter";
   to_email: string | null;
@@ -120,7 +123,7 @@ function monthlyIncome(items: NotificationItem[]): number {
 
 const FOOTER = "Du får det här mejlet för att du har ett konto på Spazia. Frågor? Svara på mejlet, så hjälper vi dig.";
 
-interface Draft {
+export interface Draft {
   subject: string;
   intro: string[];
   rows: [string, string][];
@@ -128,9 +131,28 @@ interface Draft {
   button: { href: string; label: string };
 }
 
+function render(d: Draft, to: string, team: string, footer: string): OutgoingMail {
+  const text = [...d.intro, d.rows.map(([k, v]) => `${k}: ${v}`).join("\n"), ...(d.after ?? []), `${d.button.label}: ${d.button.href}`, footer].join("\n\n");
+  const html = htmlLayout(
+    paragraphsHtml(d.intro) + `<div style="margin:4px 0 18px">${htmlTable(d.rows)}</div>` + paragraphsHtml(d.after ?? []) + buttonHtml(d.button.href, d.button.label),
+    escapeHtml(footer),
+  );
+  return { to, replyTo: team, subject: d.subject, text, html };
+}
+
 /** Build the email, or null when there is nobody to send it to. */
 export function buildBookingEmail(p: NotificationPayload, opts: { appUrl: string; team: string }): OutgoingMail | null {
   if (!p.to_email) return null;
+  if (p.lang === "en") {
+    const links = {
+      host: `${opts.appUrl}/vard/forfragan?id=${p.request_id}`,
+      renter: `${opts.appUrl}/kund/bokning?id=${p.request_id}`,
+      search: `${opts.appUrl}/sok${p.listing_city ? `?ort=${encodeURIComponent(p.listing_city)}` : ""}`,
+      appUrl: opts.appUrl,
+    };
+    const en = englishDraft(p, links);
+    return en ? render(en, p.to_email, opts.team, FOOTER_EN) : null;
+  }
   const name = p.other_name || (p.role === "host" ? "Hyresgästen" : "Värden");
   const hello = p.to_name ? `Hej ${p.to_name}!` : "Hej!";
   const hostLink = `${opts.appUrl}/vard/forfragan?id=${p.request_id}`;
@@ -323,21 +345,5 @@ export function buildBookingEmail(p: NotificationPayload, opts: { appUrl: string
       return null;
   }
 
-  const text = [
-    ...d.intro,
-    d.rows.map(([k, v]) => `${k}: ${v}`).join("\n"),
-    ...(d.after ?? []),
-    `${d.button.label}: ${d.button.href}`,
-    FOOTER,
-  ].join("\n\n");
-
-  const html = htmlLayout(
-    paragraphsHtml(d.intro) +
-      `<div style="margin:4px 0 18px">${htmlTable(d.rows)}</div>` +
-      paragraphsHtml(d.after ?? []) +
-      buttonHtml(d.button.href, d.button.label),
-    escapeHtml(FOOTER),
-  );
-
-  return { to: p.to_email, replyTo: opts.team, subject: d.subject, text, html };
+  return render(d, p.to_email, opts.team, FOOTER);
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { L } from "@/lib/app/lang";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
@@ -148,11 +149,11 @@ export function CalendarPage() {
       </div>
 
       <div className="mt-5 flex items-center justify-between lg:max-w-[30rem]">
-        <button type="button" aria-label="Föregående månad" onClick={() => setMonth(addMonths(month, -1))} className="flex h-11 w-11 items-center justify-center rounded-full border border-line hover:border-night">
+        <button type="button" aria-label={appText.ui.prevMonth} onClick={() => setMonth(addMonths(month, -1))} className="flex h-11 w-11 items-center justify-center rounded-full border border-line hover:border-night">
           <ChevronLeft size={20} aria-hidden="true" />
         </button>
         <h2 className="text-xl font-bold text-night first-letter:uppercase">{formatMonthYear(month)}</h2>
-        <button type="button" aria-label="Nästa månad" onClick={() => setMonth(addMonths(month, 1))} className="flex h-11 w-11 items-center justify-center rounded-full border border-line hover:border-night">
+        <button type="button" aria-label={appText.ui.nextMonth} onClick={() => setMonth(addMonths(month, 1))} className="flex h-11 w-11 items-center justify-center rounded-full border border-line hover:border-night">
           <ChevronRight size={20} aria-hidden="true" />
         </button>
       </div>
@@ -207,7 +208,7 @@ export function CalendarPage() {
                     const used = bookingsOn(selectedDay).reduce((sum, r) => sum + (r.request_items.find((i) => i.category === s.category)?.quantity ?? 0), 0);
                     return (
                       <li key={s.category}>
-                        {c.name.sv}: {fill(t.booked, { booked: used, capacity: s.capacity, unit: s.capacity === 1 ? c.unit.sv : c.unitPlural.sv })}
+                        {L(c.name)}: {fill(t.booked, { booked: used, capacity: s.capacity, unit: s.capacity === 1 ? L(c.unit) : L(c.unitPlural) })}
                       </li>
                     );
                   })}

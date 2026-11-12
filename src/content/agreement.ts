@@ -7,6 +7,7 @@
  */
 import { appText } from "./app";
 import { getCategory, type CategoryId } from "./categories";
+import { appLang } from "@/lib/app/lang";
 import { bookingHours, formatDay, formatKr, formatTimeRange, renterHourlyTotal, renterPrice } from "@/lib/app/model";
 
 export const AGREEMENT_VERSION = "2026-11-13";
@@ -61,7 +62,12 @@ function units(i: AgreementItem): string {
   return `${i.quantity} ${i.quantity === 1 ? c.unit.sv : c.unitPlural.sv}`;
 }
 
+/** The agreement in the app's language (English is a translation; the Swedish text applies). */
 export function agreementSections(d: AgreementData): AgreementSection[] {
+  return appLang === "en" ? englishSections(d) : swedishSections(d);
+}
+
+function swedishSections(d: AgreementData): AgreementSection[] {
   const l = d.listing;
   const isHour = d.kind === "hour";
   const where = [l.area_name, l.city].filter(Boolean).join(", ");
@@ -217,6 +223,172 @@ export function agreementSections(d: AgreementData): AgreementSection[] {
     paragraphs: [
       "Spazias användarvillkor gäller också. Vid frågor eller om något går fel: skriv först till varandra i appen. Löser det sig inte, kontakta Spazia. Svensk lag gäller för avtalet.",
     ],
+  });
+
+  return sections;
+}
+
+function englishUnits(i: AgreementItem): string {
+  const c = getCategory(i.category);
+  return `${i.quantity} ${i.quantity === 1 ? c.unit.en : c.unitPlural.en}`;
+}
+
+function englishSections(d: AgreementData): AgreementSection[] {
+  const l = d.listing;
+  const isHour = d.kind === "hour";
+  const where = [l.area_name, l.city].filter(Boolean).join(", ");
+  const spaceType = l.space_type ? (s.spaceTypes as Record<string, string>)[l.space_type] ?? "" : "";
+  const heated = l.heated ? (s.heated as Record<string, string>)[l.heated] ?? "" : "";
+  const features = l.features.map((f) => (s.features as Record<string, string>)[f]).filter(Boolean);
+  const access = l.access ? (s.access as Record<string, string>)[l.access] ?? "" : "";
+  const sections: AgreementSection[] = [];
+
+  sections.push({
+    title: "About this translation",
+    paragraphs: ["This is an English translation of Spazia's rental agreement. If the Swedish and English texts differ, the Swedish text applies."],
+  });
+
+  sections.push({
+    title: "1. Parties",
+    paragraphs: [
+      `Host: ${d.hostName}. Renter: ${d.renterName}. Contact details are in Spazia's app.`,
+      "The agreement is between the host and the renter. Spazia arranges the agreement and collects the payment in the host's name and on the host's behalf, but is not a party to the rental.",
+    ],
+  });
+
+  sections.push({
+    title: "2. The space",
+    paragraphs: [
+      [`${l.title}${spaceType ? ` (${spaceType.toLowerCase()})` : ""}${where ? `, ${where}` : ""}.`, l.size_m2 ? `About ${l.size_m2} m².` : "", heated ? `${heated}.` : ""]
+        .filter(Boolean)
+        .join(" "),
+      d.address ? `Address: ${d.address}.` : "The address is shown in the app once the booking is confirmed.",
+      ...(features.length ? [`Facilities: ${features.join(", ").toLowerCase()}.`] : []),
+    ],
+  });
+
+  if (isHour) {
+    const qty = d.items[0]?.quantity ?? 1;
+    sections.push({
+      title: "3. What the agreement covers",
+      paragraphs: [`${qty === 1 ? "One parking space" : `${qty} parking spaces`} for ${qty === 1 ? "one vehicle" : "as many vehicles"}, in the spot the host shows.`],
+    });
+  } else {
+    sections.push({
+      title: "3. What is stored",
+      paragraphs: ["The renter may store the following. Anything else only if the host has approved it in the app."],
+      bullets: d.items.map(englishUnits),
+    });
+  }
+
+  sections.push({
+    title: "4. Rental period",
+    paragraphs: [
+      isHour && d.start_at && d.end_at
+        ? `${formatTimeRange(d.start_at, d.end_at)} (Swedish time).`
+        : d.end_date
+          ? `From ${formatDay(d.start_date, true)} up to and including ${formatDay(d.end_date, true)}.`
+          : `From ${formatDay(d.start_date, true)}, until further notice.`,
+    ],
+  });
+
+  if (isHour) {
+    const item = d.items[0];
+    const hours = bookingHours({ start_at: d.start_at, end_at: d.end_at });
+    const total = item?.hourly_price ? renterHourlyTotal(hours, item.hourly_price, item.daily_max, item.quantity) : 0;
+    sections.push({
+      title: "5. Price and payment",
+      paragraphs: [
+        `The renter pays ${formatKr(total)} kr for the whole booking, including Spazia's service fee (VAT is included in the fee, not in the rent).`,
+        d.paymentRequired
+          ? "The amount is paid by card through Spazia when booking. The host receives their share from Spazia one day after the start."
+          : "Host and renter settle payment directly with each other.",
+      ],
+    });
+  } else {
+    const total = d.items.reduce((sum, i) => sum + (i.host_price_month ? renterPrice(i.host_price_month) * i.quantity : 0), 0);
+    const rent = d.items.reduce((sum, i) => sum + (i.host_price_month ?? 0) * i.quantity, 0);
+    sections.push({
+      title: "5. Price and payment",
+      paragraphs: [
+        `The renter pays ${formatKr(total)} kr per month. Of that, ${formatKr(rent)} kr is rent to the host and ${formatKr(total - rent)} kr is Spazia's service fee (VAT is included in the fee, not in the rent).`,
+        d.paymentRequired
+          ? "The first month is paid by card through Spazia when the host has accepted the request, and then on the same date every month. If the rental has an end date, the last month is charged per day. Never pay outside Spazia."
+          : "Host and renter settle payment directly with each other.",
+      ],
+    });
+  }
+
+  sections.push({
+    title: "6. Access",
+    paragraphs: [
+      isHour
+        ? "The renter may use the space during the booked time and must move the vehicle by the time the booking ends."
+        : `Access: ${access ? access.toLowerCase() : "by agreement"}. The renter drops off and picks up their things at the times that apply, and for “by appointment” you agree on a time in the app.`,
+      ...(l.access_notes.trim() ? [`The host's instructions: ${l.access_notes.trim()}`] : []),
+    ],
+  });
+
+  sections.push({
+    title: isHour ? "7. Cancellation" : "7. Ending and cancellation",
+    paragraphs: isHour
+      ? [
+          "The renter can cancel free of charge until one hour before the start and then gets the full amount back. After that the booking can't be cancelled.",
+          "If the space can't be used, the host can cancel before the start. The renter then gets the full amount back.",
+        ]
+      : [
+          "Either party can end the rental in the app. The rental then runs up to and including the last day that is already paid, and no more payments are taken. There is no minimum term.",
+          "If the rental is cancelled before it has started, the renter gets the full amount back.",
+          ...(l.min_period === "week" ? ["The host's shortest rental is one week."] : l.min_period === "month" ? ["The host's shortest rental is one month."] : []),
+          "The renter must pick up their things by the last day. Things left after that must be picked up as soon as possible after a reminder in the app.",
+        ],
+  });
+
+  sections.push({
+    title: "8. Responsibility",
+    paragraphs: [],
+    bullets: [
+      "The host is responsible for the space being in the condition the listing describes and for the renter getting access as agreed.",
+      isHour
+        ? "The renter is responsible for their vehicle and for any damage the renter causes to the space or the property."
+        : "The renter is responsible for their things and for any damage the renter causes to the space. Check that your home insurance covers things stored away from home.",
+      "Spazia stores nothing and owns no spaces, and is not liable for damage to or loss of things, vehicles or spaces, unless the damage is caused by Spazia's negligence.",
+    ],
+  });
+
+  sections.push(
+    isHour
+      ? {
+          title: "9. Use",
+          paragraphs: ["The space may only be used for parking the vehicle. No storage, no repairs and nothing that leaks oil or fuel."],
+        }
+      : {
+          title: "9. What may not be stored",
+          paragraphs: [],
+          bullets: [
+            "anything flammable, such as petrol in cans, gas bottles, paint and solvents",
+            "food and anything else that attracts pests",
+            "animals and plants",
+            "weapons, ammunition and anything illegal",
+            "cash, jewellery and other valuables",
+          ],
+        },
+  );
+
+  if (!isHour) {
+    sections.push({
+      title: "10. Inventory list",
+      paragraphs: ["At drop-off and at pickup, the person dropping off or picking up photographs the things in the app, and the other person confirms the list. The list with photos is part of the agreement."],
+    });
+  }
+
+  if (l.rules.trim()) {
+    sections.push({ title: `${isHour ? 10 : 11}. The host's rules`, paragraphs: [l.rules.trim()] });
+  }
+
+  sections.push({
+    title: "Other",
+    paragraphs: ["Spazia's terms of use also apply. If you have questions or something goes wrong: first write to each other in the app. If that doesn't solve it, contact Spazia. Swedish law applies to the agreement."],
   });
 
   return sections;

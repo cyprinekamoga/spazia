@@ -1,5 +1,6 @@
 "use client";
 
+import { L } from "@/lib/app/lang";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, MapPin } from "lucide-react";
@@ -59,7 +60,7 @@ export function SearchHero() {
                 className="flex min-h-11 items-center gap-2 rounded-full border border-white/25 px-3.5 text-[0.95rem] font-semibold text-white transition-colors hover:border-white hover:bg-white/10"
               >
                 <Icon size={18} aria-hidden="true" />
-                {c.name.sv}
+                {L(c.name)}
               </Link>
             </li>
           );

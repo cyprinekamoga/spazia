@@ -1,5 +1,6 @@
 "use client";
 
+import { L, appLocale } from "@/lib/app/lang";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Check, FileText, Hourglass, MessageSquare, X } from "lucide-react";
@@ -20,7 +21,7 @@ import { Avatar } from "./RequestCard";
 const t = appText.request;
 
 function memberSince(iso: string): string {
-  return new Intl.DateTimeFormat("sv-SE", { month: "long", year: "numeric" }).format(new Date(iso));
+  return new Intl.DateTimeFormat(appLocale, { month: "long", year: "numeric" }).format(new Date(iso));
 }
 
 export function RequestPage() {
@@ -141,7 +142,7 @@ export function RequestPage() {
               return (
                 <li key={i.category} className="flex justify-between gap-3 text-night">
                   <span>
-                    {i.quantity} {i.quantity === 1 ? c.unit.sv : c.unitPlural.sv} ({c.name.sv.toLowerCase()})
+                    {i.quantity} {i.quantity === 1 ? L(c.unit) : L(c.unitPlural)} ({L(c.name).toLowerCase()})
                   </span>
                   <span className="shrink-0 whitespace-nowrap text-muted">
                     {i.host_price_month != null ? `${formatKr(hostPayout(i.host_price_month) * i.quantity)} kr/mån` : i.hourly_price != null ? `${formatKr(hostPayout(i.hourly_price) * i.quantity)} kr/tim` : ""}
@@ -266,7 +267,7 @@ export function RequestPage() {
         )}
         {status !== "pending" && (
           <p className="font-semibold text-night">
-            Status: {r.kind === "hour" && status === "accepted" ? "Bokad" : appText.requestStatus[status]}
+            {appText.ui.status}: {r.kind === "hour" && status === "accepted" ? appText.ui.booked : appText.requestStatus[status]}
             {status === "declined" && r.decline_reason ? ` (${r.decline_reason})` : ""}
             {status === "cancelled" && cancelledText ? ` · ${cancelledText}` : ""}
           </p>

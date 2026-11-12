@@ -13,6 +13,7 @@ import { useLoad } from "@/lib/app/session";
 import { site } from "@/lib/site";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "./AppShell";
+import { LanguageSwitch } from "./LanguageSwitch";
 import { CardSection } from "./renter/CardSection";
 import { Avatar } from "./ui";
 
@@ -178,6 +179,8 @@ export function MenuPage({ mode }: { mode: AppMode }) {
 
       {mode === "renter" && pay.data?.enabled && <CardSection setup={pay.data} onChange={pay.reload} returnTo="/kund/meny" />}
 
+      <LanguageSwitch uid={uid} />
+
       <ul className="card divide-y divide-line">
         {admin.data && (
           <li>
@@ -200,14 +203,14 @@ export function MenuPage({ mode }: { mode: AppMode }) {
           </Link>
         </li>
         <li>
-          <a href={`${site.url}/trygghet`} className="flex min-h-14 items-center justify-between px-5 font-semibold text-night">
+          <a href={`${site.url}${appText.links.trust}`} className="flex min-h-14 items-center justify-between px-5 font-semibold text-night">
             {t.help}
             <ChevronRight size={18} className="text-muted" aria-hidden="true" />
           </a>
         </li>
         {[
-          { href: `${site.url}/anvandarvillkor`, label: t.terms },
-          { href: `${site.url}/integritetspolicy`, label: t.privacy },
+          { href: `${site.url}${appText.links.terms}`, label: t.terms },
+          { href: `${site.url}${appText.links.privacy}`, label: t.privacy },
         ].map((link) => (
           <li key={link.href}>
             <a href={link.href} className="flex min-h-14 items-center justify-between px-5 font-semibold text-night">

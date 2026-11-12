@@ -1,8 +1,12 @@
 /**
- * Copy for the logged-in app (Swedish). The host side is Swedish only for
- * now; an English version can follow the same shape.
+ * Copy for the logged-in app, in Swedish; the English copy is in ./app-en.ts
+ * with the same shape. `appText` is the one in the app's language
+ * (src/lib/app/lang.ts), chosen when the app starts.
  */
-export const appText = {
+import { appLang } from "@/lib/app/lang";
+import { appTextEn } from "./app-en";
+
+const appTextSv = {
   login: {
     title: "Logga in eller skapa konto",
     lead: "Samma konto för att hyra ut och för att hyra plats.",
@@ -69,6 +73,26 @@ export const appText = {
     renterPending: "Väntar på svar från värden",
     switchLater: "Du kan byta när du vill, under Meny.",
     logout: "Logga ut",
+  },
+  links: { terms: "/anvandarvillkor", privacy: "/integritetspolicy", trust: "/trygghet" },
+  ui: {
+    fewer: "Färre, {what}",
+    more: "Fler, {what}",
+    unread: "Oläst",
+    booked: "Bokad",
+    status: "Status",
+    noPhotos: "Inga bilder än",
+    fits: "Det här får plats",
+    hasFeatures: "Det här finns",
+    access: "Tillgång",
+    preview: "Förhandsvisning",
+    perMonthShort: "mån",
+    perHourShort: "tim",
+    perUnitMonth: "per {unit} och månad",
+    prevMonth: "Föregående månad",
+    nextMonth: "Nästa månad",
+    dayNames: ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"],
+    language: "Språk",
   },
   common: {
     loading: "Laddar …",
@@ -730,4 +754,6 @@ export const appText = {
   },
 };
 
-export type AppText = typeof appText;
+export type AppText = typeof appTextSv;
+
+export const appText: AppText = appLang === "en" ? appTextEn : appTextSv;

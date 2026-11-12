@@ -1,6 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- photos come from Supabase Storage */
+import { L } from "@/lib/app/lang";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -87,7 +88,7 @@ type SpaceDraft = {
 };
 
 const ALL_DAYS = [1, 2, 3, 4, 5, 6, 7];
-const DAY_NAMES = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
+const DAY_NAMES = appText.ui.dayNames;
 
 /** Whether an enabled space has a usable price. */
 function spaceReady(category: CategoryId, s: SpaceDraft): boolean {
@@ -681,20 +682,20 @@ export function ListingWizard() {
                     <label className="flex min-h-14 cursor-pointer items-center gap-3 px-4 py-3">
                       <input type="checkbox" checked={s.enabled} onChange={(e) => setSpace(c.id, { enabled: e.target.checked })} className="h-5 w-5 shrink-0 accent-[#2f6b75]" />
                       <Icon size={22} className="shrink-0 text-brand" />
-                      <span className="font-semibold text-night">{c.name.sv}</span>
+                      <span className="font-semibold text-night">{L(c.name)}</span>
                     </label>
                     {s.enabled && (
                       <div className="grid gap-4 border-t border-line px-4 py-4 sm:grid-cols-2">
                         <div>
                           <p className="field-label">
-                            {w.spaces.capacity} ({c.unitPlural.sv})
+                            {w.spaces.capacity} ({L(c.unitPlural)})
                           </p>
                           <div className="flex items-center gap-2">
-                            <button type="button" aria-label={`Färre ${c.unitPlural.sv}`} disabled={s.capacity <= 1} onClick={() => setSpace(c.id, { capacity: s.capacity - 1 })} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-night hover:border-night disabled:opacity-35">
+                            <button type="button" aria-label={`Färre ${L(c.unitPlural)}`} disabled={s.capacity <= 1} onClick={() => setSpace(c.id, { capacity: s.capacity - 1 })} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-night hover:border-night disabled:opacity-35">
                               <Minus size={16} aria-hidden="true" />
                             </button>
                             <output className="w-10 text-center text-lg font-semibold">{s.capacity}</output>
-                            <button type="button" aria-label={`Fler ${c.unitPlural.sv}`} disabled={s.capacity >= 200} onClick={() => setSpace(c.id, { capacity: s.capacity + 1 })} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-night hover:border-night disabled:opacity-35">
+                            <button type="button" aria-label={`Fler ${L(c.unitPlural)}`} disabled={s.capacity >= 200} onClick={() => setSpace(c.id, { capacity: s.capacity + 1 })} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-night hover:border-night disabled:opacity-35">
                               <Plus size={16} aria-hidden="true" />
                             </button>
                           </div>
@@ -706,7 +707,7 @@ export function ListingWizard() {
                           <>
                             <div>
                               <label htmlFor={`price-${c.id}`} className="field-label">
-                                {fill(w.spaces.price, { unit: c.unit.sv })}
+                                {fill(w.spaces.price, { unit: L(c.unit) })}
                               </label>
                               <div className="flex items-center gap-2">
                                 <input id={`price-${c.id}`} className="field-input max-w-32" inputMode="numeric" value={s.price} onChange={(e) => setSpace(c.id, { price: e.target.value.replace(/\D/g, "").slice(0, 6) })} />

@@ -1,3 +1,4 @@
+import { appLang, appLocale } from "./lang";
 import { getCategory, type CategoryId } from "@/content/categories";
 import { FEES } from "@/content/pricing";
 
@@ -197,7 +198,7 @@ export function requestIncome(items: RequestItem[]): number {
 }
 
 export function formatKr(amount: number): string {
-  return new Intl.NumberFormat("sv-SE", { maximumFractionDigits: 0 }).format(amount);
+  return new Intl.NumberFormat(appLocale, { maximumFractionDigits: 0 }).format(amount);
 }
 
 /* ---------- Dates (date-only strings, YYYY-MM-DD) ---------- */
@@ -208,7 +209,7 @@ export function todayIso(): string {
 }
 
 export function formatDay(iso: string, withYear = false): string {
-  return new Intl.DateTimeFormat("sv-SE", {
+  return new Intl.DateTimeFormat(appLocale, {
     timeZone: "UTC",
     day: "numeric",
     month: "short",
@@ -221,7 +222,7 @@ export function formatPeriod(start: string, end: string | null, untilFurtherNoti
 }
 
 export function formatMonthYear(iso: string): string {
-  return new Intl.DateTimeFormat("sv-SE", { timeZone: "UTC", month: "long", year: "numeric" }).format(new Date(`${iso}T00:00:00Z`));
+  return new Intl.DateTimeFormat(appLocale, { timeZone: "UTC", month: "long", year: "numeric" }).format(new Date(`${iso}T00:00:00Z`));
 }
 
 /** "23 h" or "45 min" left until a timestamp. */
@@ -261,7 +262,7 @@ export function hostCanCancel(r: CancelFields, now = Date.now()): boolean {
 
 /** Clock time in Swedish time, e.g. "tis 10 nov. 07:00". */
 export function formatMoment(iso: string | number): string {
-  return new Intl.DateTimeFormat("sv-SE", { timeZone: TIME_ZONE, weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
+  return new Intl.DateTimeFormat(appLocale, { timeZone: TIME_ZONE, weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 }
 
 export function effectiveStatus(r: Pick<RequestRow, "status" | "expires_at">, now = Date.now()): RequestStatus {
@@ -315,19 +316,19 @@ export function hoursText(space: Pick<ListingSpace, "hourly_from" | "hourly_to" 
   const from = space.hourly_from ?? 0;
   const to = space.hourly_to ?? 24;
   const days = [...(space.hourly_days ?? [1, 2, 3, 4, 5, 6, 7])].sort();
-  const names = ["mån", "tis", "ons", "tor", "fre", "lör", "sön"];
+  const names = appLang === "en" ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] : ["mån", "tis", "ons", "tor", "fre", "lör", "sön"];
   const contiguous = days.every((d, i) => i === 0 || d === days[i - 1] + 1);
   const dayText =
-    days.length === 7 ? "alla dagar" : contiguous && days.length > 2 ? `${names[days[0] - 1]}–${names[days[days.length - 1] - 1]}` : days.map((d) => names[d - 1]).join(", ");
-  const timeText = from === 0 && to === 24 ? "dygnet runt" : `${hourLabel(from)}–${hourLabel(to)}`;
+    days.length === 7 ? (appLang === "en" ? "every day" : "alla dagar") : contiguous && days.length > 2 ? `${names[days[0] - 1]}–${names[days[days.length - 1] - 1]}` : days.map((d) => names[d - 1]).join(", ");
+  const timeText = from === 0 && to === 24 ? (appLang === "en" ? "around the clock" : "dygnet runt") : `${hourLabel(from)}–${hourLabel(to)}`;
   const text = `${timeText}, ${dayText}`;
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 /** "12 nov. 14:00–17:00" or "12 nov. 14:00 – 14 nov. 10:00", in Swedish time. */
 export function formatTimeRange(startIso: string, endIso: string): string {
-  const day = new Intl.DateTimeFormat("sv-SE", { timeZone: TIME_ZONE, day: "numeric", month: "short" });
-  const time = new Intl.DateTimeFormat("sv-SE", { timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit" });
+  const day = new Intl.DateTimeFormat(appLocale, { timeZone: TIME_ZONE, day: "numeric", month: "short" });
+  const time = new Intl.DateTimeFormat(appLocale, { timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit" });
   const s = new Date(startIso);
   const e = new Date(endIso);
   const sameDay = day.format(s) === day.format(new Date(e.getTime() - 1000));
