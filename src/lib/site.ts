@@ -10,9 +10,14 @@ export const site = {
   appUrl: env(process.env.NEXT_PUBLIC_APP_URL, "https://app.spazia.se"),
   /** Shown on the site and used as reply-to address in emails. */
   email: "info@nordvra.se",
-  /** Shown in the privacy policy. Add the org.nr once the company is registered. */
+  /**
+   * The business behind Spazia: shown in the footer, the terms and the privacy
+   * policy, as e-handelslagen requires once payments are taken.
+   */
   legalName: "Spazia",
-  orgNumber: "" as string,
+  orgNumber: "20061129-9595" as string,
+  /** Postal address, one line. Shown only when filled in. */
+  address: "" as string,
 
   /* Integrations. Public IDs, so they can live in the code; each can be
      overridden with an environment variable in Netlify. */

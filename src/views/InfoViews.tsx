@@ -113,12 +113,18 @@ export function AboutView({ lang }: { lang: Lang }) {
   );
 }
 
+/** "Spazia (org.nr …), address": who runs the service, for the legal pages. */
+function companyLine(lang: Lang): string {
+  const org = site.orgNumber ? ` (${lang === "sv" ? "org.nr" : "Swedish org. no."} ${site.orgNumber})` : "";
+  return `${site.legalName}${org}${site.address ? `, ${site.address}` : ""}`;
+}
+
 type LegalSection = { title: string; text: string; bullets: string[] };
 
 /** Privacy policy and terms: a title, a date, a lead and numbered-free sections with optional bullet lists. */
 function LegalPage({ lang, title, updated, lead, sections }: { lang: Lang; title: string; updated: string; lead: string; sections: LegalSection[] }) {
   const t = getDictionary(lang);
-  const legal = site.orgNumber ? `${site.legalName} (org.nr ${site.orgNumber})` : site.legalName;
+  const legal = companyLine(lang);
   const vars = { legal, email: site.email };
   return (
     <Section>

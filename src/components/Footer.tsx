@@ -114,6 +114,13 @@ export function Footer({ lang, t }: { lang: Lang; t: Dictionary }) {
         <div className="container-page pb-action-bar flex flex-col gap-2 pt-6 text-sm text-frost-2/80 sm:flex-row sm:items-center sm:justify-between md:pb-6">
           <p>
             © 2026 {site.legalName}. {t.footer.rights}
+            {site.orgNumber && (
+              <>
+                <br />
+                {t.footer.orgNumber} {site.orgNumber}
+                {site.address && <> · {site.address}</>}
+              </>
+            )}
           </p>
           <p>{t.common.launchBadge}</p>
         </div>

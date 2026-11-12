@@ -280,6 +280,7 @@ export const en: Dictionary = {
     cookies: "Cookie settings",
     credits: "Photo credits",
     rights: "All rights reserved.",
+    orgNumber: "Swedish org. no.",
   },
   hostPage: {
     metaTitle: "Rent out your garage, storeroom or parking space",
