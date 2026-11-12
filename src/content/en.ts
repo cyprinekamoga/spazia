@@ -519,7 +519,7 @@ export const en: Dictionary = {
         text: "",
         bullets: [
           "The waitlist: no more than 12 months after you signed up, or sooner if you ask.",
-          "Your account and listings: as long as you have the account. If you ask us to delete it, we do so within 30 days.",
+          "Your account and listings: as long as you have the account. You can delete the account yourself in the app under Menu → Delete account, or ask us to do it within 30 days. If you have booked or rented out, your name, photo, phone number and login are removed, while bookings and messages the other party needs stay without your name.",
           "Requests, bookings and messages: as long as the account exists, and after that for no more than 12 months if they are needed to settle a dispute.",
           "Once payments through Spazia have started, we keep bookkeeping records for seven years, as the Bookkeeping Act requires.",
           "Hosts' personal identity numbers, addresses and rental income are kept for as long as the platform reporting rules require.",
@@ -535,7 +535,7 @@ export const en: Dictionary = {
           "Strato: sends our emails.",
           "OpenStreetMap and OpenFreeMap: when a host saves the address, only the postal code and town are sent to OpenStreetMap to get an approximate position for the search map, and the map images are loaded from OpenFreeMap when you open the map. The street address is never sent.",
           "Notification services: if you turn on notifications in the app, they are sent through the service your browser or phone uses (for example Google, Apple or Mozilla). A notification only holds a short text about what happened, and you can turn it off in the menu at any time.",
-          "Google: if you choose to log in with Google. Google's own terms then also apply.",
+          "Google and Apple: if you choose to log in with Google or Apple. Their own terms then also apply.",
           "Meta: only if you accept marketing cookies on spazia.se, to measure our ads.",
           "Some suppliers may process data outside the EU/EEA. When they do, it is under the European Commission's standard contractual clauses or the EU–US Data Privacy Framework.",
         ],

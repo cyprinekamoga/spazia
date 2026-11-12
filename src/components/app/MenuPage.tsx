@@ -13,6 +13,7 @@ import { useLoad } from "@/lib/app/session";
 import { site } from "@/lib/site";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "./AppShell";
+import { DeleteAccount } from "./DeleteAccount";
 import { LanguageSwitch } from "./LanguageSwitch";
 import { PushSection } from "./PushSection";
 import { CardSection } from "./renter/CardSection";
@@ -229,6 +230,14 @@ export function MenuPage({ mode }: { mode: AppMode }) {
           </button>
         </li>
       </ul>
+
+      <DeleteAccount
+        uid={uid}
+        onDeleted={async () => {
+          await supabase().auth.signOut({ scope: "local" });
+          router.replace("/logga-in?raderat=1");
+        }}
+      />
     </div>
   );
 }

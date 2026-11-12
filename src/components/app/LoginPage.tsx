@@ -124,6 +124,12 @@ export function LoginPage() {
           <LogoMark className="h-14 w-auto" id="login-logo" />
         </a>
 
+        {params.get("raderat") === "1" && (
+          <p role="status" className="mt-6 rounded-xl bg-pine-soft p-3 text-center font-medium text-pine">
+            {appText.deleteAccount.done}
+          </p>
+        )}
+
         {step === "start" ? (
           <>
             <h1 className="mt-6 text-center text-[2rem] leading-tight text-night">{t.title}</h1>

@@ -517,7 +517,7 @@ export const sv = {
         text: "",
         bullets: [
           "Väntelistan: senast 12 månader efter din anmälan, eller tidigare om du ber om det.",
-          "Kontot och annonserna: så länge du har kontot. Ber du oss radera kontot gör vi det inom 30 dagar.",
+          "Kontot och annonserna: så länge du har kontot. Du kan radera kontot själv i appen under Meny → Radera kontot, eller be oss göra det inom 30 dagar. Har du bokat eller hyrt ut tas namn, bild, telefonnummer och inloggning bort, medan bokningar och meddelanden som den andra parten behöver finns kvar utan ditt namn.",
           "Förfrågningar, bokningar och meddelanden: så länge kontot finns, och därefter högst 12 månader om de behövs för att reda ut en tvist.",
           "När betalning via Spazia har startat sparar vi bokföringsunderlag i sju år, som bokföringslagen kräver.",
           "Värdars personnummer, adress och hyresintäkter sparar vi så länge lagen om plattformsrapportering kräver.",
@@ -533,7 +533,7 @@ export const sv = {
           "Strato: skickar våra mejl.",
           "OpenStreetMap och OpenFreeMap: när en värd sparar adressen skickas bara postnummer och ort till OpenStreetMap för att få ett ungefärligt läge till sökkartan, och kartbilderna hämtas från OpenFreeMap när du öppnar kartan. Gatuadressen skickas aldrig.",
           "Aviseringstjänster: slår du på aviseringar i appen skickas de via den tjänst din webbläsare eller telefon använder (till exempel Google, Apple eller Mozilla). Aviseringen innehåller bara en kort text om vad som har hänt, och du kan stänga av den i menyn när som helst.",
-          "Google: om du väljer att logga in med Google. Då gäller också Googles egna villkor.",
+          "Google och Apple: om du väljer att logga in med Google eller Apple. Då gäller också deras egna villkor.",
           "Meta: bara om du godkänner marknadsföringscookies på spazia.se, för att mäta våra annonser.",
           "Vissa leverantörer kan behandla uppgifter utanför EU/EES. Då sker det med stöd av EU-kommissionens standardavtalsklausuler eller EU–US Data Privacy Framework.",
         ],

@@ -21,6 +21,7 @@ import {
 } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
 import { Spinner, useAppSession } from "../AppShell";
+import { YearSummary } from "./YearSummary";
 
 const t = appText.payments;
 
@@ -274,6 +275,8 @@ export function PayoutsPage() {
           )}
         </section>
       )}
+
+      <YearSummary uid={uid} />
     </div>
   );
 }

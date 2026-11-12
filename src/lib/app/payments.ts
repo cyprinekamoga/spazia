@@ -78,6 +78,31 @@ export async function fetchHostPayments(uid: string): Promise<(Payment & { listi
   return rows.map((r) => ({ ...r, listing_title: r.request?.listing?.title ?? "" }));
 }
 
+export interface Earning {
+  id: string;
+  request_id: string;
+  host_amount: number;
+  period_start: string;
+  period_end: string;
+  transferred_at: string;
+  refunded_at: string | null;
+  listing_title: string;
+}
+
+/** Everything transferred to the host (for the yearly summary), newest first. */
+export async function fetchHostEarnings(uid: string): Promise<Earning[]> {
+  const rows = must(
+    await supabase()
+      .from("payments")
+      .select("id, request_id, host_amount, period_start, period_end, transferred_at, refunded_at, request:requests(listing:listings(title))")
+      .eq("host_id", uid)
+      .not("transferred_at", "is", null)
+      .order("transferred_at", { ascending: false })
+      .limit(5000),
+  ) as unknown as (Omit<Earning, "listing_title"> & { request: { listing: { title: string } | null } | null })[];
+  return rows.map(({ request, ...r }) => ({ ...r, listing_title: request?.listing?.title ?? "" }));
+}
+
 export class PaymentsError extends Error {
   constructor(public code: string) {
     super(code);
