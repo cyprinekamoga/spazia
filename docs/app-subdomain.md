@@ -49,3 +49,15 @@ Google behöver inga ändringar, eftersom inloggningen går via Supabase.
 Push:a koden. Sedan:
 - spazia.se länkar "Logga in" och sökningen till app.spazia.se.
 - Gamla adresser som `spazia.se/vard` och `spazia.se/logga-in` skickas vidare till app.spazia.se.
+
+### 5. Annonserna på Google (Search Console)
+
+Annonssidorna (`app.spazia.se/annons?id=…`) får synas på Google; resten av appen är stängd för sökmotorer (`robots.txt`). En kantfunktion (`netlify/edge-functions/listing-page.ts`) lägger in annonsens titel, beskrivning, bild, pris och strukturerad data innan sidan skickas, och `app.spazia.se/sitemap-annonser.xml` listar alla publicerade annonser. Svaren cachas i Netlifys CDN (sidorna 10 minuter, kartan en timme), så funktionerna körs sällan och drar lite krediter.
+
+En gång, efter att koden har publicerats:
+
+1. Öppna [Google Search Console](https://search.google.com/search-console) och lägg till en **domänegendom** för `spazia.se` (den täcker också app.spazia.se). Google ger en TXT-post: lägg in den hos Strato under DNS för spazia.se och klicka *Verifiera*.
+2. Under *Webbplatskartor*: skicka in `https://app.spazia.se/sitemap-annonser.xml`.
+3. Testa en annons med *Webbadressgranskning* och [Rich Results Test](https://search.google.com/test/rich-results).
+
+Det tar oftast några dagar till ett par veckor innan nya annonser syns i sökresultaten.

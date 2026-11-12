@@ -5,6 +5,7 @@ import { getDictionary } from "@/content";
 import type { Category } from "@/content/categories";
 import type { City } from "@/content/cities";
 import { guides } from "@/content/guides";
+import { CityListings } from "@/components/CityListings";
 import { DemandBadge } from "@/components/DemandBadge";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { RenterCalculator } from "@/components/RenterCalculator";
@@ -153,6 +154,8 @@ export function CityView({ lang, city }: { lang: Lang; city: City }) {
           {fill(p.hostCta, vars)}
         </Link>
       </PhotoHero>
+
+      <CityListings city={city.name} lang={lang} />
 
       <Section>
         <DemandBadge lang={lang} town={city.name} className="mb-4 sm:mb-6" />

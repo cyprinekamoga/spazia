@@ -10,9 +10,22 @@ if (buildTarget() === "app") {
   rmSync("out/images", { recursive: true, force: true });
   rmSync("out/__forms.html", { force: true });
   rmSync("out/og.jpg", { force: true });
-  // The app's pages load their content in the browser: nothing to index yet.
-  writeFileSync("out/robots.txt", "User-agent: *\nDisallow: /\n");
-  console.log("postbuild: app export tidied (no landing photos or forms, robots.txt disallows all)");
+  // Only public listings are for search engines (plus the scripts and styles
+  // they need to render them). Everything else is behind a login.
+  writeFileSync(
+    "out/robots.txt",
+    [
+      "User-agent: *",
+      "Allow: /annons",
+      "Allow: /_next/",
+      "Allow: /app-icons/",
+      "Disallow: /",
+      "",
+      "Sitemap: https://app.spazia.se/sitemap-annonser.xml",
+      "",
+    ].join("\n"),
+  );
+  console.log("postbuild: app export tidied (no landing photos or forms, robots.txt allows listings only)");
 } else {
   rmSync("out/sw.js", { force: true });
   rmSync("out/app.webmanifest", { force: true });

@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { useEffect } from "react";
 import { appText } from "@/content/app";
+import { FEES } from "@/content/pricing";
+import { appLang } from "@/lib/app/lang";
+import { listingSeo } from "@/lib/listing-seo";
+import { site } from "@/lib/site";
 import { fetchListingBundle, fetchMyOpenRequest } from "@/lib/app/data";
 import { useLoad } from "@/lib/app/session";
 import { ListingView } from "../ListingView";
@@ -25,6 +30,25 @@ export function RenterListingPage() {
     const [bundle, open] = await Promise.all([fetchListingBundle(id), uid ? fetchMyOpenRequest(id, uid) : Promise.resolve(null)]);
     return { bundle, open };
   }, `${id}:${uid ?? ""}`);
+
+  // The same title and description the edge function serves to search engines
+  // (they read the page after it has run in the browser).
+  useEffect(() => {
+    const b = data?.bundle;
+    if (!b || b.listing.status !== "published") return;
+    const seo = listingSeo(
+      { ...b.listing, listing_spaces: b.spaces, listing_photos: b.photos },
+      { lang: appLang, appUrl: site.appUrl, storageUrl: site.appSupabaseUrl, serviceFee: FEES.renterServiceFee },
+    );
+    document.title = seo.title;
+    let meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "description";
+      document.head.appendChild(meta);
+    }
+    meta.content = seo.description;
+  }, [data]);
 
   function back() {
     if (window.history.length > 1) router.back();

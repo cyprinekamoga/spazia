@@ -1,7 +1,8 @@
 /**
- * The app's language: Swedish or English. Chosen once when the app starts,
- * from the user's choice (saved in this browser) or else the browser's
- * language. Changing it reloads the app. While the static pages are built
+ * The app's language: Swedish or English. Chosen once when the app starts:
+ * a ?lang= in the address (public listing pages link both versions), else the
+ * user's choice saved in this browser, else the browser's language. Search
+ * engine crawlers get Swedish, the canonical version of listing pages. Changing it reloads the app. While the static pages are built
  * (no browser), it is Swedish; the app shows nothing until it runs in the
  * browser, so the two never mix (AppLanguageGate).
  */
@@ -9,8 +10,13 @@ export type AppLang = "sv" | "en";
 
 const KEY = "spazia-lang";
 
+const CRAWLER = /bot|crawler|spider|slurp|facebookexternalhit|embedly|preview/i;
+
 function detect(): AppLang {
   if (typeof window === "undefined") return "sv";
+  const fromUrl = new URLSearchParams(window.location.search).get("lang");
+  if (fromUrl === "sv" || fromUrl === "en") return fromUrl;
+  if (CRAWLER.test(navigator.userAgent)) return "sv";
   try {
     const saved = window.localStorage.getItem(KEY);
     if (saved === "sv" || saved === "en") return saved;
@@ -38,5 +44,12 @@ export function setAppLang(lang: AppLang): void {
   } catch {
     // Can't remember it; the reload below still applies the browser default.
   }
-  window.location.reload();
+  // A ?lang= in the address would win over the new choice: drop it.
+  const url = new URL(window.location.href);
+  if (url.searchParams.has("lang")) {
+    url.searchParams.delete("lang");
+    window.location.replace(url.toString());
+  } else {
+    window.location.reload();
+  }
 }
