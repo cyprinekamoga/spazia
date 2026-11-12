@@ -59,18 +59,44 @@ export async function getUser(userId: string): Promise<UserRow | null> {
 }
 
 /** The renter's Stripe customer, created the first time it's needed. */
+interface Company {
+  company_name: string;
+  company_org_number: string;
+  company_vat_number: string;
+}
+
+async function companyOf(userId: string): Promise<Company | null> {
+  const [row] = await sql<Company[]>`
+    select company_name, company_org_number, company_vat_number from public.profile_private where id = ${userId}`;
+  return row && row.company_name.trim() ? row : null;
+}
+
+/** Name and invoice fields: the company's when the renter has invoices made out to one. */
+function invoiceIdentity(user: UserRow, company: Company | null) {
+  return {
+    name: company?.company_name.trim() || user.first_name || undefined,
+    invoice_settings: {
+      footer: INVOICE_FOOTER,
+      custom_fields: company?.company_org_number ? [{ name: "Org.nr", value: company.company_org_number }] : [],
+    },
+  };
+}
+
 export async function ensureCustomer(user: UserRow): Promise<string> {
   const [existing] = await sql<{ customer_id: string }[]>`select customer_id from private.stripe_customers where user_id = ${user.id}`;
   if (existing) return existing.customer_id;
+  const company = await companyOf(user.id);
+  const identity = invoiceIdentity(user, company);
   const customer = await stripe().customers.create(
     {
       email: user.email ?? undefined,
-      name: user.first_name || undefined,
+      name: identity.name,
       metadata: { user_id: user.id },
       preferred_locales: ["sv"],
       // Renters rent space in Sweden; Stripe Tax needs at least the country.
       address: { country: "SE" },
-      invoice_settings: { footer: INVOICE_FOOTER },
+      invoice_settings: identity.invoice_settings,
+      ...(company?.company_vat_number ? { tax_id_data: [{ type: "eu_vat" as const, value: company.company_vat_number }] } : {}),
     },
     { idempotencyKey: `customer-${user.id}` },
   );
@@ -78,6 +104,26 @@ export async function ensureCustomer(user: UserRow): Promise<string> {
             on conflict (user_id) do nothing`;
   const [row] = await sql<{ customer_id: string }[]>`select customer_id from private.stripe_customers where user_id = ${user.id}`;
   return row.customer_id;
+}
+
+/**
+ * After the renter changed their company details: update the Stripe customer
+ * (name, org number on invoices, VAT number). Nothing to do before the first
+ * payment; the customer is created with the details then.
+ */
+export async function syncCustomerDetails(user: UserRow): Promise<void> {
+  const [existing] = await sql<{ customer_id: string }[]>`select customer_id from private.stripe_customers where user_id = ${user.id}`;
+  if (!existing) return;
+  const s = stripe();
+  const company = await companyOf(user.id);
+  const identity = invoiceIdentity(user, company);
+  await s.customers.update(existing.customer_id, { name: identity.name ?? "", invoice_settings: identity.invoice_settings });
+  const wanted = company?.company_vat_number || null;
+  const current = await s.customers.listTaxIds(existing.customer_id, { limit: 10 });
+  for (const t of current.data) if (t.value !== wanted) await s.customers.deleteTaxId(existing.customer_id, t.id);
+  if (wanted && !current.data.some((t) => t.value === wanted)) {
+    await s.customers.createTaxId(existing.customer_id, { type: "eu_vat", value: wanted });
+  }
 }
 
 /** Remember a card for later charges, and make it the customer's default. */

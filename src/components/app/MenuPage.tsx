@@ -18,6 +18,7 @@ import { LanguageSwitch } from "./LanguageSwitch";
 import { PushSection } from "./PushSection";
 import { AlertsSection } from "./SearchAlerts";
 import { SavedSection } from "./Favourites";
+import { CompanySection, InviteSection } from "./Discounts";
 import { CardSection } from "./renter/CardSection";
 import { Avatar } from "./ui";
 
@@ -185,6 +186,8 @@ export function MenuPage({ mode }: { mode: AppMode }) {
 
       {mode === "renter" && <SavedSection uid={uid} />}
       {mode === "renter" && <AlertsSection uid={uid} />}
+      {mode === "renter" && pay.data?.enabled && <CompanySection uid={uid} />}
+      <InviteSection uid={uid} />
 
       <PushSection uid={uid} />
 

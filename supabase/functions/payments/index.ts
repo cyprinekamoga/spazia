@@ -23,6 +23,7 @@ import {
   paymentSucceeded,
   saveCard,
   syncAccount,
+  syncCustomerDetails,
   TAX_CODES,
   type UserRow,
 } from "../_shared/payments.ts";
@@ -304,6 +305,10 @@ Deno.serve(async (req) => {
         return json(req, await pay(user, body));
       case "pay_done":
         return json(req, await payDone(user, body));
+      case "billing":
+        // The renter changed their company details: update the Stripe customer.
+        await syncCustomerDetails(user);
+        return json(req, { ok: true });
       default:
         throw new HttpError(400, "unknown_action");
     }

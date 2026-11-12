@@ -2,6 +2,7 @@
 
 import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { appLang } from "@/lib/app/lang";
+import { rememberReferral } from "./Discounts";
 
 const noop = () => () => {};
 
@@ -19,6 +20,7 @@ export function AppLanguageGate({ children }: { children: ReactNode }) {
   );
   useEffect(() => {
     document.documentElement.lang = appLang;
+    rememberReferral();
   }, []);
   return inBrowser ? children : <div aria-busy="true" className="min-h-dvh" />;
 }

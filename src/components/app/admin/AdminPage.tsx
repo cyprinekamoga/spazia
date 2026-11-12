@@ -14,7 +14,7 @@ import { Spinner } from "../AppShell";
  */
 
 type Row = Record<string, unknown>;
-type Tab = "overview" | "reports" | "bookings" | "payments" | "listings" | "users" | "log";
+type Tab = "overview" | "reports" | "bookings" | "payments" | "listings" | "users" | "codes" | "log";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "overview", label: "Översikt" },
@@ -23,6 +23,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "payments", label: "Betalningar" },
   { id: "listings", label: "Annonser" },
   { id: "users", label: "Användare" },
+  { id: "codes", label: "Rabattkoder" },
   { id: "log", label: "Logg" },
 ];
 
@@ -412,6 +413,103 @@ function Users() {
   );
 }
 
+/** Campaign codes: a share off Spazia's fee in a renter's first month. */
+function Codes() {
+  const list = useLoad(() => rpc<Row[]>("admin_discount_codes"), "codes");
+  const [form, setForm] = useState({ code: "", percent: "50", maxUses: "", validUntil: "", note: "" });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function create(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      await rpc("admin_create_discount_code", {
+        p_code: form.code,
+        p_percent: Number(form.percent),
+        p_max_uses: form.maxUses ? Number(form.maxUses) : null,
+        p_valid_until: form.validUntil ? `${form.validUntil}T23:59:59+01:00` : null,
+        p_note: form.note,
+      });
+      setForm({ code: "", percent: "50", maxUses: "", validUntil: "", note: "" });
+      await list.reload();
+    } catch (err) {
+      setError(err instanceof Error && err.message.includes("duplicate") ? "Koden finns redan." : err instanceof Error ? err.message : "Något gick fel");
+    }
+    setBusy(false);
+  }
+
+  return (
+    <div className="space-y-5">
+      <form onSubmit={create} className="card grid gap-3 p-4 sm:grid-cols-[1fr_6rem_6rem_10rem] sm:items-end">
+        <div>
+          <label htmlFor="code" className="field-label">
+            Kod (A–Z, 0–9, -)
+          </label>
+          <input id="code" required pattern="[A-Za-z0-9-]{3,24}" className="field-input uppercase" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
+        </div>
+        <div>
+          <label htmlFor="percent" className="field-label">
+            % av avgiften
+          </label>
+          <input id="percent" type="number" min={1} max={100} required className="field-input" value={form.percent} onChange={(e) => setForm({ ...form, percent: e.target.value })} />
+        </div>
+        <div>
+          <label htmlFor="max" className="field-label">
+            Max antal
+          </label>
+          <input id="max" type="number" min={1} className="field-input" value={form.maxUses} onChange={(e) => setForm({ ...form, maxUses: e.target.value })} />
+        </div>
+        <div>
+          <label htmlFor="until" className="field-label">
+            Gäller till
+          </label>
+          <input id="until" type="date" className="field-input" value={form.validUntil} onChange={(e) => setForm({ ...form, validUntil: e.target.value })} />
+        </div>
+        <div className="sm:col-span-3">
+          <label htmlFor="note" className="field-label">
+            Anteckning
+          </label>
+          <input id="note" className="field-input" value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} />
+        </div>
+        <button type="submit" disabled={busy} className="btn btn-primary">
+          Skapa kod
+        </button>
+        {error && <p className="text-sm font-medium text-[#b42318] sm:col-span-4">{error}</p>}
+      </form>
+      <p className="text-sm text-muted">Koden drar av en andel av Spazias serviceavgift första månaden. Värdens hyra påverkas inte.</p>
+      {list.loading ? (
+        <Spinner />
+      ) : (
+        <Table
+          head={["Kod", "Rabatt", "Använd", "Gäller till", "Anteckning", ""]}
+          rows={(list.data ?? []).map((c) => [
+            <span key="c" className="font-mono font-bold">
+              {s(c.code)}
+            </span>,
+            `${s(c.percent_off)} %`,
+            `${s(c.uses)}${c.max_uses ? ` / ${s(c.max_uses)}` : ""}`,
+            day(c.valid_until),
+            s(c.note),
+            <button
+              key="b"
+              type="button"
+              className="font-semibold text-brand underline underline-offset-4"
+              onClick={async () => {
+                await rpc("admin_set_discount_code_active", { p_code: c.code, p_active: !c.active }).catch(() => {});
+                await list.reload();
+              }}
+            >
+              {c.active ? "Stäng av" : "Slå på"}
+            </button>,
+          ])}
+        />
+      )}
+    </div>
+  );
+}
+
 function Log() {
   const { data, loading } = useLoad(() => rpc<Row[]>("admin_log_entries", { p_limit: 200 }), "admin-log");
   if (loading) return <Spinner />;
@@ -469,6 +567,7 @@ export function AdminPage() {
         {tab === "payments" && <Payments />}
         {tab === "listings" && <Listings />}
         {tab === "users" && <Users />}
+        {tab === "codes" && <Codes />}
         {tab === "log" && <Log />}
       </div>
     </div>

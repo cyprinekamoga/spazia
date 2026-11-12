@@ -13,6 +13,7 @@ import { fetchAvailability, fetchBlocks, fetchListingBundle, fetchMyOpenRequest,
 import { addDays, formatDay, formatKr, minEndDate, renterMonthly, renterPrice, todayIso, type ListingBlock } from "@/lib/app/model";
 import { fetchPaymentSetup, fetchProtectionOffer, protectionAmount } from "@/lib/app/payments";
 import { ProtectionOption } from "../Protection";
+import { DiscountField, forgetReferral, type AppliedDiscount } from "../Discounts";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { AGREEMENT_VERSION } from "@/content/agreement";
@@ -69,6 +70,7 @@ export function RequestFormPage() {
   const pay = useLoad(fetchPaymentSetup, `pay-${uid}`);
   const offer = useLoad(fetchProtectionOffer, "protection-offer");
   const [protect, setProtect] = useState(false);
+  const [discount, setDiscount] = useState<AppliedDiscount | null>(null);
 
   const [start, setStart] = useState(() => addDays(todayIso(), 1));
   const [openEnded, setOpenEnded] = useState(true);
@@ -124,6 +126,9 @@ export function RequestFormPage() {
   const rentTotal = renterMonthly(chosen);
   const protection = offer.data && protect ? protectionAmount(rentTotal, offer.data.rate) : 0;
   const total = rentTotal + protection;
+  // A code takes a share off Spazia's fee in the first month (same rounding as the database).
+  const rentBase = chosen.reduce((sum, i) => sum + i.host_price_month * i.quantity, 0);
+  const firstMonthDiscount = discount ? Math.round(((rentTotal - rentBase) * discount.percent) / 100) : 0;
 
   // Problems with the dates, shown under the date fields (the database checks the same).
   const dateProblem: ErrorCode | null =
@@ -174,6 +179,11 @@ export function RequestFormPage() {
       const added = await db.rpc("set_request_protection", { p_request: res.data as string, p_on: true });
       if (added.error) console.error("protection", added.error.message);
     }
+    if (discount) {
+      const applied = await db.rpc("apply_discount_code", { p_request: res.data as string, p_code: discount.code });
+      if (applied.error) console.error("discount", applied.error.message);
+      else forgetReferral(discount.code);
+    }
     router.replace(`/kund/bokning?id=${res.data as string}&skickad=1`);
   }
 
@@ -218,12 +228,25 @@ export function RequestFormPage() {
           <span className="whitespace-nowrap">{formatKr(total)} kr</span>
         </p>
         <p className="mt-1 text-sm text-muted">{t.includesFee}</p>
+        {firstMonthDiscount > 0 && (
+          <p className="mt-2 flex justify-between gap-3 text-[0.95rem] font-semibold text-pine">
+            <span>{appText.discount.line}</span>
+            <span className="shrink-0 whitespace-nowrap">−{formatKr(firstMonthDiscount)} kr</span>
+          </p>
+        )}
       </div>
       {payments && offer.data && chosen.length > 0 && <ProtectionOption offer={offer.data} monthly={rentTotal} checked={protect} onChange={setProtect} />}
       {payments && pay.data ? (
         <>
           <CardSection setup={pay.data} onChange={pay.reload} returnTo={`/kund/skicka?id=${id}`} intro={needsCard ? appText.payments.cardNeeded : appText.payments.cardText} compact />
-          {chosen.length > 0 && <p className="rounded-xl bg-frost/70 p-3 text-sm text-ink">{fill(appText.payments.chargeInfo, { amount: formatKr(total) })}</p>}
+          {chosen.length > 0 && <DiscountField value={discount} onChange={setDiscount} />}
+          {chosen.length > 0 && (
+            <p className="rounded-xl bg-frost/70 p-3 text-sm text-ink">
+              {firstMonthDiscount > 0
+                ? fill(appText.discount.chargeInfo, { first: formatKr(total - firstMonthDiscount), amount: formatKr(total) })
+                : fill(appText.payments.chargeInfo, { amount: formatKr(total) })}
+            </p>
+          )}
         </>
       ) : (
         <p className="rounded-xl bg-frost/70 p-3 text-sm text-ink">{t.noPayment}</p>
