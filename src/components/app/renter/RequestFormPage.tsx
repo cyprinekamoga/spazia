@@ -11,7 +11,8 @@ import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchAvailability, fetchBlocks, fetchListingBundle, fetchMyOpenRequest, fetchMyProfile } from "@/lib/app/data";
 import { addDays, formatDay, formatKr, minEndDate, renterMonthly, renterPrice, todayIso, type ListingBlock } from "@/lib/app/model";
-import { fetchPaymentSetup } from "@/lib/app/payments";
+import { fetchPaymentSetup, fetchProtectionOffer, protectionAmount } from "@/lib/app/payments";
+import { ProtectionOption } from "../Protection";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { AGREEMENT_VERSION } from "@/content/agreement";
@@ -66,6 +67,8 @@ export function RequestFormPage() {
     return { bundle, blocks, me, open };
   }, `${id}:${uid}`);
   const pay = useLoad(fetchPaymentSetup, `pay-${uid}`);
+  const offer = useLoad(fetchProtectionOffer, "protection-offer");
+  const [protect, setProtect] = useState(false);
 
   const [start, setStart] = useState(() => addDays(todayIso(), 1));
   const [openEnded, setOpenEnded] = useState(true);
@@ -118,7 +121,9 @@ export function RequestFormPage() {
   const minEnd = minEndDate(start, listing.min_period);
   const available = (category: string) => avail.data?.find((a) => a.category === category)?.available ?? spaces.find((s) => s.category === category)?.capacity ?? 0;
   const chosen = spaces.map((s) => ({ category: s.category, quantity: Math.min(qty[s.category] ?? 0, available(s.category)), host_price_month: s.host_price_month })).filter((i) => i.quantity > 0);
-  const total = renterMonthly(chosen);
+  const rentTotal = renterMonthly(chosen);
+  const protection = offer.data && protect ? protectionAmount(rentTotal, offer.data.rate) : 0;
+  const total = rentTotal + protection;
 
   // Problems with the dates, shown under the date fields (the database checks the same).
   const dateProblem: ErrorCode | null =
@@ -165,6 +170,10 @@ export function RequestFormPage() {
     }
     // The renter accepts the rental agreement for this request (the host does by accepting it).
     await db.rpc("agree_to_rental", { p_request: res.data as string, p_version: AGREEMENT_VERSION });
+    if (protection > 0) {
+      const added = await db.rpc("set_request_protection", { p_request: res.data as string, p_on: true });
+      if (added.error) console.error("protection", added.error.message);
+    }
     router.replace(`/kund/bokning?id=${res.data as string}&skickad=1`);
   }
 
@@ -198,12 +207,19 @@ export function RequestFormPage() {
             })}
           </ul>
         )}
+        {protection > 0 && (
+          <p className="mt-1.5 flex justify-between gap-3 text-[0.95rem] text-ink">
+            <span>{appText.protection.line}</span>
+            <span className="shrink-0 whitespace-nowrap">{formatKr(protection)} kr/mån</span>
+          </p>
+        )}
         <p className="mt-3 flex justify-between gap-3 border-t border-line pt-3 font-bold text-night">
           <span>{t.perMonth}</span>
           <span className="whitespace-nowrap">{formatKr(total)} kr</span>
         </p>
         <p className="mt-1 text-sm text-muted">{t.includesFee}</p>
       </div>
+      {payments && offer.data && chosen.length > 0 && <ProtectionOption offer={offer.data} monthly={rentTotal} checked={protect} onChange={setProtect} />}
       {payments && pay.data ? (
         <>
           <CardSection setup={pay.data} onChange={pay.reload} returnTo={`/kund/skicka?id=${id}`} intro={needsCard ? appText.payments.cardNeeded : appText.payments.cardText} compact />

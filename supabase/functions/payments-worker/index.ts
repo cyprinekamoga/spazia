@@ -24,6 +24,7 @@ interface ChargeRow {
   request_id: string;
   amount: number;
   base_amount: number | null;
+  protection_amount: number;
   attempts: number;
   stripe_invoice: string | null;
   customer_id: string | null;
@@ -38,6 +39,7 @@ interface ChargeRow {
 async function createInvoice(p: ChargeRow, tax: Awaited<ReturnType<typeof automaticTax>>): Promise<Stripe.Invoice> {
   const s = stripe();
   const rent = Math.min(p.base_amount ?? p.amount, p.amount);
+  const protection = Math.max(0, Math.min(p.protection_amount ?? 0, p.amount - rent));
   const period = `${p.period_start} – ${p.period_end}`;
   const key = `${p.id}-${p.attempts}`;
   const invoice = await s.invoices.create(
@@ -62,7 +64,8 @@ async function createInvoice(p: ChargeRow, tax: Awaited<ReturnType<typeof automa
       { idempotencyKey: `invoice-${part}-${key}` },
     );
   if (rent > 0) await item(rent, `Hyra till värden${p.host_name ? ` ${p.host_name}` : ""}, ${period}`, TAX_CODES.rent, "rent");
-  if (p.amount - rent > 0) await item(p.amount - rent, "Spazias serviceavgift", TAX_CODES.fee, "fee");
+  if (p.amount - rent - protection > 0) await item(p.amount - rent - protection, "Spazias serviceavgift", TAX_CODES.fee, "fee");
+  if (protection > 0) await item(protection, "Spazia Skydd", TAX_CODES.protection, "protection");
   return await s.invoices.retrieve(invoice.id!);
 }
 
@@ -83,7 +86,7 @@ async function charge(): Promise<number> {
                 and r2.kind = 'month' and r2.status = 'accepted'
               order by p2.due_at limit ${BATCH} for update of p2 skip locked)
        and r.id = p.request_id and l.id = r.listing_id
-    returning p.id, p.request_id, p.amount, p.base_amount, p.attempts, p.stripe_invoice,
+    returning p.id, p.request_id, p.amount, p.base_amount, p.protection_amount, p.attempts, p.stripe_invoice,
               (select c.customer_id from private.stripe_customers c where c.user_id = p.renter_id) as customer_id,
               (select c.payment_method from private.stripe_customers c where c.user_id = p.renter_id) as payment_method,
               l.title, coalesce((select pr.first_name from public.profiles pr where pr.id = p.host_id), '') as host_name,

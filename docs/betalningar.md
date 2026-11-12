@@ -112,6 +112,26 @@ Därefter räknar Stripe ut momsen på varje ny faktura, Checkout-betalning och 
 
 Återbetalningar av fakturor görs med kreditnotor, så att momsen också krediteras.
 
+## Spazia Skydd (tillval för hyresgäster)
+
+Hyresgäster kan lägga till Spazia Skydd när de skickar en förfrågan om förvaring per månad. Det kostar 5 % av månadspriset, dras som en egen rad (*Spazia Skydd*) på varje månadsfaktura och går till Spazia, inte till värden. Skadeanmälningar görs i appen på bokningen och mejlas till teamet (`public.protection_claims`).
+
+**Avstängt från början.** Innan det slås på:
+
+1. **Juridiken.** Att ta betalt för att ersätta andras skador kan räknas som försäkring, och det kräver tillstånd från Finansinspektionen eller en försäkringspartner som står för skyddet (Spazia blir då förmedlare). Bekräfta upplägget med en jurist eller försäkringsbolag.
+2. **Momsen.** Skyddet räknas nu som Spazias egen tjänst med 25 % moms (`TAX_CODES.protection` i `supabase/functions/_shared/payments.ts`). Är det en försäkring via en partner är det momsfritt: ändra skattekoden innan ni slår på det.
+3. **Villkoren.** Avsnittet *Spazia Skydd* i användarvillkoren beskriver vad som ersätts och undantagen. Gå igenom dem med partnern.
+
+Slå på, och ändra andel och högsta belopp per uthyrning vid behov:
+
+```sql
+update private.settings set value = 'true' where key = 'protection_enabled';
+update private.settings set value = '0.05' where key = 'protection_rate';   -- 5 %
+update private.settings set value = '10000' where key = 'protection_cap';   -- kr per uthyrning
+```
+
+Andelen sparas på förfrågan när hyresgästen väljer skyddet, så en ändring påverkar bara nya förfrågningar.
+
 ## Skatteverket (DAC7)
 
 Spazia är en plattformsoperatör och måste lämna kontrolluppgifter om värdarnas hyresintäkter (KU93, uthyrning av fast egendom) till Skatteverket senast den 31 januari varje år.

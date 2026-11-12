@@ -650,6 +650,17 @@ export const en: Dictionary = {
         ],
       },
       {
+        title: "Spazia Protection",
+        text: "When Spazia Protection is offered, you as a renter can add it when you send a request for monthly storage. It costs the share of the monthly rent shown in the app and is charged together with the rent. The fee goes to Spazia, not to the host.",
+        bullets: [
+          "Spazia covers damage to or theft of your belongings while they are stored at the space, up to the amount shown in the app when you choose the protection, in total for the whole rental.",
+          "The protection does not cover vehicles, cash, documents of value, jewellery or art, normal wear, damage you cause yourself, or things not on the drop-off list.",
+          "Report damage or loss in the app as soon as possible, preferably within seven days of discovering it. The drop-off list with photos is the basis, and we may ask for receipts or more photos.",
+          "Home insurance often also covers belongings in storage. Spazia Protection covers what your own insurance doesn't, such as the excess.",
+          "Once chosen, the protection can't be removed during an ongoing rental. It ends when the rental ends.",
+        ],
+      },
+      {
         title: "Content and conduct",
         text: "",
         bullets: [

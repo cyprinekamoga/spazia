@@ -27,6 +27,12 @@ export const TAX_CODES = {
   rent: "txcd_00000000",
   /** Spazia's service fee: General – Services, 25 % VAT. */
   fee: "txcd_20030000",
+  /**
+   * Spazia Skydd, the optional add-on. Treated as Spazia's own service (25 %
+   * VAT) for now. If it becomes insurance sold through a licensed partner,
+   * it is VAT-exempt instead: change this before switching it on.
+   */
+  protection: "txcd_20030000",
 };
 
 /**
@@ -125,11 +131,12 @@ async function product(key: string, name: string, taxCode: string): Promise<stri
   return created.id;
 }
 
-/** The two parts of every monthly invoice: the host's rent and Spazia's fee. */
-export async function storageProducts(): Promise<{ rent: string; fee: string }> {
+/** The parts of a monthly invoice: the host's rent, Spazia's fee and (if chosen) Spazia Skydd. */
+export async function storageProducts(): Promise<{ rent: string; fee: string; protection: string }> {
   return {
     rent: await product("stripe_product_rent", "Hyra till värden", TAX_CODES.rent),
     fee: await product("stripe_product_fee", "Spazias serviceavgift", TAX_CODES.fee),
+    protection: await product("stripe_product_protection", "Spazia Skydd", TAX_CODES.protection),
   };
 }
 

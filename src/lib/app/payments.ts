@@ -48,6 +48,25 @@ export async function fetchPaymentsEnabled(): Promise<boolean> {
   return Boolean((data as { enabled?: boolean } | null)?.enabled);
 }
 
+export interface ProtectionOffer {
+  /** Share of the monthly price, e.g. 0.05. */
+  rate: number;
+  /** Most that is paid out per rental, in kronor. */
+  cap: number;
+}
+
+/** Spazia Skydd, when it is offered (payments on and the add-on switched on). */
+export async function fetchProtectionOffer(): Promise<ProtectionOffer | null> {
+  const { data } = await supabase().rpc("payments_config");
+  const p = (data as { protection?: { rate: number | string; cap: number | string } | null } | null)?.protection;
+  return p ? { rate: Number(p.rate), cap: Number(p.cap) } : null;
+}
+
+/** The add-on per month, rounded like the database (private.period_amounts). */
+export function protectionAmount(monthly: number, rate: number | null | undefined): number {
+  return rate ? Math.round(monthly * rate) : 0;
+}
+
 /** The signed-in user's card, payout account and tax details. */
 export async function fetchPaymentSetup(): Promise<PaymentSetup> {
   return must(await supabase().rpc("my_payment_status")) as PaymentSetup;

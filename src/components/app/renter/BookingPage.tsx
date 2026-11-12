@@ -10,7 +10,7 @@ import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
 import { fetchCounterpartPrivate, fetchListingPrivate, fetchRenterRequest } from "@/lib/app/data";
 import { bookingHours, effectiveStatus, formatDay, formatKr, formatMoment, periodText, renterCancelDeadline, renterCanCancel, renterHourlyTotal, renterMonthly, renterPrice, timeLeft, todayIso } from "@/lib/app/model";
-import { fetchRequestPayments, type Payment } from "@/lib/app/payments";
+import { fetchProtectionOffer, fetchRequestPayments, protectionAmount, type Payment } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner, useAppSession } from "../AppShell";
@@ -18,6 +18,7 @@ import { HandoverSection } from "../Handovers";
 import { ReviewSection } from "../Reviews";
 import { Avatar, CoverPhoto } from "../ui";
 import { PaymentPanel } from "./PaymentPanel";
+import { ProtectionPanel } from "../Protection";
 
 const t = appText.booking;
 
@@ -45,9 +46,10 @@ export function BookingPage() {
   const { data, loading, reload } = useLoad(async () => {
     const r = await fetchRenterRequest(id);
     const payments: Payment[] = r?.payment_required ? await fetchRequestPayments(r.id) : [];
-    if (!r || r.status !== "accepted") return { r, priv: null, hostPriv: null, payments };
+    const offer = r?.protection_rate ? await fetchProtectionOffer() : null;
+    if (!r || r.status !== "accepted") return { r, priv: null, hostPriv: null, payments, offer };
     const [priv, hostPriv] = await Promise.all([fetchListingPrivate(r.listing_id), fetchCounterpartPrivate(r.host_id)]);
-    return { r, priv, hostPriv, payments };
+    return { r, priv, hostPriv, payments, offer };
   }, id);
   const [now] = useState(() => Date.now());
   const [busy, setBusy] = useState(false);
@@ -234,13 +236,16 @@ export function BookingPage() {
           <p className="text-night">{periodText(r, appText.common.untilFurtherNotice)}</p>
         </div>
         <div className="p-4">
-          <p className="text-lg font-bold text-night">{r.kind === "hour" ? fill(t.total, { amount: formatKr(hourlyItem ? renterHourlyTotal(bookingHours(r), hourlyItem.hourly_price!, hourlyItem.daily_max, hourlyItem.quantity) : 0) }) : fill(t.perMonth, { amount: formatKr(renterMonthly(r.request_items)) })}</p>
+          <p className="text-lg font-bold text-night">{r.kind === "hour" ? fill(t.total, { amount: formatKr(hourlyItem ? renterHourlyTotal(bookingHours(r), hourlyItem.hourly_price!, hourlyItem.daily_max, hourlyItem.quantity) : 0) }) : fill(t.perMonth, { amount: formatKr(renterMonthly(r.request_items) + protectionAmount(renterMonthly(r.request_items), r.protection_rate)) })}</p>
           <p className="text-sm text-muted">{appText.requestForm.includesFee}</p>
         </div>
       </div>
 
       {status === "accepted" && !unpaid && r.kind !== "hour" && (
         <HandoverSection requestId={r.id} uid={uid} hostId={r.host_id} names={{ host: hostName, renter: appText.handover.youObject }} />
+      )}
+      {r.protection_rate && r.kind === "month" && (status === "accepted" || status === "pending") && (
+        <ProtectionPanel requestId={r.id} cap={data?.offer?.cap ?? null} canClaim={status === "accepted" && !unpaid} />
       )}
       {status === "accepted" && <ReviewSection requestId={r.id} otherName={hostName} role="renter" />}
 

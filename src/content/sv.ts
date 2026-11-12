@@ -648,6 +648,17 @@ export const sv = {
         ],
       },
       {
+        title: "Spazia Skydd",
+        text: "När Spazia Skydd erbjuds kan du som hyresgäst lägga till det när du skickar en förfrågan om förvaring per månad. Det kostar den andel av månadshyran som står i appen och dras tillsammans med hyran. Avgiften går till Spazia, inte till värden.",
+        bullets: [
+          "Spazia ersätter skada på eller stöld av dina saker medan de förvaras på platsen, upp till det belopp som står i appen när du väljer skyddet, sammanlagt för hela uthyrningen.",
+          "Skyddet gäller inte fordon, kontanter, värdehandlingar, smycken eller konst, inte vanligt slitage, och inte skador du själv orsakar eller saker som inte står på inlämningslistan.",
+          "Anmäl skada eller förlust i appen så snart som möjligt, helst inom sju dagar efter att du upptäckte den. Inlämningslistan med bilder är underlaget, och vi kan be om kvitton eller fler bilder.",
+          "Har du en hemförsäkring gäller den ofta också för saker i förråd. Spazia Skydd ersätter det din egen försäkring inte täcker, till exempel självrisken.",
+          "Väljer du skyddet kan du inte ta bort det under en pågående uthyrning. Det upphör när uthyrningen slutar.",
+        ],
+      },
+      {
         title: "Innehåll och uppförande",
         text: "",
         bullets: [

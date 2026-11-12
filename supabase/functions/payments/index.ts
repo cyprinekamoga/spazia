@@ -178,6 +178,7 @@ interface PaymentRow {
   status: string;
   amount: number;
   base_amount: number | null;
+  protection_amount: number;
   pay_by: Date;
   period_start: string;
   period_end: string;
@@ -193,7 +194,7 @@ interface PaymentRow {
 async function loadPayment(user: UserRow, value: unknown): Promise<PaymentRow> {
   if (typeof value !== "string" || !UUID_RE.test(value)) throw new HttpError(400, "bad_request");
   const [p] = await sql<PaymentRow[]>`
-    select p.id, p.request_id, p.renter_id, p.status::text as status, p.amount, p.base_amount, p.pay_by,
+    select p.id, p.request_id, p.renter_id, p.status::text as status, p.amount, p.base_amount, p.protection_amount, p.pay_by,
            p.period_start::text as period_start, p.period_end::text as period_end,
            r.kind, r.status::text as request_status, l.title,
            coalesce((select pr.first_name from public.profiles pr where pr.id = p.host_id), '') as host_name,
@@ -226,13 +227,15 @@ async function pay(user: UserRow, body: Record<string, unknown>): Promise<{ url:
   // Two lines, VAT included: the host's rent (passed on in the host's name, no VAT
   // from Spazia) and Spazia's service fee (VAT).
   const rent = Math.min(p.base_amount ?? p.amount, p.amount);
+  const protection = Math.max(0, Math.min(p.protection_amount ?? 0, p.amount - rent));
   const line = (kr: number, name: string, taxCode: string) => ({
     quantity: 1,
     price_data: { currency: "sek", unit_amount: ore(kr), tax_behavior: "inclusive" as const, product_data: { name, tax_code: taxCode } },
   });
   const lineItems = [
     ...(rent > 0 ? [line(rent, `${what}, hyra till värden${p.host_name ? ` ${p.host_name}` : ""}`, TAX_CODES.rent)] : []),
-    ...(p.amount - rent > 0 ? [line(p.amount - rent, "Spazias serviceavgift", TAX_CODES.fee)] : []),
+    ...(p.amount - rent - protection > 0 ? [line(p.amount - rent - protection, "Spazias serviceavgift", TAX_CODES.fee)] : []),
+    ...(protection > 0 ? [line(protection, "Spazia Skydd", TAX_CODES.protection)] : []),
   ];
   const tax = await automaticTax();
   const session = await stripe().checkout.sessions.create({

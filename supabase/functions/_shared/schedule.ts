@@ -20,6 +20,9 @@ export interface SchedulePlan {
   /** The last month of a rental with an end date, charged by the day (kronor), or null. */
   last: number | null;
   last_base: number | null;
+  /** Spazia Skydd's part of a full month and of the last month (0 or missing: not chosen). */
+  monthly_protection?: number | null;
+  last_protection?: number | null;
   title: string;
   host_name: string | null;
 }
@@ -31,7 +34,7 @@ export function scheduleParams(
   opts: {
     customer: string;
     paymentMethod: string | null;
-    products: { rent: string; fee: string };
+    products: { rent: string; fee: string; protection?: string };
     requestId: string;
     now: number;
     automaticTax?: { enabled: true; liability: { type: "self" } };
@@ -44,22 +47,25 @@ export function scheduleParams(
     tax_behavior: "inclusive" as const,
     recurring: { interval: "month" as const },
   });
-  // Rent and Spazia's fee for one month.
-  const items = (total: number, rent: number) => {
+  // Rent, Spazia's fee and (if chosen) Spazia Skydd for one month.
+  const items = (total: number, rent: number, protection = 0) => {
     const base = Math.min(rent, total);
+    const prot = opts.products.protection ? Math.max(0, Math.min(protection, total - base)) : 0;
     return [
       ...(base > 0 ? [{ price_data: price(opts.products.rent, base) }] : []),
-      ...(total - base > 0 ? [{ price_data: price(opts.products.fee, total - base) }] : []),
+      ...(total - base - prot > 0 ? [{ price_data: price(opts.products.fee, total - base - prot) }] : []),
+      ...(prot > 0 ? [{ price_data: price(opts.products.protection!, prot) }] : []),
     ];
   };
   const metadata = { request_id: opts.requestId };
   const phases: Stripe.SubscriptionScheduleCreateParams.Phase[] = [];
 
   if (plan.months === null) {
-    phases.push({ items: items(plan.monthly, plan.monthly_base), metadata });
+    phases.push({ items: items(plan.monthly, plan.monthly_base, plan.monthly_protection ?? 0), metadata });
   } else {
-    if (plan.months > 0) phases.push({ items: items(plan.monthly, plan.monthly_base), duration: { interval: "month", interval_count: plan.months }, metadata });
-    if (plan.last) phases.push({ items: items(plan.last, plan.last_base ?? 0), duration: { interval: "month", interval_count: 1 }, metadata });
+    if (plan.months > 0)
+      phases.push({ items: items(plan.monthly, plan.monthly_base, plan.monthly_protection ?? 0), duration: { interval: "month", interval_count: plan.months }, metadata });
+    if (plan.last) phases.push({ items: items(plan.last, plan.last_base ?? 0, plan.last_protection ?? 0), duration: { interval: "month", interval_count: 1 }, metadata });
   }
   if (phases.length === 0 || phases.some((p) => p.items.length === 0)) return null;
 

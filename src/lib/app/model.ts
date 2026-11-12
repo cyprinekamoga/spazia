@@ -104,6 +104,8 @@ export interface RequestItem {
 
 export interface RequestRow {
   id: string;
+  /** Spazia Skydd: the share of the monthly price, when the renter chose it. */
+  protection_rate?: number | null;
   listing_id: string;
   conversation_id: string;
   host_id: string;
