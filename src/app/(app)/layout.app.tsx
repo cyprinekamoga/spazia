@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: { default: "Spazia", template: "%s | Spazia" },
   robots: { index: false, follow: false },
+  // Installable app (Add to Home Screen); push notifications need it on iPhone.
+  manifest: "/app.webmanifest",
+  appleWebApp: { capable: true, title: "Spazia", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = { themeColor: "#f6f8f9", viewportFit: "cover" };

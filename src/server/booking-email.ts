@@ -58,6 +58,8 @@ export interface NotificationPayload {
   listing_city: string;
   listing_area: string;
   items: NotificationItem[];
+  /** The recipient's devices with push turned on. */
+  push?: { endpoint: string; p256dh: string; auth: string }[] | null;
   /** Message emails: the conversation and the unread messages (oldest first). */
   conversation_id?: string | null;
   unread?: { body: string; created_at: string }[] | null;

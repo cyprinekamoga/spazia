@@ -18,7 +18,8 @@ import type { Config } from "@netlify/functions";
 import { site } from "../../src/lib/site";
 import { buildBookingEmail, type NotificationPayload } from "../../src/server/booking-email";
 import { error, json, readJson, str } from "../../src/server/http";
-import { sendMail, teamAddress } from "../../src/server/mailer";
+import { sendMail, teamAddress, type OutgoingMail } from "../../src/server/mailer";
+import { sendPush, type PushMessage } from "../../src/server/push";
 import { env } from "../../src/server/env";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -33,6 +34,16 @@ async function rpc<T>(name: string, args: Record<string, unknown>): Promise<T> {
   if (!res.ok) throw new Error(`${name}: ${res.status} ${await res.text()}`);
   const text = await res.text();
   return (text ? JSON.parse(text) : null) as T;
+}
+
+/** A short push version of an email: its subject, the first real line, and where its button goes. */
+function pushMessage(mail: OutgoingMail, appUrl: string, p: NotificationPayload): PushMessage {
+  const lines = mail.text.split("\n\n").map((l) => l.trim()).filter(Boolean);
+  const first = (lines[1] ?? "").split("\n")[0];
+  const body = first.length <= 180 ? first : `${first.slice(0, 178).replace(/\s+\S*$/, "")} …`;
+  const button = /https:\/\/\S+/.exec(lines.find((l) => l.includes(appUrl)) ?? "");
+  const url = button ? button[0].replace(appUrl, "") || "/" : "/";
+  return { title: mail.subject, body, url, tag: `${p.kind}-${p.request_id}` };
 }
 
 /** An alert to the team (MAIL_TO): reports, failing emails, stuck payments. */
@@ -87,6 +98,13 @@ export default async function notify(req: Request): Promise<Response> {
   const mail = buildBookingEmail(payload, { appUrl, team: teamAddress() });
   // No address (e.g. a deleted account): mark it as done.
   const sent = mail ? await sendMail(mail) : true;
+
+  // The same news as a push notification on the user's devices (if they turned it on).
+  if (mail && sent && payload.push?.length) {
+    const message = pushMessage(mail, appUrl, payload);
+    const { gone } = await sendPush(payload.push, message, teamAddress());
+    if (gone.length) await rpc("drop_push_subscriptions", { p_id: id, p_token: token, p_endpoints: gone }).catch((err) => console.error("notify: drop push", err));
+  }
   try {
     await rpc("finish_notification", { p_id: id, p_token: token, p_sent: sent });
   } catch (err) {

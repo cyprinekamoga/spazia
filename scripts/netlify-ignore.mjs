@@ -11,7 +11,15 @@ const from = process.env.CACHED_COMMIT_REF;
 const to = process.env.COMMIT_REF;
 
 /** Only used by the app (app.spazia.se). */
-const APP_ONLY = [/^src\/app\/\(app\)\//, /^src\/app\/[^/]+\.app\.tsx?$/, /^src\/components\/app\//, /^src\/lib\/app\//, /^src\/content\/app\.ts$/, /^supabase\//];
+const APP_ONLY = [
+  /^src\/app\/\(app\)\//,
+  /^src\/app\/[^/]+\.app\.tsx?$/,
+  /^src\/components\/app\//,
+  /^src\/lib\/app\//,
+  /^src\/content\/(app|app-en|agreement|town-centres)\.ts$/,
+  /^supabase\//,
+  /^public\/(sw\.js|app\.webmanifest|app-icons\/)/,
+];
 /** Only used by the landing site (spazia.se). */
 const SITE_ONLY = [
   /^src\/app\/\((sv|en|admin)\)\//,
