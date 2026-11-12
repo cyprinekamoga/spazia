@@ -2,8 +2,9 @@
 
 import { supabase } from "../supabase";
 import { must } from "./session";
-import type { AppMode, Listing, ListingBlock, ListingPhoto, ListingPrivate, ListingSpace, Message, Profile, ProfilePrivate, RequestRow } from "./model";
+import { renterPrice, type AppMode, type Feature, type Listing, type ListingBlock, type ListingPhoto, type ListingPrivate, type ListingSpace, type Message, type Profile, type ProfilePrivate, type RequestRow } from "./model";
 import type { CategoryId } from "@/content/categories";
+import { FEES } from "@/content/pricing";
 
 export interface ListingBundle {
   listing: Listing;
@@ -149,7 +150,7 @@ export async function fetchCounterpartPrivate(userId: string): Promise<ProfilePr
   return must(await supabase().from("profile_private").select("id, last_name, phone").eq("id", userId).maybeSingle()) as ProfilePrivate | null;
 }
 
-export type SearchResult = Pick<Listing, "id" | "host_id" | "title" | "city" | "area_name" | "space_type" | "size_m2" | "heated" | "published_at" | "approx_lat" | "approx_lng"> & {
+export type SearchResult = Pick<Listing, "id" | "host_id" | "title" | "city" | "area_name" | "space_type" | "size_m2" | "heated" | "features" | "access" | "published_at" | "approx_lat" | "approx_lng"> & {
   listing_photos: Pick<ListingPhoto, "path" | "position">[];
   listing_spaces: Pick<ListingSpace, "category" | "capacity" | "host_price_month" | "hourly_price">[];
 };
@@ -159,22 +160,57 @@ function cleanTerm(term: string): string {
   return term.replace(/[,()*%\\:."']/g, " ").replace(/\s+/g, " ").trim().slice(0, 60);
 }
 
+export interface SearchFilters {
+  /** Highest monthly price the renter pays (service fee included). */
+  maxPrice: number | null;
+  minSize: number | null;
+  heated: boolean;
+  anytime: boolean;
+  features: Feature[];
+}
+
+export const NO_FILTERS: SearchFilters = { maxPrice: null, minSize: null, heated: false, anytime: false, features: [] };
+
 /**
- * Published listings, optionally by place (city or area) and by what they take.
- * `exclude` leaves out the logged-in user's own listings (empty when logged out).
+ * Published listings, optionally by place (city or area), by what they take
+ * and by the filters. `exclude` leaves out the logged-in user's own listings
+ * (empty when logged out).
  */
-export async function searchListings({ place, category, exclude }: { place: string; category: CategoryId | null; exclude: string }): Promise<SearchResult[]> {
+export async function searchListings({
+  place,
+  category,
+  exclude,
+  filters = NO_FILTERS,
+}: {
+  place: string;
+  category: CategoryId | null;
+  exclude: string;
+  filters?: SearchFilters;
+}): Promise<SearchResult[]> {
   let q = supabase()
     .from("listings")
-    .select("id, host_id, title, city, area_name, space_type, size_m2, heated, published_at, approx_lat, approx_lng, listing_photos(path, position), listing_spaces!inner(category, capacity, host_price_month, hourly_price)")
+    .select(
+      "id, host_id, title, city, area_name, space_type, size_m2, heated, features, access, published_at, approx_lat, approx_lng, listing_photos(path, position), listing_spaces!inner(category, capacity, host_price_month, hourly_price)",
+    )
     .eq("status", "published")
     .order("published_at", { ascending: false })
-    .limit(60);
+    .limit(100);
   if (exclude) q = q.neq("host_id", exclude);
   const term = cleanTerm(place);
   if (term) q = q.or(`city.ilike.*${term}*,area_name.ilike.*${term}*`);
   if (category) q = q.eq("listing_spaces.category", category);
-  return must(await q) as SearchResult[];
+  if (filters.minSize) q = q.gte("size_m2", filters.minSize);
+  if (filters.heated) q = q.in("heated", ["yes", "frostfree"]);
+  if (filters.anytime) q = q.eq("access", "anytime");
+  if (filters.features.length) q = q.contains("features", filters.features);
+  // The renter's price is the host's plus the service fee: compare host prices
+  // (rounded up, so nothing at the limit is lost), then exactly below.
+  if (filters.maxPrice) q = q.lte("listing_spaces.host_price_month", Math.ceil(filters.maxPrice / (1 + FEES.renterServiceFee)));
+  const rows = must(await q) as SearchResult[];
+  if (!filters.maxPrice) return rows;
+  return rows
+    .map((r) => ({ ...r, listing_spaces: r.listing_spaces.filter((s) => s.host_price_month !== null && renterPrice(s.host_price_month) <= filters.maxPrice!) }))
+    .filter((r) => r.listing_spaces.length > 0);
 }
 
 export type Availability = { category: CategoryId; capacity: number; available: number };
