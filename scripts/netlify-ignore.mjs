@@ -33,7 +33,15 @@ const SITE_ONLY = [
   /^public\/photos\//,
 ];
 /** Used by neither build. */
-const NEITHER = [/^docs\//, /\.md$/, /^\.github\//, /^scripts\/(build-images|netlify-ignore)\.mjs$/];
+const NEITHER = [
+  /^docs\//,
+  /\.md$/,
+  /^\.github\//,
+  /^scripts\/(build-images|netlify-ignore)\.mjs$/,
+  /^scripts\/db-test\.sh$/,
+  /\.test\.ts$/,
+  /^vitest\.config\.ts$/,
+];
 
 function build(reason) {
   console.log(`[${target}] build: ${reason}`);

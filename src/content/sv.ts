@@ -546,7 +546,7 @@ export const sv = {
       },
       {
         title: "Cookies och lagring i webbläsaren",
-        text: "På spazia.se använder vi bara nödvändig lagring för att sajten ska fungera, för att komma ihåg ditt cookieval och, fram till att du anmäler dig, vilken länk du kom från. Meta-pixeln, som mäter våra annonser, laddas bara om du väljer ”Acceptera alla”. Du kan ändra ditt val när som helst via länken Cookieinställningar längst ned på sidan. I appen sparar webbläsaren din inloggning och om du senast använde appen som värd eller hyresgäst. Det behövs för att appen ska fungera, och appen använder inga spårningscookies.",
+        text: "På spazia.se använder vi bara nödvändig lagring för att sajten ska fungera, för att komma ihåg ditt cookieval och, fram till att du anmäler dig, vilken länk du kom från. Meta-pixeln, som mäter våra annonser, laddas bara om du väljer ”Acceptera alla”. Du kan ändra ditt val när som helst via länken Cookieinställningar längst ned på sidan. I appen sparar webbläsaren din inloggning och om du senast använde appen som värd eller hyresgäst. Det behövs för att appen ska fungera, och appen använder inga spårningscookies. Om något går fel i appen skickas felmeddelandet, sidans adress och vilken webbläsare det gällde till oss, så att vi kan rätta felet. Inga uppgifter om dig följer med.",
         bullets: [] as string[],
       },
       {

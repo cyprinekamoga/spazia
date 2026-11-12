@@ -4,6 +4,7 @@ import "../globals.css";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { AppLanguageGate } from "@/components/app/LanguageGate";
+import { ErrorReporter } from "@/components/app/ErrorReporter";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="sv">
       <body className="min-h-dvh bg-snow text-ink">
+        <ErrorReporter />
         <AppLanguageGate>{children}</AppLanguageGate>
       </body>
     </html>

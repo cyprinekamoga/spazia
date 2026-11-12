@@ -548,7 +548,7 @@ export const en: Dictionary = {
       },
       {
         title: "Cookies and browser storage",
-        text: "On spazia.se we only use necessary storage so the site works, to remember your cookie choice and, until you sign up, which link brought you here. The Meta pixel, which measures our ads, only loads if you choose “Accept all”. You can change your choice at any time with the Cookie settings link at the bottom of the page. In the app, your browser stores your login and whether you last used the app as a host or a renter. This is needed for the app to work, and the app uses no tracking cookies.",
+        text: "On spazia.se we only use necessary storage so the site works, to remember your cookie choice and, until you sign up, which link brought you here. The Meta pixel, which measures our ads, only loads if you choose “Accept all”. You can change your choice at any time with the Cookie settings link at the bottom of the page. In the app, your browser stores your login and whether you last used the app as a host or a renter. This is needed for the app to work, and the app uses no tracking cookies. If something goes wrong in the app, the error message, the page address and which browser it was are sent to us so we can fix it. Nothing about you is included.",
         bullets: [],
       },
       {

@@ -10,7 +10,10 @@
     "start": "npx serve out",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "images": "node scripts/build-images.mjs"
+    "images": "node scripts/build-images.mjs",
+    "test": "vitest run",
+    "test:db": "scripts/db-test.sh",
+    "test:functions": "cd supabase/functions && deno test --no-config --node-modules-dir=none _shared/ && deno check --no-config --node-modules-dir=none payments/index.ts payments-worker/index.ts stripe-webhook/index.ts"
   },
   "dependencies": {
     "@fontsource-variable/finlandica": "^5.3.0",
@@ -38,6 +41,7 @@
     "postcss": "^8.5.32",
     "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "3.2.4"
   }
 }

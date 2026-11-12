@@ -110,6 +110,14 @@ npm run build      # static export to ./out
 npm run lint && npm run typecheck
 ```
 
+### Tests
+
+GitHub Actions runs all of these on every push (`.github/workflows/checks.yml`); nothing there deploys.
+
+- `npm test`: unit tests (Vitest) for prices, SEO tags, emails, search filters and error reports.
+- `npm run test:db`: starts a throwaway local Postgres, adds stand-ins for what Supabase provides (logins, storage, scheduled jobs), applies every migration and runs the SQL tests in `supabase/tests/`. Needs Postgres installed locally; the real project is never touched.
+- `npm run test:functions`: Deno tests and type checks for the payment functions in `supabase/functions/`. Needs Deno.
+
 ## Brand
 
 | What | Details |
