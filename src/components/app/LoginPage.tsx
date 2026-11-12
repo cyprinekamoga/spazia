@@ -19,7 +19,7 @@ export function safeNext(value: string | null, fallback = "/konto"): string {
   return value && value.startsWith("/") && !value.startsWith("//") ? value : fallback;
 }
 
-type Providers = { google: boolean; apple: boolean };
+type Providers = { google: boolean };
 
 function GoogleIcon() {
   return (
@@ -32,20 +32,12 @@ function GoogleIcon() {
   );
 }
 
-function AppleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
-      <path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.7-3.19-1.73-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.1 8.79.73 1.06 1.6 2.25 2.74 2.21 1.1-.04 1.51-.71 2.84-.71 1.32 0 1.7.71 2.86.69 1.18-.02 1.93-1.08 2.65-2.15.84-1.23 1.18-2.42 1.2-2.48-.03-.01-2.3-.88-2.32-3.5zM14.18 6.13c.6-.73 1.01-1.75.9-2.76-.87.04-1.92.58-2.54 1.31-.56.65-1.05 1.69-.92 2.68.97.08 1.96-.49 2.56-1.23z" />
-    </svg>
-  );
-}
-
 export function LoginPage() {
   const router = useRouter();
   const params = useSearchParams();
   const next = safeNext(params.get("next"));
   const session = useSession();
-  const [providers, setProviders] = useState<Providers>({ google: true, apple: false });
+  const [providers, setProviders] = useState<Providers>({ google: true });
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [step, setStep] = useState<"start" | "sent">("start");
@@ -58,11 +50,11 @@ export function LoginPage() {
     if (session.status === "signedIn") router.replace(next);
   }, [session.status, next, router]);
 
-  // Which social logins are switched on in Supabase.
+  // Whether Google login is switched on in Supabase.
   useEffect(() => {
     fetch(`${site.appSupabaseUrl}/auth/v1/settings`, { headers: { apikey: site.appSupabaseKey } })
       .then((r) => r.json())
-      .then((s: { external?: Record<string, boolean> }) => setProviders({ google: Boolean(s.external?.google), apple: Boolean(s.external?.apple) }))
+      .then((s: { external?: Record<string, boolean> }) => setProviders({ google: Boolean(s.external?.google) }))
       .catch(() => {});
   }, []);
 
@@ -74,10 +66,10 @@ export function LoginPage() {
 
   const redirectTo = () => `${window.location.origin}/logga-in?next=${encodeURIComponent(next)}`;
 
-  async function social(provider: "google" | "apple") {
+  async function social(provider: "google") {
     setError(null);
     if (!providers[provider]) {
-      setError(fill(t.errors.provider, { provider: provider === "google" ? "Google" : "Apple" }));
+      setError(fill(t.errors.provider, { provider: "Google" }));
       return;
     }
     setBusy(true);
@@ -139,12 +131,6 @@ export function LoginPage() {
                 <GoogleIcon />
                 {t.google}
               </button>
-              {providers.apple && (
-                <button type="button" onClick={() => social("apple")} disabled={busy} className="btn w-full bg-black text-white hover:bg-night">
-                  <AppleIcon />
-                  {t.apple}
-                </button>
-              )}
             </div>
             <div className="my-6 flex items-center gap-3 text-sm text-muted">
               <span className="h-px flex-1 bg-line" />

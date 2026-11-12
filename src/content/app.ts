@@ -11,7 +11,6 @@ const appTextSv = {
     title: "Logga in eller skapa konto",
     lead: "Samma konto för att hyra ut och för att hyra plats.",
     google: "Fortsätt med Google",
-    apple: "Fortsätt med Apple",
     or: "eller",
     email: "E-post",
     emailPlaceholder: "namn@exempel.se",

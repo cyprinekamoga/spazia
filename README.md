@@ -49,7 +49,7 @@ The pages are built on Supabase (project `spazia`, region Stockholm). They are s
 
 | Page | What it does |
 |---|---|
-| `/logga-in` | Log in or create an account: Google, email (link or 6-digit code), and Apple once it's switched on in Supabase |
+| `/logga-in` | Log in or create an account: Google or email (link or 6-digit code) |
 | `/vard` | **Idag:** things to do, requests waiting for an answer (24 h), current and upcoming rentals, monthly income |
 | `/vard/annons` | Listing wizard in 8 steps: type, address, about the space, what it takes (capacity and price), photos, title, access and terms, review and publish. Each step is saved, so the host can stop and continue later. |
 | `/vard/annonser` | The host's listings: continue a draft, edit, preview, pause |

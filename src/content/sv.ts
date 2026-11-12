@@ -533,7 +533,7 @@ export const sv = {
           "Strato: skickar våra mejl.",
           "OpenStreetMap och OpenFreeMap: när en värd sparar adressen skickas bara postnummer och ort till OpenStreetMap för att få ett ungefärligt läge till sökkartan, och kartbilderna hämtas från OpenFreeMap när du öppnar kartan. Gatuadressen skickas aldrig.",
           "Aviseringstjänster: slår du på aviseringar i appen skickas de via den tjänst din webbläsare eller telefon använder (till exempel Google, Apple eller Mozilla). Aviseringen innehåller bara en kort text om vad som har hänt, och du kan stänga av den i menyn när som helst.",
-          "Google och Apple: om du väljer att logga in med Google eller Apple. Då gäller också deras egna villkor.",
+          "Google: om du väljer att logga in med Google. Då gäller också Googles egna villkor.",
           "Meta: bara om du godkänner marknadsföringscookies på spazia.se, för att mäta våra annonser.",
           "Vissa leverantörer kan behandla uppgifter utanför EU/EES. Då sker det med stöd av EU-kommissionens standardavtalsklausuler eller EU–US Data Privacy Framework.",
         ],

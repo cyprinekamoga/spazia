@@ -535,7 +535,7 @@ export const en: Dictionary = {
           "Strato: sends our emails.",
           "OpenStreetMap and OpenFreeMap: when a host saves the address, only the postal code and town are sent to OpenStreetMap to get an approximate position for the search map, and the map images are loaded from OpenFreeMap when you open the map. The street address is never sent.",
           "Notification services: if you turn on notifications in the app, they are sent through the service your browser or phone uses (for example Google, Apple or Mozilla). A notification only holds a short text about what happened, and you can turn it off in the menu at any time.",
-          "Google and Apple: if you choose to log in with Google or Apple. Their own terms then also apply.",
+          "Google: if you choose to log in with Google. Google's own terms then also apply.",
           "Meta: only if you accept marketing cookies on spazia.se, to measure our ads.",
           "Some suppliers may process data outside the EU/EEA. When they do, it is under the European Commission's standard contractual clauses or the EU–US Data Privacy Framework.",
         ],

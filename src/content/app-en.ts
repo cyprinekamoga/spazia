@@ -9,7 +9,6 @@ export const appTextEn: AppText = {
     title: "Log in or create an account",
     lead: "One account for letting space and for renting it.",
     google: "Continue with Google",
-    apple: "Continue with Apple",
     or: "or",
     email: "Email",
     emailPlaceholder: "name@example.com",

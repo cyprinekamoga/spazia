@@ -7,7 +7,7 @@
 -- bookings, messages and agreements, the bookkeeping records (7 years) and
 -- the platform report to Skatteverket (host_tax_info) must stay: name, about,
 -- photo, last name, phone, access instructions, push devices and the login
--- (email, Google/Apple identities, sessions) are removed, listings without
+-- (email, Google identity, sessions) are removed, listings without
 -- bookings are deleted and the rest are paused, and the account is locked.
 --
 -- Deletion is refused while a rental is running or coming up, a request is
@@ -106,7 +106,7 @@ begin
   delete from private.admins where user_id = me;
   update private.stripe_customers set payment_method = null, card_brand = null, card_last4 = null, card_exp = null where user_id = me;
 
-  -- The login: no email, phone, Google/Apple link or session left, and locked.
+  -- The login: no email, phone, Google link or session left, and locked.
   delete from auth.identities where user_id = me;
   delete from auth.sessions where user_id = me;
   delete from auth.refresh_tokens where user_id = me::text;
