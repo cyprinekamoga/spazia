@@ -4,7 +4,8 @@
  * (private.schedule_plan), so it can be tested without Deno.
  *
  * Every month has two lines, VAT included: the host's rent (no VAT from
- * Spazia, passed on in the host's name) and Spazia's service fee (25 % VAT).
+ * Spazia, passed on in the host's name) and Spazia's service fee (25 % VAT),
+ * plus a third for Spazia Skydd when the renter chose it.
  */
 import type { Stripe } from "./deps.ts";
 

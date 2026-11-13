@@ -8,6 +8,7 @@
  *   card_done   renter: after returning from Checkout   → { ok }    { session }
  *   pay         renter: pay a booking or a month         → { url }   { payment }
  *   pay_done    renter: after returning from Checkout   → { paid }  { payment }
+ *   billing     renter: company details changed (invoices) → { ok }
  *
  * Secrets: STRIPE_SECRET_KEY. Optional: APP_URL (default https://app.spazia.se).
  */
@@ -226,7 +227,7 @@ async function pay(user: UserRow, body: Record<string, unknown>): Promise<{ url:
   const customer = await ensureCustomer(user);
   const what = p.kind === "hour" ? `Parkering: ${p.title}` : `Förvaring: ${p.title} (${p.period_start} – ${p.period_end})`;
   // Two lines, VAT included: the host's rent (passed on in the host's name, no VAT
-  // from Spazia) and Spazia's service fee (VAT).
+  // from Spazia) and Spazia's service fee (VAT); a third for Spazia Skydd if chosen.
   const rent = Math.min(p.base_amount ?? p.amount, p.amount);
   const protection = Math.max(0, Math.min(p.protection_amount ?? 0, p.amount - rent));
   const line = (kr: number, name: string, taxCode: string) => ({

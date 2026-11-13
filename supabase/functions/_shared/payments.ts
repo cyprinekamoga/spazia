@@ -58,7 +58,6 @@ export async function getUser(userId: string): Promise<UserRow | null> {
   return row ?? null;
 }
 
-/** The renter's Stripe customer, created the first time it's needed. */
 interface Company {
   company_name: string;
   company_org_number: string;
@@ -82,6 +81,7 @@ function invoiceIdentity(user: UserRow, company: Company | null) {
   };
 }
 
+/** The renter's Stripe customer, created the first time it's needed. */
 export async function ensureCustomer(user: UserRow): Promise<string> {
   const [existing] = await sql<{ customer_id: string }[]>`select customer_id from private.stripe_customers where user_id = ${user.id}`;
   if (existing) return existing.customer_id;
