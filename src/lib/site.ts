@@ -17,7 +17,7 @@ export const site = {
   legalName: "Spazia",
   orgNumber: "20061129-9595" as string,
   /** Postal address, one line. Shown only when filled in. */
-  address: "" as string,
+  address: "Vänortsvägen 70, Luleå" as string,
 
   /* Integrations. Public IDs, so they can live in the code; each can be
      overridden with an environment variable in Netlify. */
