@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { categories } from "@/content/categories";
 import { FEES } from "@/content/pricing";
 import { renterPrice } from "@/lib/app/model";
-import { SERVICE_FEE } from "../../netlify/edge-functions/listing-shared";
+import { SERVICE_FEE } from "../../netlify/lib/listing-shared";
 import { clip, listingSeo, lowestPrice, renterPriceFor, SEO_CATEGORY_NAMES, seoHeadTags } from "./listing-seo";
 
 const listing = {

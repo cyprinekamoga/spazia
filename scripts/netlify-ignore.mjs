@@ -19,7 +19,7 @@ const APP_ONLY = [
   /^src\/content\/(app|app-en|agreement|town-centres)\.ts$/,
   /^supabase\//,
   /^public\/(sw\.js|app\.webmanifest|app-icons\/)/,
-  /^netlify\/edge-functions\//,
+  /^netlify\/(edge-functions|lib)\//,
 ];
 /** Only used by the landing site (spazia.se). */
 const SITE_ONLY = [

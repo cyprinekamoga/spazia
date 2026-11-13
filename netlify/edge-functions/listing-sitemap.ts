@@ -4,7 +4,7 @@
  * robots.txt. Cached on the CDN for an hour.
  */
 import { listingPath } from "../../src/lib/listing-seo.ts";
-import { APP_URL, isAppHost, publicGet, type EdgeContext } from "./listing-shared.ts";
+import { APP_URL, isAppHost, publicGet, type EdgeContext } from "../lib/listing-shared.ts";
 
 export default async function listingSitemap(req: Request, context: EdgeContext): Promise<Response> {
   if (!isAppHost(new URL(req.url).host)) return context.next();

@@ -9,7 +9,7 @@
  * background), so the function rarely runs and the database is rarely asked.
  */
 import { listingSeo, seoHeadTags, type SeoLang, type SeoListing } from "../../src/lib/listing-seo.ts";
-import { APP_URL, isAppHost, publicGet, SERVICE_FEE, supabaseUrl, UUID, type EdgeContext } from "./listing-shared.ts";
+import { APP_URL, isAppHost, publicGet, SERVICE_FEE, supabaseUrl, UUID, type EdgeContext } from "../lib/listing-shared.ts";
 
 const SELECT =
   "id,title,description,city,area_name,size_m2,updated_at,listing_spaces(category,capacity,host_price_month,hourly_price),listing_photos(path,position)";
