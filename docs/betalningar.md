@@ -69,7 +69,27 @@ on conflict (key) do update set value = excluded.value;
 
 ## 4. Skarpt läge
 
-Skapa en begränsad nyckel och samma två webhooks i skarpt läge, och byt de tre hemligheterna i Supabase. Inget annat behöver ändras.
+I den här ordningen:
+
+1. **Aktivera Stripe-kontot** (ni): *Activate payments* i skarpt läge. Enskild firma, org.nr, adress, telefon, webbplats `https://spazia.se`, beskrivning av tjänsten, er legitimation och Spazias bankkonto (IBAN). Statement descriptor `SPAZIA.SE`. Momsregistreringsnumret under *Settings → Business → Tax details*.
+2. **Connect i skarpt läge** (ni): *Connect → Get started → Marketplace*, plattformsprofilen, ansvar för förluster och avgifter (Spazia), utbetalningar veckovis på måndagar. Betalsätt, Billing-inställningar, kvitton och utseende som i avsnitt 1.
+3. **Stripe Tax** (ni): *Tax → Registrations* → Sverige, med er momsregistrering.
+4. **Nyckel och webhooks i skarpt läge** (ni): samma begränsade nyckel och samma två event destinations som i avsnitt 2, men i skarpt läge. Lägg in `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` och `STRIPE_CONNECT_WEBHOOK_SECRET` i Supabase och ersätt sandbox-värdena.
+5. **Rensa sandbox-data** (Claude): kopplingar till sandlådans kunder och värdkonton, testbetalningar och testscheman, och sparade sandbox-produkter, så att skarpa produkter skapas av sig själva. Bara testkonton berörs.
+6. **Moms och testkonto** (Claude): `stripe_tax` på, och ert eget konto som enda testkonto.
+7. **En liten skarp betalning** (ni och Claude): en förfrågan på några kronor mellan två egna konton, betala med ett riktigt kort, kontrollera fakturan och överföringen, återbetala.
+8. **Slå på** (Claude): `payments_enabled = 'true'`.
+
+Rensningen (steg 5), för kännedom:
+
+```sql
+delete from private.settings where key in ('stripe_product_rent', 'stripe_product_fee', 'stripe_product_protection');
+delete from public.payments where renter_id in (select id from auth.users where lower(email) = any(<testkonton>));
+update public.requests set stripe_schedule = null, stripe_subscription = null, stripe_sync_needed = false
+ where renter_id in (select id from auth.users where lower(email) = any(<testkonton>));
+delete from private.stripe_customers where user_id in (...testkonton...);
+delete from private.stripe_accounts where user_id in (...testkonton...);
+```
 
 ## Så fungerar det
 
