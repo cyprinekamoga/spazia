@@ -12,6 +12,8 @@ import { automaticTax, ensureCustomer, getUser, invoicePaid, paymentFailed, stor
 import { scheduleParams, type SchedulePlan } from "../_shared/schedule.ts";
 import { bookTxn, type PaymentSplit } from "../_shared/bookkeeping.ts";
 
+type JsonValue = Parameters<typeof sql.json>[0];
+
 const BATCH = 25;
 
 async function validToken(token: unknown): Promise<boolean> {
@@ -364,14 +366,15 @@ async function bookkeeping(): Promise<number> {
         { reverseCharge: state?.rc !== "false", now },
       );
       if (result.kind === "book") {
-        await sql`select private.acc_book(${result.voucher.date}::date, ${result.voucher.description}, ${JSON.stringify(result.voucher.lines)}::jsonb,
+        // sql.json: a JSON value as such (a JSON string would be encoded once more).
+        await sql`select private.acc_book(${result.voucher.date}::date, ${result.voucher.description}, ${sql.json(result.voucher.lines as unknown as JsonValue)},
                                           'S', 'stripe', ${ref}, null, null, 'Stripe (automatiskt)', true)`;
         booked++;
       } else if (result.kind === "manual") {
         const source = typeof t.source === "string" ? t.source : (t.source?.id ?? null);
         await sql`insert into private.acc_unbooked (txn_id, kind, amount, occurred_at, description, detail)
                   values (${t.id}, ${t.type}, ${t.amount / 100}, to_timestamp(${t.created}), ${t.description ?? ""},
-                          ${JSON.stringify({ reason: result.reason, fee: t.fee / 100, source, charge })}::jsonb)
+                          ${sql.json({ reason: result.reason, fee: t.fee / 100, source, charge })})
                   on conflict (txn_id) do nothing`;
       }
     } catch (err) {
