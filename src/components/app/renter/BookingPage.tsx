@@ -8,7 +8,7 @@ import { useState, type ReactNode } from "react";
 import { appText } from "@/content/app";
 import { getCategory } from "@/content/categories";
 import { fill } from "@/lib/i18n";
-import { fetchCounterpartPrivate, fetchListingPrivate, fetchRenterRequest } from "@/lib/app/data";
+import { fetchCounterpartPrivate, fetchListingAddress, fetchListingPrivate, fetchRenterRequest } from "@/lib/app/data";
 import { bookingHours, effectiveStatus, formatDay, formatKr, formatMoment, periodText, renterCancelDeadline, renterCanCancel, renterHourlyTotal, renterMonthly, renterPrice, timeLeft, todayIso } from "@/lib/app/model";
 import { fetchProtectionOffer, fetchRequestPayments, protectionAmount, type Payment } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
@@ -47,9 +47,14 @@ export function BookingPage() {
     const r = await fetchRenterRequest(id);
     const payments: Payment[] = r?.payment_required ? await fetchRequestPayments(r.id) : [];
     const offer = r?.protection_rate ? await fetchProtectionOffer() : null;
-    if (!r || r.status !== "accepted") return { r, priv: null, hostPriv: null, payments, offer };
-    const [priv, hostPriv] = await Promise.all([fetchListingPrivate(r.listing_id), fetchCounterpartPrivate(r.host_id)]);
-    return { r, priv, hostPriv, payments, offer };
+    if (!r || r.status !== "accepted") return { r, addr: null, priv: null, hostPriv: null, payments, offer };
+    // The address shows once accepted; how to get in and the phone number wait for payment (the database decides).
+    const [addr, priv, hostPriv] = await Promise.all([
+      fetchListingAddress(r.listing_id).catch(() => null),
+      fetchListingPrivate(r.listing_id),
+      fetchCounterpartPrivate(r.host_id),
+    ]);
+    return { r, addr, priv, hostPriv, payments, offer };
   }, id);
   const [now] = useState(() => Date.now());
   const [busy, setBusy] = useState(false);
@@ -65,7 +70,8 @@ export function BookingPage() {
   const l = r.listing;
   const place = [l?.area_name, l?.city].filter(Boolean).join(", ");
   const priv = data?.priv;
-  const address = priv ? [priv.street_address, [priv.postal_code, l?.city].filter(Boolean).join(" ")].filter(Boolean).join(", ") : "";
+  const addr = data?.addr ?? priv;
+  const address = addr?.street_address ? [addr.street_address, [addr.postal_code, l?.city].filter(Boolean).join(" ")].filter(Boolean).join(", ") : "";
 
   async function cancel(confirmText: string) {
     if (!window.confirm(confirmText)) return;
@@ -165,7 +171,7 @@ export function BookingPage() {
         </Link>
       )}
 
-      {status === "accepted" && !unpaid ? (
+      {status === "accepted" ? (
         <div className="card divide-y divide-line">
           <Row icon={MapPin} label={t.address}>
             <p className="font-semibold">{address || place}</p>
@@ -180,10 +186,16 @@ export function BookingPage() {
               </a>
             )}
           </Row>
-          {priv?.access_instructions && (
+          {unpaid ? (
             <Row icon={KeyRound} label={t.access}>
-              <p className="leading-relaxed whitespace-pre-line">{priv.access_instructions}</p>
+              <p className="leading-relaxed text-muted">{fill(t.accessAfterPayment, { name: hostName })}</p>
             </Row>
+          ) : (
+            priv?.access_instructions && (
+              <Row icon={KeyRound} label={t.access}>
+                <p className="leading-relaxed whitespace-pre-line">{priv.access_instructions}</p>
+              </Row>
+            )
           )}
           {l?.access && (
             <Row icon={Clock3} label={t.accessHours}>
@@ -203,7 +215,7 @@ export function BookingPage() {
         status === "pending" && !isHold && (
           <p className="flex gap-2 rounded-2xl bg-frost/70 p-4 text-[0.95rem] text-ink">
             <KeyRound size={18} className="mt-0.5 shrink-0 text-brand" aria-hidden="true" />
-            {t.addressLater}
+            {r.payment_required ? t.addressLaterPaid : t.addressLater}
           </p>
         )
       )}

@@ -78,7 +78,12 @@ export function englishDraft(p: NotificationPayload, links: { host: string; rent
     case "request_accepted":
       return {
         subject: `${name} has accepted your request`,
-        intro: [hello, `${name} has accepted your request for “${p.listing_title}”. You can now see the address, how to get in and ${name}'s phone number in the app.`],
+        intro: [
+          hello,
+          p.payment && p.payment.status !== "paid"
+            ? `${name} has accepted your request for “${p.listing_title}”. You can now see the address in the app. How to get in and ${name}'s phone number are shown there once the first payment has gone through.`
+            : `${name} has accepted your request for “${p.listing_title}”. You can now see the address, how to get in and ${name}'s phone number in the app.`,
+        ],
         rows: [["Place", place(p)], ["What", itemsText(p.items)], ["Period", period(p)]],
         button: { href: links.renter, label: "View the booking" },
       };

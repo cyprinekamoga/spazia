@@ -7,7 +7,7 @@ import { useState } from "react";
 import { AGREEMENT_VERSION, agreementSections, type AgreementData, type AgreementListing } from "@/content/agreement";
 import { appText } from "@/content/app";
 import { fill } from "@/lib/i18n";
-import { fetchCounterpartPrivate, fetchListingBundle, fetchListingPrivate, fetchMyProfile } from "@/lib/app/data";
+import { fetchCounterpartPrivate, fetchListingAddress, fetchListingBundle, fetchMyProfile } from "@/lib/app/data";
 import { formatMoment, type AgreementSnapshot, type AppMode, type Listing, type Profile, type RequestRow } from "@/lib/app/model";
 import { must, useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
@@ -118,7 +118,7 @@ export function AgreementPage({ mode }: { mode: AppMode }) {
     const accepted = r.status === "accepted";
     const [bundle, priv, other, me] = await Promise.all([
       r.agreement ? Promise.resolve(null) : fetchListingBundle(r.listing_id),
-      accepted ? fetchListingPrivate(r.listing_id).catch(() => null) : Promise.resolve(null),
+      accepted ? fetchListingAddress(r.listing_id).catch(() => null) : Promise.resolve(null),
       accepted ? fetchCounterpartPrivate(uid === r.host_id ? r.renter_id : r.host_id).catch(() => null) : Promise.resolve(null),
       fetchMyProfile(uid),
     ]);

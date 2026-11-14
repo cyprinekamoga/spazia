@@ -140,7 +140,12 @@ export async function fetchRenterRequest(id: string): Promise<RenterRequest | nu
   return must(await supabase().from("requests").select(RENTER_REQUEST_SELECT).eq("id", id).maybeSingle()) as RenterRequest | null;
 }
 
-/** Address and access instructions: readable once the host has accepted. */
+/** The exact address alone: for the host, and for a renter once the host has accepted (paid or not). */
+export async function fetchListingAddress(listingId: string): Promise<Pick<ListingPrivate, "street_address" | "postal_code"> | null> {
+  return must(await supabase().rpc("listing_address", { p_listing: listingId })) as Pick<ListingPrivate, "street_address" | "postal_code"> | null;
+}
+
+/** Address and access instructions: readable once the host has accepted, and paid when paid through Spazia. */
 export async function fetchListingPrivate(listingId: string): Promise<ListingPrivate | null> {
   return must(await supabase().from("listing_private").select("*").eq("listing_id", listingId).maybeSingle()) as ListingPrivate | null;
 }

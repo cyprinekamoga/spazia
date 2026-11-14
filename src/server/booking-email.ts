@@ -188,7 +188,12 @@ export function buildBookingEmail(p: NotificationPayload, opts: { appUrl: string
     case "request_accepted":
       d = {
         subject: `${name} har godkänt din förfrågan`,
-        intro: [hello, `${name} har godkänt din förfrågan om ”${p.listing_title}”. Nu ser du adressen, hur du kommer in och ${name}s telefonnummer i appen.`],
+        intro: [
+          hello,
+          p.payment && p.payment.status !== "paid"
+            ? `${name} har godkänt din förfrågan om ”${p.listing_title}”. Nu ser du adressen i appen. Hur du kommer in och ${name}s telefonnummer visas där när den första betalningen har gått igenom.`
+            : `${name} har godkänt din förfrågan om ”${p.listing_title}”. Nu ser du adressen, hur du kommer in och ${name}s telefonnummer i appen.`,
+        ],
         rows: [["Plats", place(p)], ["Vad", itemsText(p.items)], ["Period", period(p)]],
         button: { href: renterLink, label: "Visa bokningen" },
       };
