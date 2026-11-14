@@ -267,12 +267,21 @@ async function refund(): Promise<number> {
       }
       let refundId: string;
       if (p.stripe_invoice) {
-        // Invoices are refunded with a credit note, so Stripe Tax reverses the VAT too.
+        // Invoices are refunded with a credit note that credits every line in full (rent,
+        // Spazia's fee, Spazia Skydd), so Stripe Tax reverses the VAT on the fee as well.
+        // A credit note with only a total reverses no VAT. Refunds are always for the whole
+        // payment; the preview gives the exact total to refund.
+        const items = await s.invoices.listLineItems(p.stripe_invoice, { limit: 100 });
+        const lines = items.data.map((l) => ({ type: "invoice_line_item" as const, invoice_line_item: l.id!, quantity: l.quantity ?? 1 }));
+        const preview = await s.creditNotes.preview({ invoice: p.stripe_invoice, lines });
         const note = await s.creditNotes.create(
-          { invoice: p.stripe_invoice, amount: ore(p.refund_amount), refund_amount: ore(p.refund_amount), reason: "order_change", metadata: { payment_id: p.id } },
-          { idempotencyKey: `credit-note-${p.id}` },
+          { invoice: p.stripe_invoice, lines, refund_amount: preview.total, reason: "order_change", metadata: { payment_id: p.id } },
+          { idempotencyKey: `credit-note-lines-${p.id}` },
         );
         refundId = note.id;
+        if (preview.total !== ore(p.refund_amount)) {
+          console.warn(`payments-worker: refund ${p.id} credited ${preview.total / 100} kr, asked ${p.refund_amount} kr`);
+        }
       } else {
         const r = await s.refunds.create(
           { payment_intent: p.stripe_payment_intent!, amount: ore(p.refund_amount), metadata: { payment_id: p.id } },
