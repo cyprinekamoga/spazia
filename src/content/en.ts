@@ -216,8 +216,8 @@ export const en: Dictionary = {
         a: "Things stored away from home are often covered by your home insurance, but many policies have exclusions or limits for theft-prone items in garages and storerooms. Check your terms. We are working on storage insurance with an insurer.",
       },
       {
-        q: "I don't have Swedish BankID. Can I still rent?",
-        a: "Yes. You don't need BankID. You log in with email or Google and pay by card, including a foreign card.",
+        q: "Do I need BankID?",
+        a: "No. We'll add BankID login once more people use Spazia. For now you log in securely with a one-time code we email to you, or with Google. You pay by card, including a foreign card, so you can rent without a Swedish BankID.",
       },
       {
         q: "How do I get to my things?",

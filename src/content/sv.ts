@@ -214,8 +214,8 @@ export const sv = {
         a: "Saker som förvaras utanför hemmet omfattas ofta av hemförsäkringen, men många försäkringar har undantag eller beloppsgränser för stöldbegärliga saker i garage och förråd. Kontrollera dina villkor. Vi arbetar på en förvaringsförsäkring tillsammans med ett försäkringsbolag.",
       },
       {
-        q: "Jag har inget svenskt BankID. Kan jag ändå hyra?",
-        a: "Ja. Du behöver inget BankID. Du loggar in med e-post eller Google och betalar med kort, även med ett utländskt kort.",
+        q: "Behöver jag BankID?",
+        a: "Nej. Inloggning med BankID lägger vi till när fler använder Spazia. Tills vidare loggar du in säkert med en engångskod som vi mejlar till dig, eller med Google. Du betalar med kort, även med ett utländskt kort, så det går bra att hyra utan svenskt BankID.",
       },
       {
         q: "Hur kommer jag åt mina saker?",
