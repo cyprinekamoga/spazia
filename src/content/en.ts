@@ -567,7 +567,7 @@ export const en: Dictionary = {
     metaTitle: "Terms of use",
     metaDescription: "The terms for letting and renting storage and parking through Spazia: account, requests, hourly booking, cancellation, fees and liability.",
     title: "Terms of use",
-    updated: "In force from 8 November 2026",
+    updated: "In force from 14 November 2026",
     lead: "These terms apply when you use Spazia on spazia.se and app.spazia.se, as a host or a renter. By creating an account you accept them. The Swedish version applies if the two differ.",
     sections: [
       {
@@ -635,7 +635,7 @@ export const en: Dictionary = {
           "Spazia's fees (15% and 5%) include 25% Swedish VAT. Spazia charges no VAT on the rent. The host is responsible for any tax and VAT on their rental income, and Spazia withholds no tax from payouts.",
           "Monthly storage: your card is charged when the host accepts the request, and then on the same date every month until the rental ends. The last month of a rental with an end date is charged per day.",
           "Hourly parking is paid when you book. The space is held for you for 30 minutes while you pay.",
-          "The host receives their share one day after the rental or booking starts. Stripe pays out to the host's bank account every Monday.",
+          "The host receives their share for each period once it is over: for monthly storage one day after the month has ended, for parking one day after the booking. Stripe pays out to the host's bank account every Monday.",
           "If a payment fails, you get an email with a link to pay. The first month must be paid within 48 hours, or the rental is cancelled. Later months must be paid within 7 days, or the rental ends after the last paid day.",
           "If you cancel storage before the rental starts, or parking at least one hour before the start, you get the full amount back. If the host cancels, you always get the full amount back.",
         ],

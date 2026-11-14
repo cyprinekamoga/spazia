@@ -813,7 +813,7 @@ const appTextSv = {
   payments: {
     // Host: payouts
     payoutsTitle: "Utbetalningar",
-    payoutsLead: "Hyresgästerna betalar med kort via Spazia. Din del förs över till ditt Stripe-konto ett dygn efter att uthyrningen har börjat, och Stripe betalar ut till ditt bankkonto varje måndag.",
+    payoutsLead: "Hyresgästerna betalar med kort via Spazia. Din del för en månad förs över till ditt Stripe-konto ett dygn efter att månaden är slut (för parkering ett dygn efter bokningen), och Stripe betalar ut till ditt bankkonto varje måndag.",
     off: "Betalning i appen öppnar snart. Tills dess kommer du och hyresgästen överens om betalningen direkt.",
     taxTitle: "1. Uppgifter till Skatteverket",
     taxText: "Spazia måste varje år lämna uppgifter till Skatteverket om vad värdar har tjänat via plattformen. Uppgifterna visas aldrig för hyresgäster.",

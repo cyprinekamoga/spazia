@@ -808,7 +808,7 @@ export const appTextEn: AppText = {
   },
   payments: {
     payoutsTitle: "Payouts",
-    payoutsLead: "Renters pay by card through Spazia. Your share is transferred to your Stripe account one day after the rental starts, and Stripe pays out to your bank account every Monday.",
+    payoutsLead: "Renters pay by card through Spazia. Your share for a month is transferred to your Stripe account one day after the month has ended (for parking, one day after the booking), and Stripe pays out to your bank account every Monday.",
     off: "Payment in the app opens soon. Until then, you and the renter agree on payment directly.",
     taxTitle: "1. Details for the Swedish Tax Agency",
     taxText: "Every year Spazia must report to the Swedish Tax Agency (Skatteverket) what hosts have earned through the platform. These details are never shown to renters.",

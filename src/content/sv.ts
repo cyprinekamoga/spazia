@@ -565,7 +565,7 @@ export const sv = {
     metaTitle: "Användarvillkor",
     metaDescription: "Villkoren för att hyra ut och hyra förvaring och parkering via Spazia: konto, förfrågningar, timbokning, avbokning, avgifter och ansvar.",
     title: "Användarvillkor",
-    updated: "Gäller från 8 november 2026",
+    updated: "Gäller från 14 november 2026",
     lead: "Villkoren gäller när du använder Spazia på spazia.se och app.spazia.se, som värd eller hyresgäst. Genom att skapa ett konto godkänner du dem.",
     sections: [
       {
@@ -633,7 +633,7 @@ export const sv = {
           "Spazias avgifter (15 % och 5 %) inkluderar 25 % moms. Spazia tar inte ut moms på hyran. Värden ansvarar själv för skatt och eventuell moms på sina hyresintäkter, och Spazia drar ingen skatt från utbetalningarna.",
           "Förvaring per månad: kortet debiteras när värden godkänner förfrågan och sedan samma datum varje månad tills hyran avslutas. Sista månaden för en hyra med slutdatum debiteras per dag.",
           "Parkering per timme betalas när du bokar. Platsen hålls åt dig i 30 minuter medan du betalar.",
-          "Värden får sin del ett dygn efter att uthyrningen eller bokningen har börjat. Stripe betalar ut till värdens bankkonto varje måndag.",
+          "Värden får sin del för varje period när den är slut: för månadsförvaring ett dygn efter att månaden är slut, för parkering ett dygn efter bokningen. Stripe betalar ut till värdens bankkonto varje måndag.",
           "Går en betalning inte igenom får du ett mejl med en länk för att betala. Första månaden måste betalas inom 48 timmar, annars avbryts hyran. Senare månader måste betalas inom 7 dagar, annars avslutas hyran efter den sista betalda dagen.",
           "Avbokar du förvaring innan hyran har börjat, eller parkering minst en timme före start, får du tillbaka hela beloppet. Avbokar värden får du alltid tillbaka hela beloppet.",
         ],

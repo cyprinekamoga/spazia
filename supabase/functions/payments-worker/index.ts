@@ -137,7 +137,7 @@ async function charge(): Promise<number> {
   return due.length;
 }
 
-/** The host's share, 24 hours after the period starts. Stripe pays it out on Mondays. */
+/** The host's share, a day after the period it pays for has ended (transfer_due_at). Stripe pays it out on Mondays. */
 async function transfer(): Promise<number> {
   const due = await sql<{ id: string; request_id: string; host_amount: number; stripe_charge: string | null; account_id: string }[]>`
     select p.id, p.request_id, p.host_amount, p.stripe_charge, a.account_id

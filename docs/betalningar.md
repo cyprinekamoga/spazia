@@ -1,6 +1,6 @@
 # Betalningar med Stripe
 
-Hyresgäster betalar med kort, Apple Pay eller Google Pay. Spazia tar emot betalningen via Stripe Connect och för över värdens del ett dygn efter att uthyrningen har börjat. Stripe betalar ut till värdens bankkonto varje måndag. Spazia behåller 15 % från hyresgästen och 5 % från värden, och står för Stripes avgifter.
+Hyresgäster betalar med kort, Apple Pay eller Google Pay. Spazia tar emot betalningen via Stripe Connect och för över värdens del för varje period ett dygn efter att perioden är slut. Stripe betalar ut till värdens bankkonto varje måndag. Spazia behåller 15 % från hyresgästen och 5 % från värden, och står för Stripes avgifter.
 
 Allt är byggt men avstängt tills stegen nedan är klara. Gör allt i **testläge** först.
 
@@ -100,7 +100,7 @@ delete from private.stripe_accounts where user_id in (...testkonton...);
 | Följande månader | Stripe Billing: ett betalschema som börjar när månad 2 börjar och drar samma datum varje månad. Med slutdatum dras sista månaden per dag, sedan slutar det. Varje månad blir en faktura | – |
 | Misslyckad betalning | Första månaden: mejl med länk till fakturasidan, 48 timmar. Senare månader: Stripe försöker igen i en vecka och hyresgästen kan betala på fakturasidan, annars avslutas hyran efter sista betalda dagen | Platsen släpps |
 | Avsluta | Före start: allt tillbaka och betalschemat stoppas. Efter start: hyran slutar när den betalda perioden är slut, inga fler dragningar | Gratis fram till 1 timme före start |
-| Värden får betalt | Ett dygn efter att varje månad börjar, utbetalning på måndagar | Ett dygn efter start, utbetalning på måndagar |
+| Värden får betalt | Ett dygn efter att varje månad är slut, utbetalning på måndagar | Ett dygn efter att bokningen har slutat, utbetalning på måndagar |
 | Tvist eller bedrägerivarning | Värdens del hålls kvar tills det är utrett | Samma |
 
 Värdar fyller i namn, personnummer och adress under *Meny → Utbetalningar* och kopplar sedan sitt bankkonto hos Stripe. Utan kopplat bankkonto kan de inte godkänna förfrågningar, och deras parkeringar går inte att boka. Ett värdkonto är redo för pengar när Stripe har aktiverat förmågan att ta emot överföringar (`stripe_transfers`).

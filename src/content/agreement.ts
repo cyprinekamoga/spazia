@@ -10,7 +10,7 @@ import { getCategory, type CategoryId } from "./categories";
 import { appLang } from "@/lib/app/lang";
 import { bookingHours, formatDay, formatKr, formatTimeRange, renterHourlyTotal, renterPrice } from "@/lib/app/model";
 
-export const AGREEMENT_VERSION = "2026-11-13";
+export const AGREEMENT_VERSION = "2026-11-14";
 
 export interface AgreementItem {
   category: CategoryId;
@@ -131,7 +131,7 @@ function swedishSections(d: AgreementData): AgreementSection[] {
       paragraphs: [
         `Hyresgästen betalar ${formatKr(total)} kr för hela bokningen, inklusive Spazias serviceavgift (moms ingår i avgiften, inte i hyran).`,
         d.paymentRequired
-          ? "Beloppet betalas med kort via Spazia när bokningen görs. Värden får sin del från Spazia ett dygn efter start."
+          ? "Beloppet betalas med kort via Spazia när bokningen görs. Värden får sin del från Spazia ett dygn efter att bokningen har slutat."
           : "Värd och hyresgäst gör upp om betalningen direkt med varandra.",
       ],
     });
@@ -143,7 +143,7 @@ function swedishSections(d: AgreementData): AgreementSection[] {
       paragraphs: [
         `Hyresgästen betalar ${formatKr(total)} kr per månad. Av det är ${formatKr(rent)} kr hyra till värden och ${formatKr(total - rent)} kr Spazias serviceavgift (moms ingår i avgiften, inte i hyran).`,
         d.paymentRequired
-          ? "Första månaden betalas med kort via Spazia när värden har godkänt förfrågan, och sedan samma datum varje månad. Har hyran ett slutdatum betalas den sista månaden per dag. Betala aldrig vid sidan av Spazia."
+          ? "Första månaden betalas med kort via Spazia när värden har godkänt förfrågan, och sedan samma datum varje månad. Har hyran ett slutdatum betalas den sista månaden per dag. Värden får sin del för varje månad från Spazia ett dygn efter att månaden är slut. Betala aldrig vid sidan av Spazia."
           : "Värd och hyresgäst gör upp om betalningen direkt med varandra.",
       ],
     });
@@ -301,7 +301,7 @@ function englishSections(d: AgreementData): AgreementSection[] {
       paragraphs: [
         `The renter pays ${formatKr(total)} kr for the whole booking, including Spazia's service fee (VAT is included in the fee, not in the rent).`,
         d.paymentRequired
-          ? "The amount is paid by card through Spazia when booking. The host receives their share from Spazia one day after the start."
+          ? "The amount is paid by card through Spazia when booking. The host receives their share from Spazia one day after the booking has ended."
           : "Host and renter settle payment directly with each other.",
       ],
     });
@@ -313,7 +313,7 @@ function englishSections(d: AgreementData): AgreementSection[] {
       paragraphs: [
         `The renter pays ${formatKr(total)} kr per month. Of that, ${formatKr(rent)} kr is rent to the host and ${formatKr(total - rent)} kr is Spazia's service fee (VAT is included in the fee, not in the rent).`,
         d.paymentRequired
-          ? "The first month is paid by card through Spazia when the host has accepted the request, and then on the same date every month. If the rental has an end date, the last month is charged per day. Never pay outside Spazia."
+          ? "The first month is paid by card through Spazia when the host has accepted the request, and then on the same date every month. If the rental has an end date, the last month is charged per day. The host receives their share for each month from Spazia one day after the month has ended. Never pay outside Spazia."
           : "Host and renter settle payment directly with each other.",
       ],
     });
