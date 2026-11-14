@@ -4,7 +4,7 @@ Förvaring och parkering hos grannen. A peer-to-peer storage and parking marketp
 
 **All of Sweden:** Spazia is open everywhere in Sweden. There are no inspection visits: hosts are verified with BankID and photograph their own space for the listing.
 
-Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-och-plan.md).
+Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-och-plan.md). Spazia's own bookkeeping (Admin → Bokföring) is described in [`docs/bokforing.md`](docs/bokforing.md).
 
 ## What is in Fas 0
 

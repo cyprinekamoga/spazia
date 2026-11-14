@@ -10,6 +10,7 @@ import type { Stripe } from "../_shared/deps.ts";
 import { alertTeam, ore, sql, stripe } from "../_shared/config.ts";
 import { automaticTax, ensureCustomer, getUser, invoicePaid, paymentFailed, storageProducts, TAX_CODES } from "../_shared/payments.ts";
 import { scheduleParams, type SchedulePlan } from "../_shared/schedule.ts";
+import { bookTxn, type PaymentSplit } from "../_shared/bookkeeping.ts";
 
 const BATCH = 25;
 
@@ -298,6 +299,92 @@ async function refund(): Promise<number> {
   return due.length;
 }
 
+/** The card charge a balance transaction belongs to (a payment, or the payment a refund is for). */
+function chargeOf(t: Stripe.BalanceTransaction): string | null {
+  const src = t.source;
+  if (!src) return null;
+  if (typeof src === "string") return /^(ch|py)_/.test(src) ? src : null;
+  if (src.object === "charge") return src.id;
+  if (src.object === "refund") {
+    const c = (src as Stripe.Refund).charge;
+    return typeof c === "string" ? c : (c?.id ?? null);
+  }
+  return null;
+}
+
+/**
+ * Bookkeeping: book what moved through Spazia's Stripe balance (card payments,
+ * refunds, transfers to hosts, payouts to the bank, Stripe's fees) as vouchers
+ * in series S. Once an hour; it looks back two days so nothing is missed, and
+ * each transaction is booked once (source_ref). What can't be booked safely
+ * goes to the "to book" list in the admin page.
+ */
+async function bookkeeping(): Promise<number> {
+  const [state] = await sql<{ at: string | null; cursor: string | null; rc: string | null }[]>`
+    select private.setting('acc_stripe_synced_at') as at, private.setting('acc_stripe_cursor') as cursor,
+           private.setting('acc_stripe_fee_reverse_charge') as rc`;
+  if (state?.at && Date.now() - Date.parse(state.at) < 50 * 60_000) return 0;
+  const cursor = Number(state?.cursor ?? 0) || 0;
+  const txns: Stripe.BalanceTransaction[] = [];
+  for await (const t of stripe().balanceTransactions.list({ created: { gte: Math.max(0, cursor - 2 * 86400) }, limit: 100, expand: ["data.source"] })) {
+    txns.push(t);
+    if (txns.length >= 2000) break;
+  }
+  txns.sort((a, b) => a.created - b.created || a.id.localeCompare(b.id));
+  const now = Math.floor(Date.now() / 1000);
+  let booked = 0;
+  let newest = cursor;
+  for (const t of txns) {
+    newest = Math.max(newest, t.created);
+    const ref = `stripe:${t.id}`;
+    const seen = await sql`select 1 from private.acc_vouchers where source_ref = ${ref}
+                           union all select 1 from private.acc_unbooked where txn_id = ${t.id} limit 1`;
+    if (seen.length > 0) continue;
+    try {
+      const charge = chargeOf(t);
+      const [split] = charge
+        ? await sql<PaymentSplit[]>`
+            select p.amount, p.host_amount,
+                   case when r.kind = 'hour' then 'Parkering, ' else 'Förvaring, ' end || l.title || ' (' || p.period_start ||
+                   case when p.period_end <> p.period_start then ' – ' || p.period_end else '' end || ')' as label
+              from public.payments p join public.requests r on r.id = p.request_id join public.listings l on l.id = r.listing_id
+             where p.stripe_charge = ${charge} limit 1`
+        : [];
+      const result = bookTxn(
+        {
+          id: t.id,
+          type: t.type,
+          amount: t.amount,
+          fee: t.fee,
+          fee_details: t.fee_details.map((d) => ({ type: d.type, amount: d.amount })),
+          created: t.created,
+          description: t.description,
+        },
+        split ?? null,
+        { reverseCharge: state?.rc !== "false", now },
+      );
+      if (result.kind === "book") {
+        await sql`select private.acc_book(${result.voucher.date}::date, ${result.voucher.description}, ${JSON.stringify(result.voucher.lines)}::jsonb,
+                                          'S', 'stripe', ${ref}, null, null, 'Stripe (automatiskt)', true)`;
+        booked++;
+      } else if (result.kind === "manual") {
+        const source = typeof t.source === "string" ? t.source : (t.source?.id ?? null);
+        await sql`insert into private.acc_unbooked (txn_id, kind, amount, occurred_at, description, detail)
+                  values (${t.id}, ${t.type}, ${t.amount / 100}, to_timestamp(${t.created}), ${t.description ?? ""},
+                          ${JSON.stringify({ reason: result.reason, fee: t.fee / 100, source, charge })}::jsonb)
+                  on conflict (txn_id) do nothing`;
+      }
+    } catch (err) {
+      console.error("payments-worker: bookkeeping", t.id, err);
+      await alertTeam("worker_bookkeeping", "En Stripe-transaktion gick inte att bokföra", err);
+    }
+  }
+  await sql`insert into private.settings (key, value)
+            values ('acc_stripe_cursor', ${String(newest)}), ('acc_stripe_synced_at', ${new Date().toISOString()})
+            on conflict (key) do update set value = excluded.value`;
+  return booked;
+}
+
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("method not allowed", { status: 405 });
   const body = await req.json().catch(() => ({}));
@@ -309,6 +396,12 @@ Deno.serve(async (req) => {
       charges: await charge(),
       schedules: await syncSchedules(),
       transfers: await transfer(),
+      // Last, and never in the way of the payments themselves.
+      booked: await bookkeeping().catch(async (err) => {
+        console.error("payments-worker: bookkeeping", err);
+        await alertTeam("worker_bookkeeping", "Bokföringen av Stripe-transaktioner kraschade", err);
+        return 0;
+      }),
     };
     return new Response(JSON.stringify(done), { headers: { "content-type": "application/json" } });
   } catch (err) {

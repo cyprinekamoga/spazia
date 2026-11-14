@@ -7,6 +7,7 @@ import { formatKr, formatMoment } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner } from "../AppShell";
+import { Bookkeeping } from "./bookkeeping/Bookkeeping";
 
 /**
  * The team's admin page in the app (internal, Swedish only). Only accounts in
@@ -14,7 +15,7 @@ import { Spinner } from "../AppShell";
  */
 
 type Row = Record<string, unknown>;
-type Tab = "overview" | "reports" | "bookings" | "payments" | "listings" | "users" | "codes" | "log";
+type Tab = "overview" | "reports" | "bookings" | "payments" | "listings" | "users" | "codes" | "books" | "log";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "overview", label: "Översikt" },
@@ -24,6 +25,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "listings", label: "Annonser" },
   { id: "users", label: "Användare" },
   { id: "codes", label: "Rabattkoder" },
+  { id: "books", label: "Bokföring" },
   { id: "log", label: "Logg" },
 ];
 
@@ -568,6 +570,7 @@ export function AdminPage() {
         {tab === "listings" && <Listings />}
         {tab === "users" && <Users />}
         {tab === "codes" && <Codes />}
+        {tab === "books" && <Bookkeeping />}
         {tab === "log" && <Log />}
       </div>
     </div>
