@@ -11,8 +11,9 @@ export const site = {
   /** Shown on the site and used as reply-to address in emails. */
   email: "info@nordvra.se",
   /**
-   * The business behind Spazia: shown in the footer, the terms and the privacy
-   * policy, as e-handelslagen requires once payments are taken.
+   * The business behind Spazia: shown in the terms and the privacy policy (both
+   * linked from every page's footer), as e-handelslagen requires once payments
+   * are taken. Not in the footer itself, by choice.
    */
   legalName: "Spazia",
   orgNumber: "20061129-9595" as string,

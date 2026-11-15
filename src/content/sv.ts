@@ -278,7 +278,6 @@ export const sv = {
     cookies: "Cookieinställningar",
     credits: "Bildkällor",
     rights: "Alla rättigheter förbehållna.",
-    orgNumber: "Org.nr",
   },
   hostPage: {
     metaTitle: "Hyr ut ditt garage, förråd eller p-plats",
