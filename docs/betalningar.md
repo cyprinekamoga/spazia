@@ -1,6 +1,6 @@
 # Betalningar med Stripe
 
-Hyresgäster betalar med kort, Apple Pay eller Google Pay. Spazia tar emot betalningen via Stripe Connect och för över värdens del för varje period ett dygn efter att perioden är slut. Stripe betalar ut till värdens bankkonto varje måndag. Spazia behåller 15 % från hyresgästen och 5 % från värden, och står för Stripes avgifter.
+Hyresgäster betalar med kort, Apple Pay eller Google Pay. Spazia tar emot betalningen via Stripe Connect och för över värdens del för varje period ett dygn efter att perioden är slut. Stripe betalar ut till värdens bankkonto varje måndag. Spazia behåller 10 % från hyresgästen och 5 % från värden, och står för Stripes avgifter.
 
 Allt är byggt men avstängt tills stegen nedan är klara. Gör allt i **testläge** först.
 
@@ -110,7 +110,7 @@ Värdar fyller i namn, personnummer och adress under *Meny → Utbetalningar* oc
 Spazia är momsregistrerat och tar ut 25 % moms på sina egna avgifter, inte på hyran. Priserna ändras inte, eftersom momsen ingår i avgiften. Be er redovisningskonsult bekräfta upplägget innan ni går skarpt.
 
 - **Hyran** förmedlas i värdens namn och för värdens räkning. Att hyra ut förvaringsutrymme räknas som momsfri uthyrning av fastighet, och privata värdar som hyr ut parkering ligger normalt under momsgränsen på 120 000 kr om året. Spazia tar därför ingen moms på hyran (Stripes skattekod `txcd_00000000`, ej skattepliktig).
-- **Spazias serviceavgift** (15 % från hyresgästen) är Spazias egen tjänst: 25 % moms ingår (skattekod `txcd_20030000`).
+- **Spazias serviceavgift** (10 % från hyresgästen) är Spazias egen tjänst: 25 % moms ingår (skattekod `txcd_20030000`).
 - **Värdens avgift** (5 %) dras från överföringen till värden. Momsen på den (20 % av avgiften, alltså 25 % ovanpå) bokförs av er. Stripe räknar inte ut den, eftersom den inte står på någon faktura. Underlaget finns i `fees_withheld` i `private.dac7_report`.
 - **Ingen skatt dras** från utbetalningarna. Värdarna deklarerar själva sina hyresintäkter, och Spazia lämnar kontrolluppgift (se *Skatteverket* nedan). En värd som själv är momsregistrerad (till exempel ett företag som hyr ut parkering) ansvarar för sin egen moms.
 

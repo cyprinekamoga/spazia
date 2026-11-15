@@ -39,11 +39,11 @@ describe("listing SEO", () => {
   it("builds title, description, canonical and structured data", () => {
     const seo = listingSeo(listing, opts);
     expect(seo.title).toBe("Uthus eller förråd i Porsön, Luleå | Spazia");
-    expect(seo.description).toBe("Däckförvaring och cykelförvaring att hyra i Porsön, Luleå. Från 58 kr/mån, 10 m². Torrt och låst, nära bussen.");
+    expect(seo.description).toBe("Däckförvaring och cykelförvaring att hyra i Porsön, Luleå. Från 55 kr/mån, 10 m². Torrt och låst, nära bussen.");
     expect(seo.canonical).toBe(`https://app.spazia.se/annons?id=${listing.id}`);
     expect(seo.alternates.en).toBe(`https://app.spazia.se/annons?id=${listing.id}&lang=en`);
     expect(seo.image).toBe("https://x.supabase.co/storage/v1/object/public/listing-photos/u/l/a.jpg");
-    expect(seo.jsonLd).toMatchObject({ "@type": "Product", offers: { price: 58, priceCurrency: "SEK" } });
+    expect(seo.jsonLd).toMatchObject({ "@type": "Product", offers: { price: 55, priceCurrency: "SEK" } });
   });
 
   it("does not repeat the town when the title has it", () => {

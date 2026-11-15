@@ -43,11 +43,11 @@ do $$
 declare a record;
 begin
   perform tests.ok((select protection_rate = 0.05 from public.requests where id = current_setting('t.req')::uuid), 'rate copied onto the request');
-  -- Host price 200 → renter 230; protection 5 % of 230 = 12 (rounded); total 242. Host still gets 190.
+  -- Host price 200 → renter 220; protection 5 % of 220 = 11; total 231. Host still gets 190.
   select * into a from private.period_amounts(current_setting('t.req')::uuid, 0);
-  perform tests.ok(a.amount = 242 and a.protection = 12 and a.base = 200 and a.host_amount = 190,
+  perform tests.ok(a.amount = 231 and a.protection = 11 and a.base = 200 and a.host_amount = 190,
                    format('month amounts: amount %s, protection %s, base %s, host %s', a.amount, a.protection, a.base, a.host_amount));
-  perform tests.ok((private.schedule_plan(current_setting('t.req')::uuid)->>'monthly_protection')::int = 12, 'monthly plan has the add-on');
+  perform tests.ok((private.schedule_plan(current_setting('t.req')::uuid)->>'monthly_protection')::int = 11, 'monthly plan has the add-on');
 end $$;
 
 -- A shorter last month: everything prorated.
@@ -56,7 +56,7 @@ do $$
 declare a record;
 begin
   select * into a from private.period_amounts(current_setting('t.req')::uuid, 1);
-  perform tests.ok(a.pe < a.natural_end and a.protection < 12 and a.protection > 0 and a.amount = round(230 * (a.pe - a.ps + 1)::numeric / (a.natural_end - a.ps + 1)) + a.protection,
+  perform tests.ok(a.pe < a.natural_end and a.protection < 11 and a.protection > 0 and a.amount = round(220 * (a.pe - a.ps + 1)::numeric / (a.natural_end - a.ps + 1)) + a.protection,
                    format('prorated: amount %s, protection %s', a.amount, a.protection));
 end $$;
 
@@ -65,7 +65,7 @@ do $$
 declare pid uuid;
 begin
   pid := private.create_period_payment(current_setting('t.req')::uuid, 0);
-  perform tests.ok((select protection_amount = 12 and amount = 242 from public.payments where id = pid), 'payment has the protection part');
+  perform tests.ok((select protection_amount = 11 and amount = 231 from public.payments where id = pid), 'payment has the protection part');
 end $$;
 
 -- Claims: only the renter, only with protection, only once accepted; the team is told.
@@ -95,7 +95,7 @@ do $$
 declare a record;
 begin
   select * into a from private.period_amounts(current_setting('t.req2')::uuid, 0);
-  perform tests.ok(a.amount = 230 and a.protection = 0, 'no add-on: 230 kr');
+  perform tests.ok(a.amount = 220 and a.protection = 0, 'no add-on: 220 kr');
 end $$;
 
 rollback;

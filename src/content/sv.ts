@@ -203,7 +203,7 @@ export const sv = {
       },
       {
         q: "Vad kostar det?",
-        a: "Värden sätter priset. Riktpriset för en däcksats är omkring 120 kr i månaden och för flyttlådor omkring 150 kr per kvadratmeter. I storstäderna blir det ofta dyrare. Serviceavgiften på 15 % ingår i priset du ser, och det finns ingen bindningstid.",
+        a: "Värden sätter priset. Riktpriset för en däcksats är omkring 65 kr i månaden och för flyttlådor omkring 115 kr per kvadratmeter. I storstäderna blir det ofta dyrare. Serviceavgiften på 10 % ingår i priset du ser, och det finns ingen bindningstid.",
       },
       {
         q: "Är det säkert?",
@@ -565,7 +565,7 @@ export const sv = {
     metaTitle: "Användarvillkor",
     metaDescription: "Villkoren för att hyra ut och hyra förvaring och parkering via Spazia: konto, förfrågningar, timbokning, avbokning, avgifter och ansvar.",
     title: "Användarvillkor",
-    updated: "Gäller från 14 november 2026",
+    updated: "Gäller från 15 november 2026",
     lead: "Villkoren gäller när du använder Spazia på spazia.se och app.spazia.se, som värd eller hyresgäst. Genom att skapa ett konto godkänner du dem.",
     sections: [
       {
@@ -626,11 +626,11 @@ export const sv = {
       },
       {
         title: "Priser, avgifter och betalning",
-        text: "Värden sätter priset. Hyresgästen betalar värdens pris plus Spazias serviceavgift på 15 %, och värden får sitt pris minus Spazias avgift på 5 %. Spazia står för kortavgifterna. Betalning i appen startar inom kort. Tills den är igång gör värd och hyresgäst upp om betalningen direkt med varandra, och Spazia tar ingen avgift. När den är igång gäller följande:",
+        text: "Värden sätter priset. Hyresgästen betalar värdens pris plus Spazias serviceavgift på 10 %, och värden får sitt pris minus Spazias avgift på 5 %. Spazia står för kortavgifterna. Betalning i appen startar inom kort. Tills den är igång gör värd och hyresgäst upp om betalningen direkt med varandra, och Spazia tar ingen avgift. När den är igång gäller följande:",
         bullets: [
           "Du betalar med kort, Apple Pay eller Google Pay via vår betalleverantör Stripe. Spazia tar emot betalningen och för över värdens del.",
           "Spazia tar emot hyran i värdens namn och för värdens räkning. Kvittot visar hyran och Spazias serviceavgift var för sig.",
-          "Spazias avgifter (15 % och 5 %) inkluderar 25 % moms. Spazia tar inte ut moms på hyran. Värden ansvarar själv för skatt och eventuell moms på sina hyresintäkter, och Spazia drar ingen skatt från utbetalningarna.",
+          "Spazias avgifter (10 % och 5 %) inkluderar 25 % moms. Spazia tar inte ut moms på hyran. Värden ansvarar själv för skatt och eventuell moms på sina hyresintäkter, och Spazia drar ingen skatt från utbetalningarna.",
           "Förvaring per månad: kortet debiteras när värden godkänner förfrågan och sedan samma datum varje månad tills hyran avslutas. Sista månaden för en hyra med slutdatum debiteras per dag.",
           "Parkering per timme betalas när du bokar. Platsen hålls åt dig i 30 minuter medan du betalar.",
           "Värden får sin del för varje period när den är slut: för månadsförvaring ett dygn efter att månaden är slut, för parkering ett dygn efter bokningen. Stripe betalar ut till värdens bankkonto varje måndag.",
@@ -942,7 +942,7 @@ export const sv = {
     perYear: "≈ {amount} kr per år",
     renterPays: "Hyresgästerna betalar totalt ca {amount} kr/mån inklusive serviceavgift.",
     feeNote:
-      "Riktpriser. Du bestämmer själv priset. Spazia tar 5 % av utbetalningen och hyresgästen betalar en serviceavgift på 15 %.",
+      "Riktpriser. Du bestämmer själv priset. Spazia tar 5 % av utbetalningen och hyresgästen betalar en serviceavgift på 10 %.",
     decrease: "Färre {unit}",
     increase: "Fler {unit}",
     cta: "Anmäl ditt utrymme",

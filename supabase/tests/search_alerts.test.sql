@@ -53,8 +53,8 @@ begin
   p := public.claim_notification(n.id, n.token);
   perform tests.ok(p->>'kind' = 'search_match' and p->>'to_email' = 'renter@example.com', 'payload for the renter: ' || coalesce(p::text, 'null'));
   perform tests.ok(jsonb_array_length(p->'listings') = 2, 'two matching listings (200 kr host price is 230 kr: too much): ' || (p->'listings')::text);
-  perform tests.ok((select array_agg((e->>'price_month')::int order by (e->>'price_month')::int) from jsonb_array_elements(p->'listings') e) = array[115, 138],
-                   'renter prices with the service fee (100 → 115, 120 → 138)');
+  perform tests.ok((select array_agg((e->>'price_month')::int order by (e->>'price_month')::int) from jsonb_array_elements(p->'listings') e) = array[110, 132],
+                   'renter prices with the service fee (100 → 110, 120 → 132)');
   perform tests.ok(p->'alert'->>'place' = 'uppsala', 'place trimmed');
   perform public.finish_notification(n.id, n.token, true);
   perform tests.ok((select last_sent_at is not null from public.search_alerts where id = n.alert_id), 'new-since mark moved');
@@ -93,7 +93,7 @@ declare
 begin
   select * into a from private.listing_announcements where listing_id = current_setting('t.l1')::uuid;
   p := public.claim_listing_announcement(a.listing_id, a.token);
-  perform tests.ok(p->>'city' = 'Uppsala' and (p->>'price_month')::int = 115 and p->'categories' = '["boxes"]'::jsonb, 'announcement payload: ' || coalesce(p::text, 'null'));
+  perform tests.ok(p->>'city' = 'Uppsala' and (p->>'price_month')::int = 110 and p->'categories' = '["boxes"]'::jsonb, 'announcement payload: ' || coalesce(p::text, 'null'));
   perform public.finish_listing_announcement(a.listing_id, a.token, true);
   perform tests.ok(public.claim_listing_announcement(a.listing_id, a.token) is null, 'used token gives nothing');
 end $$;

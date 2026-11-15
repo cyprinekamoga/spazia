@@ -82,4 +82,4 @@ Ett jobb i databasen (`spazia-retry-notifications`) försöker igen var tionde m
 
 - **nordvra är pausat.** Gratisplanen tillåter två aktiva projekt, så nordvra pausades för att Spazia skulle få plats. Det går att starta igen i Supabase, men då måste ett annat projekt pausas, eller så behöver ni Pro-planen.
 - **Databasens ändringar** ligger i `supabase/migrations/`, från `20261105000000_host_app.sql` och framåt.
-- **Värdens förslagspris:** en värd skriver sitt eget pris. Hyresgästen betalar 15 % serviceavgift ovanpå, och Spazia drar 5 % från utbetalningen (`src/content/pricing.ts`).
+- **Värdens förslagspris:** en värd skriver sitt eget pris. Hyresgästen betalar 10 % serviceavgift ovanpå, och Spazia drar 5 % från utbetalningen (`src/content/pricing.ts`).

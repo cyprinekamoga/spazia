@@ -34,16 +34,16 @@ begin
 end $$;
 reset role;
 
--- Host price 200: renter 230, fee 30; 50 % off the fee → 215 in month one, host untouched.
+-- Host price 200: renter 220, fee 20; 50 % off the fee → 210 in month one, host untouched.
 do $$
 declare a record; b record;
 begin
   select * into a from private.period_amounts(current_setting('t.req')::uuid, 0);
-  perform tests.ok(a.amount = 215 and a.discount = 15 and a.base = 200 and a.host_amount = 190,
+  perform tests.ok(a.amount = 210 and a.discount = 10 and a.base = 200 and a.host_amount = 190,
                    format('month one: %s (discount %s, rent %s, host %s)', a.amount, a.discount, a.base, a.host_amount));
   select * into b from private.period_amounts(current_setting('t.req')::uuid, 1);
-  perform tests.ok(b.amount = 230 and b.discount = 0, 'month two at full price');
-  perform tests.ok((private.schedule_plan(current_setting('t.req')::uuid)->>'monthly')::int = 230, 'monthly plan at full price');
+  perform tests.ok(b.amount = 220 and b.discount = 0, 'month two at full price');
+  perform tests.ok((private.schedule_plan(current_setting('t.req')::uuid)->>'monthly')::int = 220, 'monthly plan at full price');
 end $$;
 
 -- The first month is paid: the inviter gets a personal reward code (once).
@@ -93,7 +93,7 @@ do $$
 declare a record;
 begin
   select * into a from private.period_amounts(current_setting('t.req2')::uuid, 0);
-  perform tests.ok(a.amount = 224 and a.discount = 6, format('20 %% of the 30 kr fee: %s', a.amount));
+  perform tests.ok(a.amount = 216 and a.discount = 4, format('20 %% of the 20 kr fee: %s', a.amount));
 end $$;
 
 rollback;

@@ -8,7 +8,7 @@
  */
 export const FEES = {
   /** Added on top of the host's price, paid by the renter. */
-  renterServiceFee: 0.15,
+  renterServiceFee: 0.1,
   /** Deducted from the host's payout. */
   hostFee: 0.05,
 };
@@ -25,7 +25,11 @@ export function hostPayout(renterPricePaid: number): number {
   return (renterPricePaid / (1 + FEES.renterServiceFee)) * (1 - FEES.hostFee);
 }
 
-/** Round to a friendly number for display (nearest 10 kr). */
+/**
+ * Round to a friendly number for display (nearest 5 kr). The guide prices are
+ * multiples of 5, so a price shown next to the price list never looks higher
+ * than the list itself (65 stays 65, it doesn't become 70).
+ */
 export function roundForDisplay(value: number): number {
-  return Math.round(value / 10) * 10;
+  return Math.round(value / 5) * 5;
 }

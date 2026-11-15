@@ -205,7 +205,7 @@ export const en: Dictionary = {
       },
       {
         q: "What does it cost?",
-        a: "The host sets the price. The guide price is about SEK 120 a month for a set of tyres and about SEK 150 per square metre for boxes. Big cities are often more expensive. The 15% service fee is included in the price you see, and you can cancel any month.",
+        a: "The host sets the price. The guide price is about SEK 65 a month for a set of tyres and about SEK 115 per square metre for boxes. Big cities are often more expensive. The 15% service fee is included in the price you see, and you can cancel any month.",
       },
       {
         q: "Is it safe?",
@@ -567,7 +567,7 @@ export const en: Dictionary = {
     metaTitle: "Terms of use",
     metaDescription: "The terms for letting and renting storage and parking through Spazia: account, requests, hourly booking, cancellation, fees and liability.",
     title: "Terms of use",
-    updated: "In force from 14 November 2026",
+    updated: "In force from 15 November 2026",
     lead: "These terms apply when you use Spazia on spazia.se and app.spazia.se, as a host or a renter. By creating an account you accept them. The Swedish version applies if the two differ.",
     sections: [
       {
@@ -628,11 +628,11 @@ export const en: Dictionary = {
       },
       {
         title: "Prices, fees and payment",
-        text: "The host sets the price. The renter pays the host's price plus Spazia's 15% service fee, and the host receives their price minus Spazia's 5% fee. Spazia covers the card fees. Payment in the app starts soon. Until it does, host and renter settle payment directly with each other, and Spazia charges no fee. Once it has started, the following applies:",
+        text: "The host sets the price. The renter pays the host's price plus Spazia's 10% service fee, and the host receives their price minus Spazia's 5% fee. Spazia covers the card fees. Payment in the app starts soon. Until it does, host and renter settle payment directly with each other, and Spazia charges no fee. Once it has started, the following applies:",
         bullets: [
           "You pay by card, Apple Pay or Google Pay through our payment provider Stripe. Spazia receives the payment and transfers the host's share.",
           "Spazia collects the rent in the host's name and on the host's behalf. The receipt shows the rent and Spazia's service fee separately.",
-          "Spazia's fees (15% and 5%) include 25% Swedish VAT. Spazia charges no VAT on the rent. The host is responsible for any tax and VAT on their rental income, and Spazia withholds no tax from payouts.",
+          "Spazia's fees (10% and 5%) include 25% Swedish VAT. Spazia charges no VAT on the rent. The host is responsible for any tax and VAT on their rental income, and Spazia withholds no tax from payouts.",
           "Monthly storage: your card is charged when the host accepts the request, and then on the same date every month until the rental ends. The last month of a rental with an end date is charged per day.",
           "Hourly parking is paid when you book. The space is held for you for 30 minutes while you pay.",
           "The host receives their share for each period once it is over: for monthly storage one day after the month has ended, for parking one day after the booking. Stripe pays out to the host's bank account every Monday.",
@@ -944,7 +944,7 @@ export const en: Dictionary = {
     perYear: "≈ SEK {amount} per year",
     renterPays: "Renters pay about SEK {amount}/month in total including the service fee.",
     feeNote:
-      "Guide prices. You set your own price. Spazia takes 5% of the payout and the renter pays a 15% service fee.",
+      "Guide prices. You set your own price. Spazia takes 5% of the payout and the renter pays a 10% service fee.",
     decrease: "Fewer {unit}",
     increase: "More {unit}",
     cta: "Register your space",

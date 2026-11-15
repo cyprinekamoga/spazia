@@ -56,7 +56,7 @@ Spazia tar emot hyran i värdens namn och för värdens räkning. Hyran är där
 | Utbetalning till företagskontot | 1930 | 1580 |
 | Stripes övriga avgifter (Billing, Tax m.m.) | 6570 (+ omvänd moms) | 1580 |
 
-Spazias avgifter är hyresgästens serviceavgift (15 %), värdens avgift (5 %) och eventuellt Spazia Skydd. Allt det är Spazias intäkt med 25 % moms. Värdens avgift ingår alltså också, och momsen på den redovisas här.
+Spazias avgifter är hyresgästens serviceavgift (10 %), värdens avgift (5 %) och eventuellt Spazia Skydd. Allt det är Spazias intäkt med 25 % moms. Värdens avgift ingår alltså också, och momsen på den redovisas här.
 
 Stripes avgifter bokförs som tjänster köpta från ett annat EU-land med omvänd skattskyldighet (Stripe Payments Europe, Irland). Om redovisningskonsulten bedömer att betalningsavgifterna är momsfria, sätt `acc_stripe_fee_reverse_charge` till `false`. Momsen att betala påverkas inte, eftersom den omvända momsen dras av i samma period. Bara rutorna 21, 30 och 48 ändras.
 

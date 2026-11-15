@@ -159,7 +159,7 @@ npm run images
 | All English copy (same shape) | `src/content/en.ts` |
 | Storage types, guide prices, units, SEO texts | `src/content/categories.ts` |
 | Featured cities (each gets a page) and town suggestions | `src/content/cities.ts` |
-| Fees (15 % renter / 5 % host) and heated premium | `src/content/pricing.ts` |
+| Fees (10 % renter / 5 % host) and heated premium | `src/content/pricing.ts` |
 | Contact email, company name, org.nr | `src/lib/site.ts` |
 | URLs per language | `src/lib/routes.ts` |
 

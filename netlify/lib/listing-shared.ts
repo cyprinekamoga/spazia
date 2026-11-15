@@ -4,7 +4,7 @@
  */
 
 /** Renter service fee. Must match FEES.renterServiceFee in src/content/pricing.ts (a unit test checks). */
-export const SERVICE_FEE = 0.15;
+export const SERVICE_FEE = 0.1;
 
 /** Public values (the same as in src/lib/site.ts); can be overridden in Netlify. */
 const DEFAULT_SUPABASE_URL = "https://mtyhnfsceahvovauckkj.supabase.co";
