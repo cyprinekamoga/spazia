@@ -8,6 +8,7 @@ import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner } from "../AppShell";
 import { Bookkeeping } from "./bookkeeping/Bookkeeping";
+import { AdminMfaGate } from "./AdminMfaGate";
 
 /**
  * The team's admin page in the app (internal, Swedish only). Only accounts in
@@ -540,39 +541,41 @@ export function AdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 sm:px-6">
-      <Link prefetch={false} href="/vard/meny" className="flex min-h-11 w-fit items-center gap-1.5 font-semibold text-night">
-        <ArrowLeft size={18} aria-hidden="true" />
-        Till appen
-      </Link>
-      <h1 className="mt-2 text-[2rem] leading-tight text-night">Admin</h1>
-      <nav aria-label="Admin" className="mt-4 -mx-4 overflow-x-auto px-4">
-        <ul className="flex gap-1">
-          {TABS.map((t) => (
-            <li key={t.id}>
-              <button
-                type="button"
-                onClick={() => setTab(t.id)}
-                aria-current={tab === t.id ? "page" : undefined}
-                className="flex min-h-11 items-center rounded-full px-3.5 text-[0.95rem] font-semibold whitespace-nowrap text-muted hover:bg-frost hover:text-night aria-[current=page]:bg-frost aria-[current=page]:text-night"
-              >
-                {t.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <div className="mt-6">
-        {tab === "overview" && <Overview />}
-        {tab === "reports" && <Reports />}
-        {tab === "bookings" && <Bookings />}
-        {tab === "payments" && <Payments />}
-        {tab === "listings" && <Listings />}
-        {tab === "users" && <Users />}
-        {tab === "codes" && <Codes />}
-        {tab === "books" && <Bookkeeping />}
-        {tab === "log" && <Log />}
+    <AdminMfaGate>
+      <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 sm:px-6">
+        <Link prefetch={false} href="/vard/meny" className="flex min-h-11 w-fit items-center gap-1.5 font-semibold text-night">
+          <ArrowLeft size={18} aria-hidden="true" />
+          Till appen
+        </Link>
+        <h1 className="mt-2 text-[2rem] leading-tight text-night">Admin</h1>
+        <nav aria-label="Admin" className="mt-4 -mx-4 overflow-x-auto px-4">
+          <ul className="flex gap-1">
+            {TABS.map((t) => (
+              <li key={t.id}>
+                <button
+                  type="button"
+                  onClick={() => setTab(t.id)}
+                  aria-current={tab === t.id ? "page" : undefined}
+                  className="flex min-h-11 items-center rounded-full px-3.5 text-[0.95rem] font-semibold whitespace-nowrap text-muted hover:bg-frost hover:text-night aria-[current=page]:bg-frost aria-[current=page]:text-night"
+                >
+                  {t.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className="mt-6">
+          {tab === "overview" && <Overview />}
+          {tab === "reports" && <Reports />}
+          {tab === "bookings" && <Bookings />}
+          {tab === "payments" && <Payments />}
+          {tab === "listings" && <Listings />}
+          {tab === "users" && <Users />}
+          {tab === "codes" && <Codes />}
+          {tab === "books" && <Bookkeeping />}
+          {tab === "log" && <Log />}
+        </div>
       </div>
-    </div>
+    </AdminMfaGate>
   );
 }

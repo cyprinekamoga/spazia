@@ -114,6 +114,7 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+  const [limited, setLimited] = useState(false);
   const [now] = useState(() => Date.now());
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -163,11 +164,14 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
     const body = text.trim();
     if (!body) return;
     setSending(true);
+    setLimited(false);
     const res = await supabase().from("messages").insert({ conversation_id: id, sender_id: uid, body }).select("*").single();
     setSending(false);
     if (!res.error) {
       setText("");
       setMessages((m) => [...m, res.data as Message]);
+    } else if (res.error.message.includes("rate_limited")) {
+      setLimited(true);
     } else if (res.error.message.includes("blocked")) {
       await head.reload();
     }
@@ -182,6 +186,10 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
       const up = await supabase().storage.from("chat-photos").upload(path, blob, { contentType: "image/jpeg" });
       if (up.error) throw up.error;
       const res = await supabase().from("messages").insert({ conversation_id: id, sender_id: uid, kind: "image", body: path }).select("*").single();
+      if (res.error?.message.includes("rate_limited")) {
+        setLimited(true);
+        return;
+      }
       if (res.error) throw res.error;
       setMessages((m) => [...m, res.data as Message]);
     } catch (err) {
@@ -263,6 +271,12 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
           {head.data.iBlocked ? fill(t.blockedByYou, { name }) : t.blocked}
         </p>
       ) : (
+      <>
+      {limited && (
+        <p role="alert" className="mt-5 rounded-xl bg-[#fff6e5] p-3 text-[0.95rem] text-night">
+          {t.rateLimited}
+        </p>
+      )}
       <form onSubmit={send} className="sticky bottom-20 mt-5 flex items-end gap-2 rounded-2xl border border-line bg-paper p-2 md:bottom-4">
         <input ref={fileRef} type="file" accept="image/*" className="sr-only" tabIndex={-1} aria-hidden="true" onChange={(e) => sendPhoto(e.target.files?.[0])} />
         <button
@@ -291,6 +305,7 @@ function ThreadView({ id, uid, mode }: { id: string; uid: string; mode: AppMode 
           <Send size={18} aria-hidden="true" />
         </button>
       </form>
+      </>
       )}
       {uploading && <p className="mt-2 text-sm text-muted">{t.uploading}</p>}
       {head.data.conversation.other?.id && (

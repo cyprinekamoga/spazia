@@ -474,6 +474,7 @@ export const appTextEn: AppText = {
     weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
   },
   messages: {
+    rateLimited: "You've sent many messages in a short while. Wait a bit and try again.",
     title: "Messages",
     empty: "No messages yet.",
     placeholder: "Write a message",
@@ -624,6 +625,7 @@ export const appTextEn: AppText = {
       no_hourly: "This space can't be booked by the hour.",
       not_found: "The listing is no longer available.",
       own_listing: "You can't book your own space.",
+      rate_limited: "You've done this many times in a short while. Wait a bit and try again.",
     },
   },
   requestForm: {
@@ -663,6 +665,7 @@ export const appTextEn: AppText = {
       bad_dates: "Check the dates.",
       not_found: "The listing is no longer available.",
       own_listing: "You can't rent your own space.",
+      rate_limited: "You've done this many times in a short while. Wait a bit and try again.",
     },
   },
   bookings: {

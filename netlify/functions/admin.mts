@@ -17,17 +17,22 @@ import { adminPassword, checkPassword, clearSessionCookie, createSessionCookie, 
 import { campaignEmail } from "../../src/server/campaign-email";
 import { deleteLead, getLead, isValidId, LEAD_STATUSES, listLeads, rebuildStats, recordMailing, updateMeta, type LeadStatus } from "../../src/server/db";
 import { error, isSameOriginJson, json, readJson, sleep, str } from "../../src/server/http";
+import { clearFailures, loginLocked, recordFailure } from "../../src/server/login-throttle";
 import { mailConfigured, sendMail, teamAddress } from "../../src/server/mailer";
 
 const MAX_MAIL_BATCH = 20;
 
 async function login(req: Request): Promise<Response> {
   if (!adminPassword()) return error(503, "not_configured");
+  // Too many wrong passwords lately (from anywhere): wait, whatever is sent.
+  if (await loginLocked().catch(() => false)) return error(429, "too_many_attempts");
   const body = await readJson(req);
   if (!checkPassword(body?.password)) {
+    await recordFailure().catch((err) => console.error("admin: could not count a failed login", err));
     await sleep(1500); // slows down guessing
     return error(401, "wrong_password");
   }
+  await clearFailures().catch(() => {});
   return json({ ok: true }, 200, { "set-cookie": createSessionCookie() });
 }
 

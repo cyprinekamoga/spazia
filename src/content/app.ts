@@ -478,6 +478,7 @@ const appTextSv = {
     weekdays: ["mån", "tis", "ons", "tor", "fre", "lör", "sön"],
   },
   messages: {
+    rateLimited: "Du har skickat många meddelanden på kort tid. Vänta en stund och försök igen.",
     title: "Meddelanden",
     empty: "Inga meddelanden än.",
     placeholder: "Skriv ett meddelande",
@@ -628,6 +629,7 @@ const appTextSv = {
       no_hourly: "Den här platsen går inte att boka per timme.",
       not_found: "Annonsen är inte tillgänglig längre.",
       own_listing: "Du kan inte boka din egen plats.",
+      rate_limited: "Du har gjort det här många gånger på kort tid. Vänta en stund och försök igen.",
     },
   },
   requestForm: {
@@ -667,6 +669,7 @@ const appTextSv = {
       bad_dates: "Kontrollera datumen.",
       not_found: "Annonsen är inte tillgänglig längre.",
       own_listing: "Du kan inte hyra din egen plats.",
+      rate_limited: "Du har gjort det här många gånger på kort tid. Vänta en stund och försök igen.",
     },
   },
   bookings: {

@@ -31,7 +31,7 @@ export function ReportButton({ kind, targetId, label }: { kind: "listing" | "use
     const res = await supabase().rpc("report_content", { p_kind: kind, p_target: targetId, p_reason: reason, p_details: details.trim() });
     setBusy(false);
     if (res.error) {
-      setError(/too_many/.test(res.error.message) ? fill(t.tooMany, { email: site.email }) : /login_required/.test(res.error.message) ? t.loginFirst : appText.common.error);
+      setError(/too_many|rate_limited/.test(res.error.message) ? fill(t.tooMany, { email: site.email }) : /login_required/.test(res.error.message) ? t.loginFirst : appText.common.error);
       return;
     }
     setDone(true);

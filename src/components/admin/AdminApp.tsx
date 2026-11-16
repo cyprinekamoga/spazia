@@ -170,7 +170,13 @@ function Login({ error, onDone }: { error?: string; onDone: () => Promise<void> 
       await onDone();
     } catch (err) {
       setBusy(false);
-      setMessage(err instanceof ApiError && err.status === 401 ? "Fel lösenord." : "Kunde inte logga in. Försök igen.");
+      setMessage(
+        err instanceof ApiError && err.status === 401
+          ? "Fel lösenord."
+          : err instanceof ApiError && err.status === 429
+            ? "För många felaktiga försök. Vänta en kvart och försök igen."
+            : "Kunde inte logga in. Försök igen.",
+      );
     }
   }
 
