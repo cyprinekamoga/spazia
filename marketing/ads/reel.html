@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Spazia reel</title>
+<!--
+  15-second Reel, 1080x1920. render(t) draws the frame at t seconds, so
+  render-reel.mjs can capture it frame by frame. Open the page on its own to
+  watch it play in a loop. Text stays inside Instagram's Reels safe area
+  (clear of the top bar, the caption at the bottom and the buttons on the right).
+-->
+<style>
+  @font-face { font-family: "Finlandica"; src: url(assets/finlandica-latin-wght-normal.woff2) format("woff2"); font-weight: 100 900; }
+  @font-face { font-family: "Fraunces"; src: url(assets/fraunces-latin-wght-normal.woff2) format("woff2"); font-weight: 100 900; }
+  :root { --night: #1d3340; --frost: #e8eef1; --glow: #ffc56e; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #000; }
+  #reel { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--night); font-family: "Finlandica", sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .scene img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+  .dim { position: absolute; inset: 0; }
+  .text { position: absolute; left: 90px; right: 90px; top: 430px; }
+  .shift { position: absolute; left: 0; right: 0; top: 300px; height: 1920px; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 260px); mask-image: linear-gradient(180deg, transparent 0, #000 260px); }
+  .shift img.bg { height: 1920px; }
+  .center { left: 90px; right: 90px; text-align: center; }
+  .line { display: block; will-change: transform, opacity; }
+  .h { font-family: "Fraunces", serif; font-weight: 700; letter-spacing: -0.015em; font-size: 116px; line-height: 1.04; text-shadow: 0 4px 30px rgb(0 0 0 / 0.45); }
+  .glow { color: var(--glow); }
+  .small { font-size: 46px; line-height: 1.3; color: var(--frost); margin-top: 26px; }
+  .num { font-family: "Fraunces", serif; font-weight: 800; font-size: 300px; line-height: 0.9; letter-spacing: -0.04em; color: var(--glow); }
+  .num small { font-size: 0.32em; letter-spacing: 0; }
+  .logo { height: 150px; width: auto; display: block; margin: 0 auto; }
+  .url { font-family: "Fraunces", serif; font-weight: 700; font-size: 120px; color: var(--glow); margin-top: 60px; }
+</style>
+</head>
+<body>
+<div id="reel">
+  <!-- 1: the problem -->
+  <section class="scene" id="s1">
+    <img class="bg" src="photos/tyres.jpg" alt="" style="object-position: 30% 50%">
+    <div class="dim" style="background: linear-gradient(180deg, rgb(13 24 31 / 0.75) 0%, rgb(13 24 31 / 0.35) 45%, rgb(13 24 31 / 0.2) 70%, rgb(13 24 31 / 0.6) 100%)"></div>
+    <div class="text"><span class="line h">Sommardäcken</span><span class="line h">i hallen igen?</span></div>
+  </section>
+  <!-- 2: the idea -->
+  <section class="scene" id="s2">
+    <img class="bg" src="photos/garage-clutter.jpg" alt="" style="object-position: 40% 50%">
+    <div class="dim" style="background: linear-gradient(180deg, rgb(13 24 31 / 0.8) 0%, rgb(13 24 31 / 0.4) 45%, rgb(13 24 31 / 0.25) 70%, rgb(13 24 31 / 0.6) 100%)"></div>
+    <div class="text"><span class="line h">Din granne har</span><span class="line h glow">plats över.</span></div>
+  </section>
+  <!-- 3: the price -->
+  <section class="scene" id="s3">
+    <div class="dim" style="background: radial-gradient(120% 70% at 50% 40%, #26404f 0%, #1d3340 55%, #142630 100%)"></div>
+    <div class="text center" style="top: 500px">
+      <span class="line h" style="font-size: 96px">Förvara dem för</span>
+      <span class="line num"><small>ca </small><span id="count">0</span> kr</span>
+      <span class="line h" style="font-size: 96px">i månaden</span>
+      <span class="line small" style="margin-top: 44px">Ca 390 kr för hela vintern.<br>Ingen bindningstid.</span>
+    </div>
+  </section>
+  <!-- 4: the other side -->
+  <section class="scene" id="s4" style="background: #000c06">
+    <div class="shift"><img class="bg" src="photos/garage-night.jpg" alt=""></div>
+    <div class="dim" style="background: linear-gradient(180deg, rgb(0 12 6 / 0.3) 0%, rgb(0 12 6 / 0) 45%, rgb(0 12 6 / 0) 75%, rgb(0 12 6 / 0.7) 100%)"></div>
+    <div class="text center" style="top: 300px">
+      <span class="line h" style="font-size: 96px">Har du ett garage?</span>
+      <span class="line h" style="font-size: 74px; margin-top: 14px">Hyr ut och tjäna</span>
+      <span class="line num" style="font-size: 176px; margin-top: 6px"><small>ca </small>450 kr<small>/mån</small></span>
+      <span class="line small" style="font-size: 38px; margin-top: 18px">Räknat på 8 däcksatser à 65 kr, efter Spazias avgifter.</span>
+    </div>
+  </section>
+  <!-- 5: the brand -->
+  <section class="scene" id="s5">
+    <div class="dim" style="background: radial-gradient(120% 70% at 50% 45%, #26404f 0%, #1d3340 55%, #142630 100%)"></div>
+    <div class="text center" style="top: 640px">
+      <span class="line"><img class="logo" src="assets/logo-white.svg" alt="Spazia"></span>
+      <span class="line url">spazia.se</span>
+      <span class="line small" style="font-size: 52px; margin-top: 34px">Hitta plats eller hyr ut din egen</span>
+      <span class="line small" style="font-size: 40px; margin-top: 40px; opacity: 0.8">Betalning och avtal i appen · Ingen bindningstid</span>
+    </div>
+  </section>
+</div>
+<script>
+  const DURATION = 15;
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+  const easeInOut = (x) => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+  const $ = (s) => document.querySelector(s);
+
+  // [start, end] of each scene; a scene fades in over FADE seconds on top of the one before.
+  const SCENES = { s1: [0, 3.1], s2: [2.8, 6.1], s3: [5.8, 9.6], s4: [9.3, 12.7], s5: [12.4, 15] };
+  const FADE = 0.35;
+  // When each line of each scene comes in, in seconds from the scene's start.
+  const LINES = { s1: [0.25, 0.6], s2: [0.45, 0.85], s3: [0.35, 0.6, 1.25, 2.0], s4: [0.35, 0.95, 1.2, 1.8], s5: [0.25, 0.6, 1.0, 1.45] };
+
+  function render(t) {
+    for (const [id, [start, end]] of Object.entries(SCENES)) {
+      const el = document.getElementById(id);
+      const local = t - start;
+      const visible = t >= start && t <= end + 0.01;
+      el.style.opacity = !visible ? 0 : id === "s1" ? 1 : easeInOut(local / FADE);
+      // Slow push-in on the photos (Ken Burns).
+      const bg = el.querySelector("img.bg");
+      if (bg) {
+        const p = clamp(local / (end - start));
+        const pan = id === "s2" ? `translateX(${-2 * p}%)` : "";
+        bg.style.transform = `scale(${1.04 + 0.1 * p}) ${pan}`;
+      }
+      // Lines slide up and fade in, one after another.
+      el.querySelectorAll(".line").forEach((line, i) => {
+        const at = (LINES[id] || [])[i] ?? 0;
+        const k = easeOut((local - at) / 0.55);
+        line.style.opacity = k;
+        line.style.transform = `translateY(${(1 - k) * 60}px)`;
+      });
+    }
+    // The price counts up to 65.
+    const c = easeOut((t - SCENES.s3[0] - 0.6) / 0.9);
+    $("#count").textContent = Math.round(65 * c);
+  }
+  window.render = render;
+  window.DURATION = DURATION;
+
+  // Preview: play in a loop when opened directly (render-reel.mjs adds ?capture).
+  if (!new URLSearchParams(location.search).has("capture")) {
+    const t0 = performance.now();
+    const tick = () => { render(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  } else {
+    render(0);
+  }
+</script>
+</body>
+</html>

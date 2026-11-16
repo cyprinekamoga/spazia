@@ -35,6 +35,7 @@ const SITE_ONLY = [
 /** Used by neither build. */
 const NEITHER = [
   /^docs\//,
+  /^marketing\//,
   /\.md$/,
   /^\.github\//,
   /^scripts\/(build-images|netlify-ignore)\.mjs$/,
