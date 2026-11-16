@@ -58,9 +58,9 @@ export default async function listingPage(req: Request, context: EdgeContext): P
 
   const seo = listingSeo(listing, { lang, appUrl: APP_URL, storageUrl: supabaseUrl(), serviceFee: SERVICE_FEE, rating });
   const out = html
-    .replace(/<title>[^<]*<\/title>/, `<title>${escapeText(seo.title)}</title>`)
-    .replace(/<html lang="[a-z]+"/, `<html lang="${lang}"`)
-    .replace("</head>", `${seoHeadTags(seo, lang)}</head>`);
+    .replace(/<title>[^<]*<\/title>/, () => `<title>${escapeText(seo.title)}</title>`)
+    .replace(/<html lang="[a-z]+"/, () => `<html lang="${lang}"`)
+    .replace("</head>", () => `${seoHeadTags(seo, lang)}</head>`);
   cached(headers, 600);
   return new Response(out, { status: 200, headers });
 }

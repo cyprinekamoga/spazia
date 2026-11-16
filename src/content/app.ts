@@ -394,6 +394,7 @@ const appTextSv = {
     create: "Skapa annons",
     empty: "Du har inga annonser än. Det tar ungefär tio minuter att skapa en.",
     untitled: "Annons utan rubrik",
+    takenDown: "Spazia har pausat annonsen och den kan inte publiceras igen härifrån. Svara på vårt mejl eller hör av dig, så tittar vi på den.",
     continue: "Fortsätt",
     edit: "Ändra",
     preview: "Visa",

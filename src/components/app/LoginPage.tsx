@@ -10,14 +10,11 @@ import { fill } from "@/lib/i18n";
 import { useSession } from "@/lib/app/session";
 import { site } from "@/lib/site";
 import { supabase } from "@/lib/supabase";
+import { safeNext } from "@/lib/app/safe-next";
 
 const t = appText.login;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-/** Only allow redirects inside the site (no "//evil.com"). */
-export function safeNext(value: string | null, fallback = "/konto"): string {
-  return value && value.startsWith("/") && !value.startsWith("//") ? value : fallback;
-}
 
 type Providers = { google: boolean };
 

@@ -539,7 +539,7 @@ export function ListingWizard() {
     const r = await supabase().rpc("publish_listing", { p_listing: id });
     setBusy(false);
     if (r.error) {
-      setError(r.error.message.startsWith("incomplete") ? w.review.missing : t.common.error);
+      setError(r.error.message.startsWith("incomplete") ? w.review.missing : /taken_down/.test(r.error.message) ? appText.listings.takenDown : t.common.error);
       return;
     }
     setListing({ status: "published" });

@@ -24,11 +24,15 @@ export function ListingsPage() {
   const uid = useAppSession().user.id;
   const { data, loading, error, reload } = useLoad(() => fetchMyListings(uid), uid);
   const [busy, setBusy] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function setStatus(id: string, status: "published" | "paused") {
     setBusy(id);
-    if (status === "published") await supabase().rpc("publish_listing", { p_listing: id });
-    else await supabase().from("listings").update({ status }).eq("id", id);
+    setNotice(null);
+    if (status === "published") {
+      const r = await supabase().rpc("publish_listing", { p_listing: id });
+      if (r.error) setNotice(/taken_down/.test(r.error.message) ? t.takenDown : appText.common.error);
+    } else await supabase().from("listings").update({ status }).eq("id", id);
     await reload();
     setBusy(null);
   }
@@ -55,6 +59,11 @@ export function ListingsPage() {
           {t.create}
         </Link>
       </div>
+      {notice && (
+        <p role="alert" className="mt-4 rounded-xl bg-[#fff6e5] p-4 text-[0.95rem] text-night">
+          {notice}
+        </p>
+      )}
 
       {listings.length === 0 ? (
         <div className="mt-8 rounded-2xl border border-line bg-paper p-6 text-center">

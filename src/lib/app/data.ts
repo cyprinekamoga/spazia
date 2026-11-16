@@ -22,7 +22,7 @@ export async function fetchListingBundle(id: string): Promise<ListingBundle | nu
     db.from("listing_private").select("*").eq("listing_id", id).maybeSingle(),
     db.from("listing_spaces").select("*").eq("listing_id", id),
     db.from("listing_photos").select("*").eq("listing_id", id).order("position"),
-    db.from("profiles").select("*").eq("id", listing.host_id).maybeSingle(),
+    db.from("profiles").select("id, first_name, about, avatar_url, created_at").eq("id", listing.host_id).maybeSingle(),
   ]);
   return {
     listing,
@@ -72,7 +72,7 @@ export async function fetchBlocks(listingId: string): Promise<ListingBlock[]> {
 export async function fetchMyProfile(uid: string): Promise<{ profile: Profile | null; priv: ProfilePrivate | null }> {
   const db = supabase();
   const [profile, priv] = await Promise.all([
-    db.from("profiles").select("*").eq("id", uid).maybeSingle(),
+    db.from("profiles").select("id, first_name, about, avatar_url, created_at").eq("id", uid).maybeSingle(),
     db.from("profile_private").select("*").eq("id", uid).maybeSingle(),
   ]);
   return { profile: must(profile) as Profile | null, priv: must(priv) as ProfilePrivate | null };

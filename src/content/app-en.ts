@@ -390,6 +390,7 @@ export const appTextEn: AppText = {
     create: "Create listing",
     empty: "You don't have any listings yet. It takes about ten minutes to create one.",
     untitled: "Untitled listing",
+    takenDown: "Spazia has paused this listing and it can't be published again from here. Reply to our email or get in touch and we'll look at it.",
     continue: "Continue",
     edit: "Edit",
     preview: "View",
