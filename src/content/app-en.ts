@@ -398,6 +398,10 @@ export const appTextEn: AppText = {
     unpause: "Publish again",
     deleteDraft: "Delete draft",
     deleteConfirm: "Delete the draft? This can't be undone.",
+    deleteListing: "Delete listing",
+    deleteListingConfirm: "Delete the listing? It disappears from Spazia and can't be brought back. Requests you haven't answered are declined. Earlier rentals, receipts and messages are kept.",
+    deleteActive: "The listing has an ongoing or upcoming rental. End it first, then you can delete the listing.",
+    deleted: "The listing has been deleted.",
     pauseHint: "A paused listing isn't shown to renters, but ongoing rentals continue.",
   },
   today: {

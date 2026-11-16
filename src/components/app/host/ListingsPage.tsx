@@ -37,11 +37,22 @@ export function ListingsPage() {
     setBusy(null);
   }
 
-  async function removeDraft(id: string, paths: string[]) {
-    if (!window.confirm(t.deleteConfirm)) return;
+  /**
+   * Drafts and listings without history are deleted for good (then the photo
+   * files go too); a listing with past rentals or messages is hidden instead,
+   * so receipts and agreements keep working. Refused while a rental is going on.
+   */
+  async function remove(id: string, draft: boolean, paths: string[]) {
+    if (!window.confirm(draft ? t.deleteConfirm : t.deleteListingConfirm)) return;
     setBusy(id);
-    if (paths.length) await supabase().storage.from("listing-photos").remove(paths);
-    await supabase().from("listings").delete().eq("id", id);
+    setNotice(null);
+    const r = await supabase().rpc("delete_listing", { p_listing: id });
+    if (r.error) {
+      setNotice(/active_rentals/.test(r.error.message) ? t.deleteActive : appText.common.error);
+    } else {
+      if (r.data === "deleted" && paths.length) await supabase().storage.from("listing-photos").remove(paths);
+      if (!draft) setNotice(t.deleted);
+    }
     await reload();
     setBusy(null);
   }
@@ -99,7 +110,7 @@ export function ListingsPage() {
                         <Link prefetch={false} href={`/vard/annons?id=${l.id}`} className="btn btn-primary !py-2 text-sm">
                           {t.continue}
                         </Link>
-                        <button type="button" disabled={busy === l.id} onClick={() => removeDraft(l.id, l.listing_photos.map((p) => p.path))} className="min-h-10 px-2 text-sm font-semibold text-[#b42318] underline underline-offset-4">
+                        <button type="button" disabled={busy === l.id} onClick={() => remove(l.id, true, l.listing_photos.map((p) => p.path))} className="min-h-10 px-2 text-sm font-semibold text-[#b42318] underline underline-offset-4">
                           {t.deleteDraft}
                         </button>
                       </>
@@ -113,6 +124,9 @@ export function ListingsPage() {
                         </Link>
                         <button type="button" disabled={busy === l.id} onClick={() => setStatus(l.id, l.status === "published" ? "paused" : "published")} className="btn btn-secondary !py-2 text-sm">
                           {l.status === "published" ? t.pause : t.unpause}
+                        </button>
+                        <button type="button" disabled={busy === l.id} onClick={() => remove(l.id, false, l.listing_photos.map((p) => p.path))} className="min-h-10 px-2 text-sm font-semibold text-[#b42318] underline underline-offset-4">
+                          {t.deleteListing}
                         </button>
                       </>
                     )}

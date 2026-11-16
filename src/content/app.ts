@@ -402,6 +402,10 @@ const appTextSv = {
     unpause: "Publicera igen",
     deleteDraft: "Ta bort utkast",
     deleteConfirm: "Ta bort utkastet? Det går inte att ångra.",
+    deleteListing: "Ta bort annonsen",
+    deleteListingConfirm: "Ta bort annonsen? Den försvinner från Spazia och går inte att få tillbaka. Förfrågningar som du inte har svarat på avböjs. Tidigare uthyrningar, kvitton och meddelanden finns kvar.",
+    deleteActive: "Annonsen har en pågående eller kommande uthyrning. Avsluta den först, sedan kan du ta bort annonsen.",
+    deleted: "Annonsen är borttagen.",
     pauseHint: "En pausad annons syns inte för hyresgäster, men pågående uthyrningar fortsätter.",
   },
   today: {

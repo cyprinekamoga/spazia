@@ -41,6 +41,7 @@ export async function fetchMyListings(uid: string): Promise<ListingSummary[]> {
       .from("listings")
       .select("*, listing_photos(path, position), listing_spaces(category, capacity, host_price_month, hourly_price)")
       .eq("host_id", uid)
+      .is("deleted_at", null)
       .order("updated_at", { ascending: false }),
   ) as ListingSummary[];
 }
