@@ -103,7 +103,11 @@ delete from private.stripe_accounts where user_id in (...testkonton...);
 | Värden får betalt | Ett dygn efter att varje månad är slut, utbetalning på måndagar | Ett dygn efter att bokningen har slutat, utbetalning på måndagar |
 | Tvist eller bedrägerivarning | Värdens del hålls kvar tills det är utrett | Samma |
 
-Värdar fyller i namn, personnummer och adress under *Meny → Utbetalningar* och kopplar sedan sitt bankkonto hos Stripe. Utan kopplat bankkonto kan de inte godkänna förfrågningar, och deras parkeringar går inte att boka. Ett värdkonto är redo för pengar när Stripe har aktiverat förmågan att ta emot överföringar (`stripe_transfers`).
+Värdar fyller i namn, personnummer och adress under *Meny → Utbetalningar* och kopplar sedan sitt bankkonto hos Stripe. Det behövs inte för att komma igång: en värd kan lägga upp en plats, godkänna förfrågningar och ta emot parkeringsbokningar utan bankkonto (migreringen `20261116000000_payouts_later.sql`). Hyresgästen betalar som vanligt, och värdens del väntar hos Spazia tills värden har kopplat ett konto. Överföringen görs vid nästa körning av `payments-worker` efter det.
+
+Appen frågar efter uppgifterna när det finns pengar att betala ut: på startsidan (”X kr väntar på dig”), på förfrågan och under Utbetalningar. Värden får också mejlet `payout_setup` en timme efter en betalning, och en påminnelse i veckan så länge en del är klar att betalas ut men saknar konto (jobbet `spazia-payout-setup`, kl. 09.41). Larmet ”utbetalningar försenade” till teamet räknar bara värdar som har skickat in sina uppgifter till Stripe.
+
+Ett värdkonto är redo för pengar när Stripe har aktiverat förmågan att ta emot överföringar (`stripe_transfers`).
 
 ## Moms
 

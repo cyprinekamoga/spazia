@@ -24,7 +24,9 @@ export type NotificationKind =
   | "new_message"
   | "handover_new"
   | "handover_answered"
-  | "review_invite";
+  | "review_invite"
+  /** To a host without payout details, when money has come in for them (prev_status "paid") or is waiting to be paid out ("reminder"). */
+  | "payout_setup";
 
 export interface NotificationItem {
   category: CategoryId;
@@ -348,6 +350,27 @@ export function buildBookingEmail(p: NotificationPayload, opts: { appUrl: string
         button: { href: p.role === "host" ? hostLink : renterLink, label: "Lämna omdöme" },
       };
       break;
+    case "payout_setup": {
+      const share = p.payment ? kr(p.payment.host_amount) : null;
+      const reminder = p.prev_status === "reminder";
+      d = {
+        subject: reminder
+          ? `Dina pengar väntar${share ? `: ${share}` : ""}. Lägg till ditt bankkonto`
+          : `${name} har betalat${share ? `, ${share} till dig` : ""}. Lägg till ditt bankkonto`,
+        intro: [
+          hello,
+          reminder
+            ? `Hyran för ”${p.listing_title}” är klar att betalas ut, men vi har inget bankkonto att skicka den till.`
+            : `${name} har betalat för ”${p.listing_title}”. Vi betalar ut din del dagen efter att perioden är slut.`,
+        ],
+        rows: [["Plats", place(p)], [isHour ? "Tid" : "Period", period(p)], ...(share ? ([["Din del", share]] as [string, string][]) : [])],
+        after: [
+          "För att kunna betala ut pengarna behöver vi ditt namn, personnummer och ett bankkonto. Det tar ett par minuter och görs bara en gång. Vår betalpartner Stripe kontrollerar din identitet, som lagen kräver.",
+        ],
+        button: { href: `${opts.appUrl}/vard/utbetalningar`, label: "Lägg till bankkonto" },
+      };
+      break;
+    }
     default:
       return null;
   }

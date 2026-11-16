@@ -36,6 +36,8 @@ export function LoginPage() {
   const router = useRouter();
   const params = useSearchParams();
   const next = safeNext(params.get("next"));
+  // Coming from "Jag har plats över" on the site: say what happens next.
+  const forHost = next.startsWith("/vard");
   const session = useSession();
   const [providers, setProviders] = useState<Providers>({ google: true });
   const [email, setEmail] = useState("");
@@ -124,8 +126,8 @@ export function LoginPage() {
 
         {step === "start" ? (
           <>
-            <h1 className="mt-6 text-center text-[2rem] leading-tight text-night">{t.title}</h1>
-            <p className="mt-2 text-center text-muted">{t.lead}</p>
+            <h1 className="mt-6 text-center text-[2rem] leading-tight text-night">{forHost ? t.hostTitle : t.title}</h1>
+            <p className="mt-2 text-center text-muted">{forHost ? t.hostLead : t.lead}</p>
             <div className="mt-8 space-y-3">
               <button type="button" onClick={() => social("google")} disabled={busy} className="btn w-full border-[1.5px] border-line bg-paper text-night hover:border-night">
                 <GoogleIcon />

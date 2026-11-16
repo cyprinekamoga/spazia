@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { trackLead } from "@/lib/tracking";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 
@@ -19,7 +20,8 @@ function subscribeEstimate(onChange: () => void) {
   return () => window.removeEventListener(ESTIMATE_EVENT, onChange);
 }
 
-type Action = { href: string; label: string };
+/** track: count the click as a lead (the host button that leads to sign-up in the app). */
+type Action = { href: string; label: string; track?: "host" };
 
 /**
  * Sticky call-to-action bar for phones. It slides in once the visitor has
@@ -97,6 +99,7 @@ export function MobileActionBar({
         <Link prefetch={false}
           href={primary.href}
           tabIndex={visible ? 0 : -1}
+          onClick={primary.track ? () => trackLead(primary.track!) : undefined}
           className={`btn btn-primary !py-3 text-[0.95rem] ${secondary || estimateLabel ? "flex-1 !px-3" : "w-full"}`}
         >
           {primary.label}

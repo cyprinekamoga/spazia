@@ -44,6 +44,15 @@ export const site = {
 export const skatteverketRentalUrl =
   "https://www.skatteverket.se/privat/fastigheterochbostad/inkomsterfranbostad/hyrautprivatbostadbostadsrattsmahusochhyresratt.4.233f91f71260075abe8800033479.html";
 
+/**
+ * Where "Jag har plats över" and "Lägg upp din plats" lead: create an account in
+ * the app (Google or email), then straight on to a new listing. No form first;
+ * payout details are asked for after the first paid rental.
+ */
+export function hostSignupUrl(lang: "sv" | "en" = "sv"): string {
+  return `${site.appUrl}/logga-in?next=${encodeURIComponent("/vard/annons")}&lang=${lang}`;
+}
+
 /** The app's public search, e.g. https://app.spazia.se/sok?ort=Göteborg&typ=tyres */
 export function appSearchUrl({ place, category }: { place?: string; category?: string } = {}): string {
   const q = new URLSearchParams();

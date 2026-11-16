@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HostSignupLink } from "@/components/HostSignupLink";
 import type { ReactNode } from "react";
 import { getDictionary } from "@/content";
 import { getCategory, type CategoryId } from "@/content/categories";
@@ -201,7 +202,7 @@ export function GuideView({ lang, guide }: { lang: Lang; guide: Guide }) {
   const t = getDictionary(lang);
   const p = t.guidesPage;
   const forHost = guide.audience === "host";
-  const ctaHref = `${pagePath(forHost ? "host" : "find", lang)}#anmalan`;
+  const ctaHref = `${pagePath("find", lang)}#anmalan`;
   const photo = photoData(guide.photo);
   const largest = photo.widths[photo.widths.length - 1];
 
@@ -273,9 +274,15 @@ export function GuideView({ lang, guide }: { lang: Lang; guide: Guide }) {
           <div className="mt-10 rounded-[1.25rem] bg-night p-6 text-white sm:p-8">
             <h2 className="text-2xl text-white">{forHost ? p.ctaHostTitle : p.ctaFindTitle}</h2>
             <p className="mt-2 leading-relaxed text-frost-2">{forHost ? p.ctaHostText : p.ctaFindText}</p>
-            <Link prefetch={false} href={ctaHref} className="btn btn-light mt-5">
-              {forHost ? t.hero.ctaHost : t.hero.ctaFind}
-            </Link>
+            {forHost ? (
+              <HostSignupLink lang={lang} className="btn btn-light mt-5">
+                {t.hero.ctaHost}
+              </HostSignupLink>
+            ) : (
+              <Link prefetch={false} href={ctaHref} className="btn btn-light mt-5">
+                {t.hero.ctaFind}
+              </Link>
+            )}
           </div>
         </article>
       </Section>

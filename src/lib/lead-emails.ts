@@ -160,7 +160,7 @@ const confirmationCopy = {
       subject: "Vi letar plats åt dig",
       intro: (name: string, town: string) => [
         `Hej ${name}!`,
-        `Tack för din förfrågan. Vi letar efter en verifierad värd ${town ? `i ${town}` : "nära dig"} och hör av oss så snart vi har hittat en.`,
+        `Tack för din förfrågan. Vi letar efter en värd ${town ? `i ${town}` : "nära dig"} och hör av oss så snart vi har hittat en.`,
       ],
     },
     org: {
@@ -189,7 +189,7 @@ const confirmationCopy = {
       subject: "We're looking for space for you",
       intro: (name: string, town: string) => [
         `Hi ${name},`,
-        `Thanks for your request. We're looking for a verified host ${town ? `in ${town}` : "near you"} and will get in touch as soon as we've found one.`,
+        `Thanks for your request. We're looking for a host ${town ? `in ${town}` : "near you"} and will get in touch as soon as we've found one.`,
       ],
     },
     org: {

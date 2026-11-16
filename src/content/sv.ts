@@ -3,7 +3,7 @@ export const sv = {
   meta: {
     homeTitle: "Spazia – förvaring och parkering hos grannen",
     homeDescription:
-      "Förvara däck, skidor, skoter och flyttlådor i grannens garage, eller hyr en p-plats på uppfarten. ID-kontrollerade värdar, ett gemensamt hyresavtal och ingen bindningstid, i hela Sverige.",
+      "Förvara däck, skidor, skoter och flyttlådor i grannens garage, eller hyr en p-plats på uppfarten. Hyresavtal i appen, betalning via Spazia och ingen bindningstid, i hela Sverige.",
     titleTemplate: "%s | Spazia",
     locale: "sv_SE",
   },
@@ -27,7 +27,7 @@ export const sv = {
   actionBar: {
     find: "Hitta förvaring",
     host: "Hyr ut din plats",
-    hostForm: "Anmäl utrymme",
+    hostForm: "Lägg upp plats",
     renterForm: "Hitta plats",
     estimate: "Du får ca",
   },
@@ -52,7 +52,7 @@ export const sv = {
     ctaFind: "Jag behöver förvaring",
     ctaHost: "Jag har plats över",
     chipsLabel: "Vad behöver du plats för?",
-    trustline: ["ID-kontrollerade värdar", "Hyresavtal i appen", "Ingen bindningstid"],
+    trustline: ["Värden får betalt i efterhand", "Hyresavtal i appen", "Ingen bindningstid"],
     illustrationAlt:
       "Ett upplyst garage en snöig vinterkväll – Spazia, förvaring och parkering hos grannen.",
   },
@@ -72,7 +72,7 @@ export const sv = {
         text: "Däck, skidor, en skoter eller en sommar med flyttlådor. Berätta var och hur länge du behöver plats.",
       },
       {
-        title: "Välj en verifierad värd",
+        title: "Välj en värd nära dig",
         text: "Värdarnas identitet kontrolleras av vår betalpartner Stripe innan de kan få betalt, och varje annons har bilder på utrymmet.",
       },
       {
@@ -82,8 +82,8 @@ export const sv = {
     ],
     hostSteps: [
       {
-        title: "Anmäl ditt utrymme",
-        text: "Garage, källare, uthus eller vind. Anmälan tar två minuter.",
+        title: "Lägg upp din plats",
+        text: "Garage, källare, uthus eller vind. Skapa konto och lägg upp platsen på några minuter.",
       },
       {
         title: "Lägg upp bilder",
@@ -149,7 +149,7 @@ export const sv = {
     items: [
       {
         icon: "id",
-        title: "ID-kontrollerade värdar",
+        title: "ID-kontroll före utbetalning",
         text: "Värdarna identitetskontrolleras av vår betalpartner Stripe innan de kan få betalt. Hyresgäster betalar med kort i eget namn.",
       },
       {
@@ -195,11 +195,11 @@ export const sv = {
       },
       {
         q: "Hur kommer jag igång?",
-        a: "Fyll i formuläret. Det är gratis och inte bindande. Vi hör av oss och hjälper dig att hitta plats, eller att hyra ut din.",
+        a: "Vill du hyra ut: skapa ett konto i appen och lägg upp platsen, det tar några minuter. Letar du plats: sök i appen. Finns det inget nära dig än kan du lämna din ort i formuläret, så hör vi av oss när det kommer en plats.",
       },
       {
         q: "Finns ni i min stad?",
-        a: "Ja, Spazia finns i hela Sverige. Skriv din ort i formuläret, så letar vi efter en värd eller hyresgäst nära dig.",
+        a: "Ja, Spazia finns i hela Sverige, och värdar kan lägga upp en plats var som helst. Finns det ingen plats nära dig än kan du skriva din ort i formuläret, så hör vi av oss när det kommer en.",
       },
       {
         q: "Vad kostar det?",
@@ -207,7 +207,7 @@ export const sv = {
       },
       {
         q: "Är det säkert?",
-        a: "Värdarna ID-kontrolleras av vår betalpartner Stripe, varje annons har bilder på utrymmet, ni godkänner samma hyresavtal i appen och fotograferar sakerna vid inlämning. Betalningen går via Spazia, så ingen behöver hantera kontanter.",
+        a: "Värdarna ID-kontrolleras av vår betalpartner Stripe innan de får betalt, och hyran betalas ut först när perioden är slut. Varje annons har bilder på utrymmet, ni godkänner samma hyresavtal i appen och fotograferar sakerna vid inlämning. Betalningen går via Spazia, så ingen behöver hantera kontanter.",
       },
       {
         q: "Är mina saker försäkrade?",
@@ -286,7 +286,7 @@ export const sv = {
     eyebrow: "Bli värd",
     title: "Tjäna pengar på ditt tomma garage.",
     lead: "Hyr ut torr plats i garage, källare eller uthus, eller en p-plats på uppfarten. Vi sköter avtal och betalning, och du låser upp dörren några gånger om året.",
-    ctaForm: "Anmäl ditt utrymme",
+    ctaForm: "Lägg upp din plats",
     ctaCalc: "Räkna på det",
     benefitsTitle: "Det här ingår",
     benefits: [
@@ -317,15 +317,15 @@ export const sv = {
     ],
     stepsTitle: "Så blir du värd",
     steps: [
-      { title: "Anmäl ditt utrymme", text: "Fyll i formuläret nedan. Det tar två minuter." },
-      { title: "Vi hör av oss", text: "Vi ringer eller mejlar inom några dagar och berättar hur det går till." },
+      { title: "Skapa konto", text: "Logga in med Google eller e-post. Inga formulär att fylla i." },
+      { title: "Lägg upp platsen", text: "Bilder, vad som får plats och pris. Appen föreslår ett pris." },
       {
-        title: "Bilder och annons",
-        text: "Du fotograferar utrymmet, och vi hjälper dig att skriva annonsen och sätta ett pris.",
+        title: "Godkänn hyresgästen",
+        text: "Du ser vem som frågar och godkänner varje förfrågan. Hyresavtalet godkänns i samma steg.",
       },
       {
-        title: "Första hyresgästen",
-        text: "Du godkänner förfrågan och därmed hyresavtalet, och den första hyran betalas ut.",
+        title: "Få betalt",
+        text: "När hyresgästen har betalat lägger du till ditt bankkonto. Pengarna betalas ut dagen efter att perioden är slut.",
       },
     ],
     requirementsTitle: "Vad krävs av utrymmet?",
@@ -340,17 +340,17 @@ export const sv = {
     taxText:
       "Hyr du ut en del av din privatbostad, till exempel garaget till din villa, beskattas hyran som inkomst av kapital. För en villa får du göra ett schablonavdrag på 40 000 kr per år plus 20 % av hyresintäkten, vilket täcker hela intäkten för de flesta värdar. Som digital plattform kan Spazia vara skyldig att lämna uppgifter om hyresintäkter till Skatteverket. Reglerna beror på din situation, så kontrollera alltid med Skatteverket.",
     taxLink: "Skatteverket om att hyra ut privatbostad",
-    formTitle: "Anmäl ditt utrymme",
-    formLead: "Vi hör av oss inom några dagar. Det är gratis och inte bindande.",
+    formTitle: "Lägg upp din plats",
+    formLead: "Det är gratis och tar några minuter. Du loggar in med Google eller e-post, och bankuppgifter behövs först när du har fått din första hyresgäst.",
     faqTitle: "Frågor från värdar",
   },
   findPage: {
     metaTitle: "Hitta förvaring och parkering hos en granne",
     metaDescription:
-      "Förvara däck, skidor, cyklar, flyttlådor eller fordon, eller hyr en p-plats, hos en verifierad granne, i hela Sverige.",
+      "Förvara däck, skidor, cyklar, flyttlådor eller fordon, eller hyr en p-plats, hos en granne, i hela Sverige.",
     eyebrow: "Hitta förvaring",
     title: "Förvaring nära dig, hos en granne.",
-    lead: "Berätta vad du behöver plats för och var, så hjälper vi dig att hitta en verifierad granne nära dig.",
+    lead: "Berätta vad du behöver plats för och var, så hjälper vi dig att hitta en granne nära dig.",
     pricesTitle: "Riktpriser",
     pricesLead: "Riktpriser per månad, inklusive serviceavgift. I storstäderna blir det ofta dyrare, och värden sätter det slutliga priset.",
     heatedNote: "Uppvärmd plats kostar ca 25 % mer för fordon, möbler och lådor.",
@@ -364,7 +364,7 @@ export const sv = {
   trustPage: {
     metaTitle: "Trygghet – så skyddar vi värdar och hyresgäster",
     metaDescription:
-      "ID-kontrollerade värdar, bilder på varje utrymme, hyresavtal i appen, inventarielista med bilder och betalning via plattformen. Så fungerar tryggheten på Spazia.",
+      "ID-kontroll av värdarna innan de får betalt, bilder på varje utrymme, hyresavtal i appen, inventarielista med bilder och betalning via plattformen. Så fungerar tryggheten på Spazia.",
     eyebrow: "Trygghet",
     title: "Förtroende är grunden.",
     lead: "Att lämna sina saker hos någon man inte känner, eller släppa in någon i sitt garage, kräver förtroende. Så här bygger vi det.",
@@ -431,7 +431,7 @@ export const sv = {
     title: "Plats finns. Den är bara på fel ställe.",
     paragraphs: [
       "Många av oss äger saker som bara används halva året: dubbdäck, skidor, skotrar och sommarmöbler. Samtidigt är kön till extra förråd i hyreshusen lång, studentrummen har knappt plats för en resväska och förrådsföretagen ligger ofta i industriområden utanför stan.",
-      "I villaområdena finns samtidigt garage, källare och uthus med plats över. Spazia kopplar ihop de två, med ID-kontrollerade värdar, ett gemensamt hyresavtal och automatisk betalning. Det ska kännas lika tryggt som ett förrådsföretag, men vara närmare och billigare.",
+      "I villaområdena finns samtidigt garage, källare och uthus med plats över. Spazia kopplar ihop de två, med ett gemensamt hyresavtal, automatisk betalning och ID-kontroll av värdarna innan de får betalt. Det ska kännas lika tryggt som ett förrådsföretag, men vara närmare och billigare.",
       "Spazia drivs av ett litet team. Vi finns i hela Sverige, och vi svarar själva när du hör av dig.",
     ],
     creditsTitle: "Bildkällor",
@@ -701,11 +701,11 @@ export const sv = {
   cityPage: {
     eyebrow: "Stad",
     title: "Förvaring och parkering i {name}",
-    metaDescription: "Förvara däck, skidor, flyttlådor eller hyr en p-plats hos en verifierad granne i {name}.",
+    metaDescription: "Förvara däck, skidor, flyttlådor eller hyr en p-plats hos en granne i {name}.",
     renterTitle: "Behöver du plats i {name}?",
     hostTitle: "Bor du i {name} och har plats över?",
     categoriesTitle: "Det här kan du förvara",
-    renterText: "Berätta vad du vill förvara, så letar vi upp en verifierad granne i {name} med plats över.",
+    renterText: "Berätta vad du vill förvara, så letar vi upp en granne i {name} med plats över.",
     hostText: "Hyr ut plats i garaget, källaren eller på uppfarten. Du bestämmer vad du tar emot och när hyresgästerna får komma.",
     renterCta: "Jag behöver plats i {name}",
     seeSpaces: "Se lediga platser i {name}",
@@ -813,7 +813,7 @@ export const sv = {
       messagePlaceholder: "T.ex. om du behöver komma åt sakerna ofta.",
       submit: "Hitta plats åt mig",
       successTitle: "Tack! Vi letar plats åt dig.",
-      successText: "Vi hör av oss så snart vi har hittat en verifierad värd nära dig.",
+      successText: "Vi hör av oss så snart vi har hittat en värd nära dig.",
     },
     org: {
       orgName: "Organisation",
@@ -944,7 +944,7 @@ export const sv = {
       "Riktpriser. Du bestämmer själv priset. Spazia tar 5 % av utbetalningen och hyresgästen betalar en serviceavgift på 10 %.",
     decrease: "Färre {unit}",
     increase: "Fler {unit}",
-    cta: "Anmäl ditt utrymme",
+    cta: "Lägg upp din plats",
     empty: "Lägg till något för att se en beräkning.",
   },
   guidesPage: {
@@ -961,9 +961,9 @@ export const sv = {
     otherGuides: "Fler guider",
     relatedTitle: "Läs mer",
     ctaFindTitle: "Behöver du plats?",
-    ctaFindText: "Berätta vad du behöver, så hjälper vi dig att hitta en verifierad granne nära dig. Det är gratis och inte bindande.",
+    ctaFindText: "Berätta vad du behöver, så hjälper vi dig att hitta en granne nära dig. Det är gratis och inte bindande.",
     ctaHostTitle: "Har du plats över?",
-    ctaHostText: "Anmäl ditt utrymme, så hör vi av oss inom några dagar och hjälper dig att komma igång.",
+    ctaHostText: "Skapa ett konto och lägg upp platsen på några minuter. Det är gratis, och bankuppgifter behövs först när du har fått din första hyresgäst.",
   },
   renterCalc: {
     title: "Vad kostar det för dig?",

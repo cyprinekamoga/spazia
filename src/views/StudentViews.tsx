@@ -6,7 +6,7 @@ import { getCity } from "@/content/cities";
 import { studentCategories, universities, type University } from "@/content/universities";
 import { categoryIcons } from "@/components/Icons";
 import { MobileActionBar } from "@/components/MobileActionBar";
-import { CheckList, FinalCta, PhotoHero, priceLabel, Section, SectionHeading, townFormHref } from "@/components/sections";
+import { CheckList, FinalCta, PhotoHero, priceLabel, Section, SectionHeading } from "@/components/sections";
 import { fill, type Lang } from "@/lib/i18n";
 import { cityPath, pagePath, RENTER_PARAMS, universityPath } from "@/lib/routes";
 import { appSearchUrl } from "@/lib/site";
@@ -193,7 +193,7 @@ export function UniversityView({ lang, university: u }: { lang: Lang; university
         </div>
       </Section>
 
-      <MobileActionBar primary={{ href: signUp, label: t.actionBar.find }} secondary={{ href: townFormHref("host", u.town, lang), label: t.actionBar.host }} />
+      <MobileActionBar primary={{ href: signUp, label: t.actionBar.find }} secondary={{ href: pagePath("host", lang), label: t.actionBar.host }} />
     </>
   );
 }

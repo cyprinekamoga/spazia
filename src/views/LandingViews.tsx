@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HostSignupLink } from "@/components/HostSignupLink";
 import { appSearchUrl } from "@/lib/site";
 import { CalendarDays, Tag } from "lucide-react";
 import { getDictionary } from "@/content";
@@ -129,7 +130,6 @@ export function CityView({ lang, city }: { lang: Lang; city: City }) {
   const t = getDictionary(lang);
   const p = t.cityPage;
   const findHref = townFormHref("find", city.name, lang);
-  const hostHref = townFormHref("host", city.name, lang);
   const vars = { name: city.name };
 
   return (
@@ -150,9 +150,9 @@ export function CityView({ lang, city }: { lang: Lang; city: City }) {
             {fill(p.renterCta, vars)}
           </Link>
         )}
-        <Link prefetch={false} href={hostHref} className="btn btn-on-dark">
+        <HostSignupLink lang={lang} className="btn btn-on-dark">
           {fill(p.hostCta, vars)}
-        </Link>
+        </HostSignupLink>
       </PhotoHero>
 
       <CityListings city={city.name} lang={lang} />
@@ -170,9 +170,9 @@ export function CityView({ lang, city }: { lang: Lang; city: City }) {
           <div className="flex flex-col rounded-[1.25rem] bg-night p-5 text-white sm:p-8">
             <h2 className="text-2xl leading-snug">{fill(p.hostTitle, vars)}</h2>
             <p className="mt-2 flex-1 leading-relaxed text-frost-2">{p.hostText}</p>
-            <Link prefetch={false} href={hostHref} className="btn btn-light mt-5 sm:self-start">
+            <HostSignupLink lang={lang} className="btn btn-light mt-5 sm:self-start">
               {t.hero.ctaHost}
-            </Link>
+            </HostSignupLink>
           </div>
         </div>
       </Section>
@@ -202,7 +202,7 @@ export function CityView({ lang, city }: { lang: Lang; city: City }) {
         </div>
       </Section>
 
-      <MobileActionBar primary={{ href: findHref, label: t.actionBar.find }} secondary={{ href: hostHref, label: t.actionBar.host }} />
+      <MobileActionBar primary={{ href: findHref, label: t.actionBar.find }} secondary={{ href: pagePath("host", lang), label: t.actionBar.host }} />
     </>
   );
 }

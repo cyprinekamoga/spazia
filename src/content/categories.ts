@@ -65,8 +65,8 @@ export const categories: Category[] = [
       en: "Tyre storage – store your tyres with a neighbour",
     },
     metaDescription: {
-      sv: "Förvara sommar- eller vinterdäck torrt och låst hos en verifierad villaägare nära dig. Från ca {price} kr/mån, utan bindningstid.",
-      en: "Store summer or winter tyres dry and locked with a verified homeowner near you. From about SEK {price}/month, cancel any month.",
+      sv: "Förvara sommar- eller vinterdäck torrt och låst hos en villaägare nära dig. Från ca {price} kr/mån, utan bindningstid.",
+      en: "Store summer or winter tyres dry and locked with a homeowner near you. From about SEK {price}/month, cancel any month.",
     },
   },
   {
@@ -105,8 +105,8 @@ export const categories: Category[] = [
       en: "Ski storage – store skis and snowboards with a neighbour",
     },
     metaDescription: {
-      sv: "Förvara skidor, snowboard och pjäxor torrt hos en verifierad granne. Från ca {price} kr/mån, utan bindningstid.",
-      en: "Store skis, snowboards and boots dry with a verified neighbour. From about SEK {price}/month, cancel any month.",
+      sv: "Förvara skidor, snowboard och pjäxor torrt hos en granne. Från ca {price} kr/mån, utan bindningstid.",
+      en: "Store skis, snowboards and boots dry with a neighbour. From about SEK {price}/month, cancel any month.",
     },
   },
   {
@@ -145,8 +145,8 @@ export const categories: Category[] = [
       en: "Snowmobile storage – indoor space for snowmobiles and trailers",
     },
     metaDescription: {
-      sv: "Hyr en låst inomhusplats för skoter, släp eller fyrhjuling hos en verifierad värd. Från ca {price} kr/mån.",
-      en: "Rent a locked indoor space for a snowmobile, trailer or quad with a verified host. From about SEK {price}/month.",
+      sv: "Hyr en låst inomhusplats för skoter, släp eller fyrhjuling hos en värd. Från ca {price} kr/mån.",
+      en: "Rent a locked indoor space for a snowmobile, trailer or quad with a host. From about SEK {price}/month.",
     },
   },
   {
@@ -185,8 +185,8 @@ export const categories: Category[] = [
       en: "Bike storage – keep your bike with a neighbour over winter",
     },
     metaDescription: {
-      sv: "Vinterförvara cykeln torrt och låst hos en verifierad granne. Från ca {price} kr/mån, utan bindningstid.",
-      en: "Store your bike dry and locked over winter with a verified neighbour. From about SEK {price}/month, cancel any month.",
+      sv: "Vinterförvara cykeln torrt och låst hos en granne. Från ca {price} kr/mån, utan bindningstid.",
+      en: "Store your bike dry and locked over winter with a neighbour. From about SEK {price}/month, cancel any month.",
     },
   },
   {
@@ -225,8 +225,8 @@ export const categories: Category[] = [
       en: "Boxes and furniture – storage with a neighbour",
     },
     metaDescription: {
-      sv: "Förvara flyttlådor och möbler hos en verifierad granne. Perfekt för studenter över sommaren. Från ca {price} kr/m² och månad.",
-      en: "Store boxes and furniture with a verified neighbour. Ideal for students over the summer. From about SEK {price} per m² per month.",
+      sv: "Förvara flyttlådor och möbler hos en granne. Perfekt för studenter över sommaren. Från ca {price} kr/m² och månad.",
+      en: "Store boxes and furniture with a neighbour. Ideal for students over the summer. From about SEK {price} per m² per month.",
     },
   },
   {
@@ -265,8 +265,8 @@ export const categories: Category[] = [
       en: "Indoor car storage – rent a garage space from a neighbour",
     },
     metaDescription: {
-      sv: "Hyr en garageplats för sommarbil, motorcykel eller vardagsbil hos en verifierad villaägare. Från ca {price} kr/mån.",
-      en: "Rent a garage space for a summer car, motorbike or everyday car with a verified homeowner. From about SEK {price}/month.",
+      sv: "Hyr en garageplats för sommarbil, motorcykel eller vardagsbil hos en villaägare. Från ca {price} kr/mån.",
+      en: "Rent a garage space for a summer car, motorbike or everyday car with a homeowner. From about SEK {price}/month.",
     },
   },
   {
@@ -305,8 +305,8 @@ export const categories: Category[] = [
       en: "Parking – rent a space from a neighbour",
     },
     metaDescription: {
-      sv: "Hyr en p-plats på en uppfart eller gårdsplan hos en verifierad villaägare. Från ca {price} kr/mån, med eller utan motorvärmaruttag.",
-      en: "Rent a parking space on a driveway or yard from a verified homeowner. From about SEK {price}/month, with or without an engine heater socket.",
+      sv: "Hyr en p-plats på en uppfart eller gårdsplan hos en villaägare. Från ca {price} kr/mån, med eller utan motorvärmaruttag.",
+      en: "Rent a parking space on a driveway or yard from a homeowner. From about SEK {price}/month, with or without an engine heater socket.",
     },
   },
 ];

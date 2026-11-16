@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HostSignupLink } from "@/components/HostSignupLink";
 import { Check } from "lucide-react";
 import { getDictionary } from "@/content";
 import { categories } from "@/content/categories";
@@ -40,12 +41,12 @@ export function HomeView({ lang }: { lang: Lang }) {
       >
         <div className="w-full">
           <LocationSearch action={lang === "sv" ? appSearchUrl() : findPath} {...t.hero.search} />
-          <Link prefetch={false}
-            href={pagePath("host", lang)}
+          <HostSignupLink
+            lang={lang}
             className="mt-4 inline-flex min-h-11 items-center font-semibold text-white underline decoration-glow decoration-2 underline-offset-6 hover:decoration-white"
           >
             {t.hero.ctaHost}
-          </Link>
+          </HostSignupLink>
         </div>
       </PhotoHero>
 

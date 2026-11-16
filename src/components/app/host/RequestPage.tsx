@@ -97,6 +97,7 @@ export function RequestPage() {
   // A paid monthly rental that has started is ended at the end of the paid period, not cancelled.
   const endInstead = !isHour && Boolean(r.payment_required) && status === "accepted" && todayIso() >= r.start_date;
   const ending = Boolean(r.ended_at && r.end_date);
+  // No payout details yet: the host can still accept; the share waits until they add a bank account.
   const payoutsMissing = Boolean(r.payment_required && r.setup?.enabled && !r.setup.payouts?.details_submitted);
   const paidPayments = r.payments.filter((p) => p.status === "paid" && !p.refund_requested_at);
   const nextShare = paidPayments.find((p) => !p.transferred_at) ?? paidPayments[paidPayments.length - 1];
@@ -189,24 +190,23 @@ export function RequestPage() {
         </p>
       )}
 
-      {status === "pending" && payoutsMissing && !message && (
-        <p className="mt-5 rounded-xl bg-[#fff6e5] p-4 text-[0.95rem] text-night">
-          {appText.payments.payoutsRequired}{" "}
-          <Link prefetch={false} href="/vard/utbetalningar" className="font-semibold underline underline-offset-4">
-            {appText.payments.hostBannerCta}
-          </Link>
-        </p>
-      )}
-
       {r.payment_required && status === "accepted" && (
         <div className="mt-5 rounded-xl bg-frost/70 p-4 text-[0.95rem] text-ink">
           <p className="font-semibold text-night">{r.paid_through || isHour ? appText.payments.renterPaid : appText.payments.awaitingPayment}</p>
           {nextShare && (
             <p className="mt-1">
-              {fill(appText.payments.hostShare, {
+              {fill(payoutsMissing && !nextShare.transferred_at ? appText.payments.hostShareNoBank : appText.payments.hostShare, {
                 amount: formatKr(nextShare.host_amount),
                 date: formatMoment(Date.parse(nextShare.transfer_due_at) > now ? nextShare.transfer_due_at : now),
               })}
+              {payoutsMissing && !nextShare.transferred_at && (
+                <>
+                  {" "}
+                  <Link prefetch={false} href="/vard/utbetalningar" className="font-semibold underline underline-offset-4">
+                    {appText.payments.hostBannerCta}
+                  </Link>
+                </>
+              )}
             </p>
           )}
           {ending && r.end_date && <p className="mt-1">{fill(appText.payments.ending, { date: formatDay(r.end_date, true) })}</p>}

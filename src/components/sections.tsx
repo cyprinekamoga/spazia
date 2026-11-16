@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HostSignupLink } from "@/components/HostSignupLink";
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Dictionary } from "@/content";
@@ -54,7 +55,7 @@ export function SectionHeading({
       {eyebrow && <span className={`eyebrow ${onDark ? "!text-glow" : ""}`}>{eyebrow}</span>}
       <h2 className={`mt-1 text-[2.1rem] leading-[1.08] sm:text-5xl ${onDark ? "text-white" : "text-night"}`}>{title}</h2>
       {lead && (
-        <p className={`mt-3 max-w-xl text-lg leading-relaxed sm:mt-4 ${onDark ? "text-frost-2" : "text-muted"}`}>{lead}</p>
+        <p className={`mt-3 max-w-xl text-lg leading-relaxed sm:mt-4 ${align === "center" ? "mx-auto" : ""} ${onDark ? "text-frost-2" : "text-muted"}`}>{lead}</p>
       )}
     </div>
   );
@@ -250,9 +251,9 @@ export function HostTeaser({ lang, t }: { lang: Lang; t: Dictionary }) {
           <Link prefetch={false} href={`${pagePath("host", lang)}#kalkylator`} className="btn btn-light">
             {t.hostTeaser.cta}
           </Link>
-          <Link prefetch={false} href={`${pagePath("host", lang)}#anmalan`} className="btn btn-on-dark">
+          <HostSignupLink lang={lang} className="btn btn-on-dark">
             {t.hostPage.ctaForm}
-          </Link>
+          </HostSignupLink>
         </div>
       </div>
     </div>
@@ -328,7 +329,7 @@ export function CitiesSection({ lang, t }: { lang: Lang; t: Dictionary }) {
 }
 
 /** Pre-filled form link for a town, e.g. /hitta-forvaring?ort=Göteborg#anmalan. */
-export function townFormHref(page: "find" | "host", town: string, lang: Lang): string {
+export function townFormHref(page: "find", town: string, lang: Lang): string {
   return `${pagePath(page, lang)}?${RENTER_PARAMS.town}=${encodeURIComponent(town)}#anmalan`;
 }
 
@@ -370,9 +371,9 @@ export function FinalCta({ lang, t }: { lang: Lang; t: Dictionary }) {
         <Link prefetch={false} href={pagePath("find", lang)} className="btn btn-light">
           {t.hero.ctaFind}
         </Link>
-        <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-on-dark">
+        <HostSignupLink lang={lang} className="btn btn-on-dark">
           {t.hero.ctaHost}
-        </Link>
+        </HostSignupLink>
       </div>
     </div>
   );

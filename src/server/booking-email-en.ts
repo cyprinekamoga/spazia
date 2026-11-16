@@ -224,6 +224,26 @@ export function englishDraft(p: NotificationPayload, links: { host: string; rent
         rows: [["Place", place(p)], ["Period", period(p)]],
         button: { href: p.role === "host" ? links.host : links.renter, label: "Leave a review" },
       };
+    case "payout_setup": {
+      const share = p.payment ? kr(p.payment.host_amount) : null;
+      const reminder = p.prev_status === "reminder";
+      return {
+        subject: reminder
+          ? `Your money is waiting${share ? `: ${share}` : ""}. Add your bank account`
+          : `${name} has paid${share ? `, ${share} for you` : ""}. Add your bank account`,
+        intro: [
+          hello,
+          reminder
+            ? `The rent for “${p.listing_title}” is ready to be paid out, but we have no bank account to send it to.`
+            : `${name} has paid for “${p.listing_title}”. We pay out your share the day after the period ends.`,
+        ],
+        rows: [["Place", place(p)], [p.request_kind === "hour" ? "Time" : "Period", period(p)], ...(share ? ([["Your share", share]] as [string, string][]) : [])],
+        after: [
+          "To pay it out we need your name, Swedish personal identity number and a bank account. It takes a couple of minutes and you only do it once. Our payment partner Stripe checks your identity, as the law requires.",
+        ],
+        button: { href: `${links.appUrl}/vard/utbetalningar`, label: "Add bank account" },
+      };
+    }
     default:
       return null;
   }

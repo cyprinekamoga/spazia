@@ -10,6 +10,9 @@ const appTextSv = {
   login: {
     title: "Logga in eller skapa konto",
     lead: "Samma konto för att hyra ut och för att hyra plats.",
+    // From the site's "Jag har plats över" buttons (next=/vard/...).
+    hostTitle: "Hyr ut din plats",
+    hostLead: "Skapa ett konto med Google eller e-post och lägg upp platsen. Bankuppgifter behövs först när du har fått din första hyresgäst.",
     google: "Fortsätt med Google",
     or: "eller",
     email: "E-post",
@@ -866,9 +869,12 @@ const appTextSv = {
     csvPeriod: "Period",
     csvAmount: "Belopp (kr)",
     csvTotal: "Summa",
-    hostBanner: "Koppla ditt bankkonto, så kan du godkänna förfrågningar och få betalt.",
-    hostBannerCta: "Koppla bankkonto",
-    payoutsRequired: "Koppla ditt bankkonto innan du godkänner, så att hyresgästen kan betala.",
+    payoutWaiting: "{amount} kr väntar på dig",
+    payoutWaitingText: "Lägg till dina uppgifter och ett bankkonto, så betalar vi ut pengarna dagen efter att hyresperioden är slut. Det tar ett par minuter och görs bara en gång.",
+    hostBannerCta: "Lägg till bankkonto",
+    payoutWaitingSteps: "Fyll i de två stegen nedan, så betalar vi ut pengarna.",
+    menuNoBank: "Lägg till ditt bankkonto när du har fått din första hyresgäst. Pengarna väntar på dig tills dess.",
+    payoutsRequired: "Lägg till ditt bankkonto innan du godkänner, så att hyresgästen kan betala.",
     // Renter: card
     cardTitle: "Betalkort",
     cardText: "Kortet används för månadshyran. Du debiteras först när värden har godkänt din förfrågan.",
@@ -909,6 +915,7 @@ const appTextSv = {
     renterPaid: "Hyresgästen har betalat.",
     awaitingPayment: "Väntar på hyresgästens betalning.",
     hostShare: "Du får {amount} kr, som förs över {date}.",
+    hostShareNoBank: "Du får {amount} kr. Lägg till ditt bankkonto, så förs pengarna över {date}.",
   },
 };
 

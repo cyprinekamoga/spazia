@@ -31,7 +31,7 @@ To change a text or price: edit `ads.html` or `reel.html` and run `node marketin
 | Age | 25–65, no interests (let Meta find the audience) |
 | Placements | Advantage+ placements. Use "customise asset per placement": the feed image for Feeds, the story image for Stories and Reels |
 | Budget | 75 kr a day for 7 days (about 525 kr) |
-| Link | `https://spazia.se/bli-vard?ort=Lule%C3%A5` (opens the host page with Luleå filled in) |
+| Link | `https://spazia.se/bli-vard` (the host page: calculator, how it works, and the button to create an account) |
 | URL parameters | `utm_source=meta&utm_medium=paid&utm_campaign=vardar-lulea&utm_content={{ad.name}}` |
 | Button | "Läs mer" |
 
@@ -77,10 +77,11 @@ There are few spaces in Luleå so far. Visitors who find nothing can join the wa
 
 ## Measuring
 
-- **Spazia admin → Leads:** the "Källa" column shows the campaign and ad for every lead (from the UTM tags). This is the real number to judge the ads on.
+- **Spazia admin → Leads:** the "Källa" column shows the campaign and ad for every renter who joins the waitlist (from the UTM tags).
+- **Hosts:** the "Jag har plats över" / "Lägg upp din plats" buttons go straight to creating an account in the app, with no form on the site. A click counts as a *Lead* for the Meta Pixel and Plausible. The sign-ups themselves are in the admin page under Users and Listings.
 - **Ads Manager:** after 3–4 days, look at click-through rate and cost per landing page view for each ad. Pause the weaker version (A or B) and keep the better one.
 - **What counts as success:** for the host campaign, the number of new hosts who publish a space. For the tyre campaign, people who join the waitlist.
-- Sign-ups in the app (app.spazia.se) aren't sent to Meta yet. That could be added later, so Meta can optimise for real sign-ups instead of visits.
+- Sign-ups in the app (app.spazia.se) aren't sent to Meta, only the click to sign up. That could be added later, so Meta can optimise for real sign-ups.
 
 ## Rules for the texts
 

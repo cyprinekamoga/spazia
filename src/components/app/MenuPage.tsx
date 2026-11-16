@@ -175,7 +175,7 @@ export function MenuPage({ mode }: { mode: AppMode }) {
                 ? t.payoutsText
                 : pay.data.payouts?.payouts_enabled
                   ? appText.payments.bankReady
-                  : appText.payments.hostBanner}
+                  : appText.payments.menuNoBank}
             </span>
           </span>
           <ChevronRight size={18} className="shrink-0 text-muted" aria-hidden="true" />

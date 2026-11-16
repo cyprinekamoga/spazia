@@ -1,14 +1,13 @@
-import Link from "next/link";
+import { HostSignupLink } from "@/components/HostSignupLink";
 import { BadgeCheck } from "lucide-react";
 import { getDictionary } from "@/content";
 import { guides } from "@/content/guides";
 import { HostCalculator } from "@/components/HostCalculator";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { Photo } from "@/components/Photo";
-import { HostForm } from "@/components/forms/HostForm";
 import { Faq, PhotoHero, Section, SectionHeading, StepList } from "@/components/sections";
 import type { Lang } from "@/lib/i18n";
-import { skatteverketRentalUrl } from "@/lib/site";
+import { hostSignupUrl, skatteverketRentalUrl } from "@/lib/site";
 import { RelatedGuides } from "@/views/GuideViews";
 
 export function HostView({ lang }: { lang: Lang }) {
@@ -24,9 +23,9 @@ export function HostView({ lang }: { lang: Lang }) {
         title={p.title}
         lead={p.lead}
       >
-        <a href="#anmalan" className="btn btn-light">
+        <HostSignupLink lang={lang} className="btn btn-light">
           {p.ctaForm}
-        </a>
+        </HostSignupLink>
         <a href="#kalkylator" className="btn btn-on-dark">
           {p.ctaCalc}
         </a>
@@ -35,7 +34,7 @@ export function HostView({ lang }: { lang: Lang }) {
       <Section id="kalkylator">
         <SectionHeading title={t.calculator.title} lead={t.calculator.lead} />
         <div className="mt-7 sm:mt-10">
-          <HostCalculator lang={lang} t={t} formHref="#anmalan" />
+          <HostCalculator lang={lang} t={t} formHref={hostSignupUrl(lang)} />
         </div>
       </Section>
 
@@ -94,10 +93,13 @@ export function HostView({ lang }: { lang: Lang }) {
         </div>
       </Section>
 
+      {/* Was the sign-up form; the id stays so older links (#anmalan) still land here. */}
       <Section id="anmalan" tone="paper">
-        <div className="grid gap-6 lg:grid-cols-[1fr_1.6fr] lg:gap-10">
-          <SectionHeading title={p.formTitle} lead={p.formLead} />
-          <HostForm lang={lang} t={t} />
+        <div className="mx-auto max-w-2xl text-center">
+          <SectionHeading title={p.formTitle} lead={p.formLead} align="center" />
+          <HostSignupLink lang={lang} className="btn btn-primary mt-6">
+            {p.ctaForm}
+          </HostSignupLink>
         </div>
       </Section>
 
@@ -110,14 +112,14 @@ export function HostView({ lang }: { lang: Lang }) {
           <RelatedGuides lang={lang} items={guides.filter((g) => g.audience === "host")} />
         </div>
         <p className="mt-8 hidden text-center md:block">
-          <Link prefetch={false} href="#anmalan" className="btn btn-primary">
+          <HostSignupLink lang={lang} className="btn btn-primary">
             {p.ctaForm}
-          </Link>
+          </HostSignupLink>
         </p>
       </Section>
 
       <MobileActionBar
-        primary={{ href: "#anmalan", label: t.actionBar.hostForm }}
+        primary={{ href: hostSignupUrl(lang), label: t.actionBar.hostForm, track: "host" }}
         hideWhenVisibleId="anmalan"
         estimateLabel={t.actionBar.estimate}
         perMonth={t.common.perMonth}

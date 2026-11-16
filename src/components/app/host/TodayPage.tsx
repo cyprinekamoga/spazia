@@ -7,7 +7,7 @@ import { appText } from "@/content/app";
 import { fill } from "@/lib/i18n";
 import { fetchHostRequests, fetchMyListings, fetchMyProfile } from "@/lib/app/data";
 import { effectiveStatus, formatKr, requestIncome, todayIso } from "@/lib/app/model";
-import { fetchPaymentSetup } from "@/lib/app/payments";
+import { fetchHostPayments, fetchPaymentSetup } from "@/lib/app/payments";
 import { useLoad } from "@/lib/app/session";
 import { Spinner, useAppSession } from "../AppShell";
 import { RequestCard } from "./RequestCard";
@@ -28,8 +28,14 @@ function Todo({ href, children }: { href: string; children: string }) {
 export function TodayPage() {
   const uid = useAppSession().user.id;
   const { data, loading, error } = useLoad(async () => {
-    const [me, listings, requests, pay] = await Promise.all([fetchMyProfile(uid), fetchMyListings(uid), fetchHostRequests(uid), fetchPaymentSetup().catch(() => null)]);
-    return { me, listings, requests, pay };
+    const [me, listings, requests, pay, payments] = await Promise.all([
+      fetchMyProfile(uid),
+      fetchMyListings(uid),
+      fetchHostRequests(uid),
+      fetchPaymentSetup().catch(() => null),
+      fetchHostPayments(uid).catch(() => []),
+    ]);
+    return { me, listings, requests, pay, payments };
   }, uid);
   // The time the page was loaded: used for "answer within" and expiry.
   const [now] = useState(() => Date.now());
@@ -46,12 +52,27 @@ export function TodayPage() {
   const income = current.reduce((sum, r) => sum + requestIncome(r.request_items), 0);
   const drafts = listings.filter((l) => l.status === "draft");
   const name = me.profile?.first_name;
-  // With payments on, a host needs a connected bank account to accept requests.
-  const needsPayouts = Boolean(data.pay?.enabled && !data.pay.payouts?.details_submitted && listings.length > 0);
+  // Payout details (name, personal number, bank account) are asked for only once
+  // there is money waiting: after the first paid rental, not when signing up.
+  const waiting = data.payments.filter((p) => !p.transferred_at && !p.refund_requested_at).reduce((sum, p) => sum + p.host_amount, 0);
+  const needsPayouts = Boolean(data.pay?.enabled && !data.pay.payouts?.details_submitted && waiting > 0);
+  // Phone number and photo can wait until the first rental, too.
+  const hasRented = requests.some((r) => r.status === "accepted");
+  const todos = drafts.length > 0 || (hasRented && (!me.priv?.phone || !me.profile?.avatar_url));
 
   return (
     <div className="space-y-9">
       <h1 className="text-[2.2rem] leading-tight text-night">{name ? fill(t.greeting, { name }) : t.greetingNoName}</h1>
+
+      {needsPayouts && (
+        <section className="rounded-2xl bg-night p-5 text-white">
+          <p className="text-2xl font-bold">{fill(appText.payments.payoutWaiting, { amount: formatKr(waiting) })}</p>
+          <p className="mt-1.5 leading-relaxed text-frost-2">{appText.payments.payoutWaitingText}</p>
+          <Link prefetch={false} href="/vard/utbetalningar" className="btn btn-light mt-4">
+            {appText.payments.hostBannerCta}
+          </Link>
+        </section>
+      )}
 
       {listings.length === 0 && (
         <Link prefetch={false} href="/vard/annons" className="btn btn-primary">
@@ -59,18 +80,17 @@ export function TodayPage() {
         </Link>
       )}
 
-      {(needsPayouts || drafts.length > 0 || !me.priv?.phone || !me.profile?.avatar_url) && (
+      {todos && (
         <section>
           <h2 className="text-2xl text-night">{t.todo}</h2>
           <ul className="mt-3 space-y-2">
-            {needsPayouts && <Todo href="/vard/utbetalningar">{appText.payments.hostBanner}</Todo>}
             {drafts.map((d) => (
               <Todo key={d.id} href={`/vard/annons?id=${d.id}`}>
                 {fill(t.finishListing, { title: d.title || appText.listings.untitled })}
               </Todo>
             ))}
-            {!me.priv?.phone && <Todo href="/vard/meny">{t.addPhone}</Todo>}
-            {!me.profile?.avatar_url && <Todo href="/vard/meny">{t.addPhoto}</Todo>}
+            {hasRented && !me.priv?.phone && <Todo href="/vard/meny">{t.addPhone}</Todo>}
+            {hasRented && !me.profile?.avatar_url && <Todo href="/vard/meny">{t.addPhoto}</Todo>}
           </ul>
         </section>
       )}

@@ -157,6 +157,7 @@ export function PayoutsPage() {
   const payouts = setup.payouts;
   const upcoming = payments.filter((p) => !p.transferred_at && !p.refund_requested_at);
   const done = payments.filter((p) => p.transferred_at);
+  const waiting = upcoming.reduce((sum, p) => sum + p.host_amount, 0);
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
@@ -166,6 +167,11 @@ export function PayoutsPage() {
       </Link>
       <h1 className="text-[2rem] leading-tight text-night">{t.payoutsTitle}</h1>
       <p className="leading-relaxed text-muted">{setup.enabled ? t.payoutsLead : t.off}</p>
+      {setup.enabled && !payouts?.details_submitted && waiting > 0 && (
+        <p className="rounded-xl bg-glow-soft p-4 leading-relaxed text-night">
+          <span className="font-bold">{fill(t.payoutWaiting, { amount: formatKr(waiting) })}.</span> {t.payoutWaitingSteps}
+        </p>
+      )}
 
       <section className="card p-5">
         <h2 className="text-xl font-bold text-night">{t.taxTitle}</h2>

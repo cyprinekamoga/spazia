@@ -5,7 +5,7 @@ export const en: Dictionary = {
   meta: {
     homeTitle: "Spazia – storage and parking with your neighbours",
     homeDescription:
-      "Store tyres, skis, snowmobiles and boxes in a neighbour's garage, or rent a driveway parking space. ID-checked hosts, one rental agreement for everyone and no long-term commitment, all over Sweden.",
+      "Store tyres, skis, snowmobiles and boxes in a neighbour's garage, or rent a driveway parking space. A rental agreement in the app, payment through Spazia and no long-term commitment, all over Sweden.",
     titleTemplate: "%s | Spazia",
     locale: "en_GB",
   },
@@ -29,7 +29,7 @@ export const en: Dictionary = {
   actionBar: {
     find: "Find storage",
     host: "List your space",
-    hostForm: "Register space",
+    hostForm: "Add space",
     renterForm: "Find space",
     estimate: "You get about",
   },
@@ -54,7 +54,7 @@ export const en: Dictionary = {
     ctaFind: "I need storage",
     ctaHost: "I have spare space",
     chipsLabel: "What do you need space for?",
-    trustline: ["ID-checked hosts", "Agreement in the app", "Cancel any month"],
+    trustline: ["Hosts are paid afterwards", "Agreement in the app", "Cancel any month"],
     illustrationAlt:
       "A lit garage on a snowy winter evening – Spazia, storage and parking with your neighbours.",
   },
@@ -74,7 +74,7 @@ export const en: Dictionary = {
         text: "Tyres, skis, a snowmobile or a summer's worth of boxes. Tell us where and for how long you need the space.",
       },
       {
-        title: "Pick a verified host",
+        title: "Pick a host near you",
         text: "Hosts have their identity checked by our payment partner Stripe before they can be paid, and every listing has photos of the space.",
       },
       {
@@ -84,8 +84,8 @@ export const en: Dictionary = {
     ],
     hostSteps: [
       {
-        title: "Register your space",
-        text: "Garage, basement, outbuilding or attic. It takes two minutes.",
+        title: "Add your space",
+        text: "Garage, basement, outbuilding or attic. Create an account and add your space in a few minutes.",
       },
       {
         title: "Add photos",
@@ -151,7 +151,7 @@ export const en: Dictionary = {
     items: [
       {
         icon: "id",
-        title: "ID-checked hosts",
+        title: "ID check before payout",
         text: "Hosts have their identity checked by our payment partner Stripe before they can be paid. Renters pay by card in their own name.",
       },
       {
@@ -197,11 +197,11 @@ export const en: Dictionary = {
       },
       {
         q: "How do I get started?",
-        a: "Fill in the form. It's free and non-binding. We'll get in touch and help you find space, or rent out yours.",
+        a: "To rent out space: create an account in the app and add your space, it takes a few minutes. Looking for space: search in the app. If there's nothing near you yet, leave your town in the form and we'll let you know when a space comes up.",
       },
       {
         q: "Are you in my city?",
-        a: "Yes, Spazia is all over Sweden. Type your town in the form and we'll look for a host or renter near you.",
+        a: "Yes, Spazia is all over Sweden, and hosts can add a space anywhere. If there's no space near you yet, type your town in the form and we'll let you know when one comes up.",
       },
       {
         q: "What does it cost?",
@@ -209,7 +209,7 @@ export const en: Dictionary = {
       },
       {
         q: "Is it safe?",
-        a: "Hosts are ID-checked by our payment partner Stripe, every listing has photos of the space, you both accept the same rental agreement in the app and photograph your things at drop-off. Payment goes through Spazia, so nobody handles cash.",
+        a: "Hosts are ID-checked by our payment partner Stripe before they are paid, and the rent is only paid out once the period is over. Every listing has photos of the space, you both accept the same rental agreement in the app and photograph your things at drop-off. Payment goes through Spazia, so nobody handles cash.",
       },
       {
         q: "Are my things insured?",
@@ -288,7 +288,7 @@ export const en: Dictionary = {
     eyebrow: "Become a host",
     title: "Make money from your empty garage.",
     lead: "Rent out dry space in your garage, basement or outbuilding, or a parking space on your driveway. We handle the agreement and payments, and you unlock the door a few times a year.",
-    ctaForm: "Register your space",
+    ctaForm: "Add your space",
     ctaCalc: "Run the numbers",
     benefitsTitle: "What's included",
     benefits: [
@@ -319,15 +319,15 @@ export const en: Dictionary = {
     ],
     stepsTitle: "How to become a host",
     steps: [
-      { title: "Register your space", text: "Fill in the form below. It takes two minutes." },
-      { title: "We get in touch", text: "We call or email within a few days and explain how it works." },
+      { title: "Create an account", text: "Log in with Google or email. No forms to fill in." },
+      { title: "Add your space", text: "Photos, what fits and a price. The app suggests one." },
       {
-        title: "Photos and listing",
-        text: "You photograph the space, and we help you write the listing and set a price.",
+        title: "Approve the renter",
+        text: "You see who is asking and approve each request. The rental agreement is accepted in the same step.",
       },
       {
-        title: "Your first renter",
-        text: "You approve the request, which also accepts the rental agreement, and the first rent is paid out.",
+        title: "Get paid",
+        text: "Once the renter has paid, you add your bank account. The money is paid out the day after the period ends.",
       },
     ],
     requirementsTitle: "What does the space need?",
@@ -342,17 +342,17 @@ export const en: Dictionary = {
     taxText:
       "If you rent out part of your private home, such as the garage of your house, the rent is taxed as capital income. For a house you can make a standard deduction of SEK 40,000 a year plus 20% of the rental income, which covers all of it for most hosts. As a digital platform, Spazia may be required to report rental income to the Swedish Tax Agency. The rules depend on your situation, so always check with Skatteverket.",
     taxLink: "Skatteverket on renting out a private home (in Swedish)",
-    formTitle: "Register your space",
-    formLead: "We'll get in touch within a few days. It's free and non-binding.",
+    formTitle: "Add your space",
+    formLead: "It's free and takes a few minutes. You log in with Google or email, and you only need bank details once you have your first renter.",
     faqTitle: "Questions from hosts",
   },
   findPage: {
     metaTitle: "Find storage and parking with a neighbour",
     metaDescription:
-      "Store tyres, skis, bikes, boxes or vehicles, or rent a parking space, with a verified neighbour, all over Sweden.",
+      "Store tyres, skis, bikes, boxes or vehicles, or rent a parking space, with a neighbour, all over Sweden.",
     eyebrow: "Find storage",
     title: "Storage near you, at a neighbour's.",
-    lead: "Tell us what you need space for and where, and we'll help you find a verified neighbour near you.",
+    lead: "Tell us what you need space for and where, and we'll help you find a neighbour near you.",
     pricesTitle: "Guide prices",
     pricesLead: "Guide prices per month, including the service fee. Big cities are often more expensive, and the host sets the final price.",
     heatedNote: "Heated space costs about 25% more for vehicles, furniture and boxes.",
@@ -366,7 +366,7 @@ export const en: Dictionary = {
   trustPage: {
     metaTitle: "Trust & safety – how we protect hosts and renters",
     metaDescription:
-      "ID-checked hosts, photos of every space, a rental agreement in the app, a photo inventory and payments through the platform. This is how trust works on Spazia.",
+      "ID checks for hosts before they are paid, photos of every space, a rental agreement in the app, a photo inventory and payments through the platform. This is how trust works on Spazia.",
     eyebrow: "Trust & safety",
     title: "Trust comes first.",
     lead: "Leaving your things with someone you don't know, or letting someone into your garage, takes trust. This is how we build it.",
@@ -433,7 +433,7 @@ export const en: Dictionary = {
     title: "The space exists. It's just in the wrong place.",
     paragraphs: [
       "Lots of us own things we only use half the year: studded tyres, skis, snowmobiles and summer furniture. Meanwhile the queue for extra storerooms in apartment buildings is long, student rooms barely fit a suitcase, and storage companies are often on industrial estates out of town.",
-      "At the same time, residential areas are full of garages, basements and outbuildings with room to spare. Spazia connects the two, with ID-checked hosts, one rental agreement and automatic payments. It should feel as safe as a storage company, but be closer and cheaper.",
+      "At the same time, residential areas are full of garages, basements and outbuildings with room to spare. Spazia connects the two, with one rental agreement, automatic payments and ID checks for hosts before they are paid. It should feel as safe as a storage company, but be closer and cheaper.",
       "Spazia is run by a small team. We're all over Sweden, and we answer ourselves when you get in touch.",
     ],
     creditsTitle: "Photo credits",
@@ -703,11 +703,11 @@ export const en: Dictionary = {
   cityPage: {
     eyebrow: "City",
     title: "Storage and parking in {name}",
-    metaDescription: "Store tyres, skis or boxes, or rent a parking space, with a verified neighbour in {name}.",
+    metaDescription: "Store tyres, skis or boxes, or rent a parking space, with a neighbour in {name}.",
     renterTitle: "Need space in {name}?",
     hostTitle: "Live in {name} and have spare space?",
     categoriesTitle: "What you can store",
-    renterText: "Tell us what you want to store, and we'll find a verified neighbour in {name} with room to spare.",
+    renterText: "Tell us what you want to store, and we'll find a neighbour in {name} with room to spare.",
     hostText: "Rent out space in your garage, basement or driveway. You decide what you accept and when renters can come.",
     renterCta: "I need space in {name}",
     seeSpaces: "See available spaces in {name}",
@@ -815,7 +815,7 @@ export const en: Dictionary = {
       messagePlaceholder: "E.g. whether you need to access your things often.",
       submit: "Find me space",
       successTitle: "Thanks! We're looking for space for you.",
-      successText: "We'll get in touch as soon as we've found a verified host near you.",
+      successText: "We'll get in touch as soon as we've found a host near you.",
     },
     org: {
       orgName: "Organisation",
@@ -946,7 +946,7 @@ export const en: Dictionary = {
       "Guide prices. You set your own price. Spazia takes 5% of the payout and the renter pays a 10% service fee.",
     decrease: "Fewer {unit}",
     increase: "More {unit}",
-    cta: "Register your space",
+    cta: "Add your space",
     empty: "Add something to see an estimate.",
   },
   guidesPage: {
@@ -963,9 +963,9 @@ export const en: Dictionary = {
     otherGuides: "More guides",
     relatedTitle: "Read more",
     ctaFindTitle: "Need space?",
-    ctaFindText: "Tell us what you need, and we'll help you find a verified neighbour near you. It's free and non-binding.",
+    ctaFindText: "Tell us what you need, and we'll help you find a neighbour near you. It's free and non-binding.",
     ctaHostTitle: "Got space to spare?",
-    ctaHostText: "Register your space, and we'll get in touch within a few days to help you get started.",
+    ctaHostText: "Create an account and add your space in a few minutes. It's free, and you only need bank details once you have your first renter.",
   },
   renterCalc: {
     title: "What would it cost you?",

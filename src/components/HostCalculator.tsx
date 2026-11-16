@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { trackLead } from "@/lib/tracking";
 import { useEffect, useMemo, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import type { Dictionary } from "@/content";
@@ -159,7 +160,7 @@ export function HostCalculator({ lang, t, formHref }: { lang: Lang; t: Dictionar
             <p className="mt-2 text-lg text-frost">{c.empty}</p>
           )}
           <p className="mt-4 border-t border-white/10 pt-4 text-sm leading-relaxed text-frost-2">{c.feeNote}</p>
-          <Link prefetch={false} href={formHref} className="btn btn-primary mt-6 w-full">
+          <Link prefetch={false} href={formHref} onClick={formHref.startsWith("http") ? () => trackLead("host") : undefined} className="btn btn-primary mt-6 w-full">
             {c.cta}
           </Link>
         </div>
