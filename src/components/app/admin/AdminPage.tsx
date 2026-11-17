@@ -2,13 +2,22 @@
 
 import Link from "next/link";
 import { ArrowLeft, Loader2, RefreshCw, Search } from "lucide-react";
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { formatKr, formatMoment } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
 import { supabase } from "@/lib/supabase";
 import { Spinner } from "../AppShell";
 import { Bookkeeping } from "./bookkeeping/Bookkeeping";
 import { AdminMfaGate } from "./AdminMfaGate";
+import { configureAdminApi } from "@/components/admin/api";
+import { LeadsAdmin } from "@/components/admin/LeadsAdmin";
+import { site } from "@/lib/site";
+
+// The "Leads" tab reads the website's sign-ups API (spazia.se/api/admin) with this login.
+configureAdminApi({
+  base: `${site.url}/api/admin`,
+  token: async () => (await supabase().auth.getSession()).data.session?.access_token ?? null,
+});
 
 /**
  * The team's admin page in the app (internal, Swedish only). Only accounts in
@@ -16,10 +25,11 @@ import { AdminMfaGate } from "./AdminMfaGate";
  */
 
 type Row = Record<string, unknown>;
-type Tab = "overview" | "reports" | "bookings" | "payments" | "listings" | "users" | "codes" | "books" | "log";
+type Tab = "overview" | "leads" | "reports" | "bookings" | "payments" | "listings" | "users" | "codes" | "books" | "log";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "overview", label: "Översikt" },
+  { id: "leads", label: "Leads" },
   { id: "reports", label: "Anmälningar" },
   { id: "bookings", label: "Bokningar" },
   { id: "payments", label: "Betalningar" },
@@ -527,6 +537,11 @@ function Log() {
 export function AdminPage() {
   const access = useLoad(() => rpc<boolean>("am_i_admin").catch(() => false), "am-i-admin");
   const [tab, setTab] = useState<Tab>("overview");
+  // A link from a team email (…/admin#lead=<id>) opens the Leads tab on that sign-up.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (/lead=/.test(window.location.hash)) setTab("leads");
+  }, []);
 
   if (access.loading) return <Spinner />;
   if (!access.data) {
@@ -566,6 +581,7 @@ export function AdminPage() {
         </nav>
         <div className="mt-6">
           {tab === "overview" && <Overview />}
+          {tab === "leads" && <LeadsAdmin />}
           {tab === "reports" && <Reports />}
           {tab === "bookings" && <Bookings />}
           {tab === "payments" && <Payments />}

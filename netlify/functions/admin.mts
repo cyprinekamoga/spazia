@@ -1,40 +1,24 @@
 /**
- * API for the admin page (/admin). Everything except login requires the
- * session cookie; everything that changes data must come from our own page.
+ * API for the sign-ups, used by the "Leads" tab in the app's admin page
+ * (app.spazia.se/admin). Every request carries the admin's Supabase login
+ * token, and the database decides whether it is enough (on the admin list,
+ * with the two-factor code when that is required); see src/server/app-admin.ts.
+ * The token can't be sent by another site's form, so there is no cookie and
+ * no password.
  *
- *   POST   /api/admin/login              { password }
- *   POST   /api/admin/logout
  *   GET    /api/admin/data               all sign-ups
  *   PATCH  /api/admin/leads/<id>         { status?, notes? }
  *   DELETE /api/admin/leads/<id>         delete everything about a lead
  *   POST   /api/admin/mail               { ids, subject: {sv,en}, body: {sv,en}, tag }
- *
- * Set ADMIN_PASSWORD in Netlify (Project configuration → Environment
- * variables, scope Functions) and redeploy.
  */
 import type { Config } from "@netlify/functions";
-import { adminPassword, checkPassword, clearSessionCookie, createSessionCookie, isLoggedIn } from "../../src/server/auth";
+import { corsHeaders, isAppAdmin } from "../../src/server/app-admin";
 import { campaignEmail } from "../../src/server/campaign-email";
 import { deleteLead, getLead, isValidId, LEAD_STATUSES, listLeads, rebuildStats, recordMailing, updateMeta, type LeadStatus } from "../../src/server/db";
-import { error, isSameOriginJson, json, readJson, sleep, str } from "../../src/server/http";
-import { clearFailures, loginLocked, recordFailure } from "../../src/server/login-throttle";
+import { error, json, readJson, str } from "../../src/server/http";
 import { mailConfigured, sendMail, teamAddress } from "../../src/server/mailer";
 
 const MAX_MAIL_BATCH = 20;
-
-async function login(req: Request): Promise<Response> {
-  if (!adminPassword()) return error(503, "not_configured");
-  // Too many wrong passwords lately (from anywhere): wait, whatever is sent.
-  if (await loginLocked().catch(() => false)) return error(429, "too_many_attempts");
-  const body = await readJson(req);
-  if (!checkPassword(body?.password)) {
-    await recordFailure().catch((err) => console.error("admin: could not count a failed login", err));
-    await sleep(1500); // slows down guessing
-    return error(401, "wrong_password");
-  }
-  await clearFailures().catch(() => {});
-  return json({ ok: true }, 200, { "set-cookie": createSessionCookie() });
-}
 
 async function data(): Promise<Response> {
   return json({ leads: await listLeads(), mailConfigured: mailConfigured(), now: Date.now() });
@@ -80,17 +64,25 @@ async function mail(req: Request): Promise<Response> {
 }
 
 const admin = async (req: Request): Promise<Response> => {
+  const cors = corsHeaders(req);
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: { ...cors, "access-control-allow-methods": "GET, POST, PATCH, DELETE", "access-control-allow-headers": "authorization, content-type", "access-control-max-age": "600" },
+    });
+  }
+  const res = await handle(req);
+  for (const [k, v] of Object.entries(cors)) res.headers.set(k, v);
+  return res;
+};
+
+async function handle(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const path = url.pathname.replace(/^\/api\/admin/, "").replace(/\/+$/, "") || "/";
   const method = req.method;
 
   try {
-    if (method !== "GET" && !isSameOriginJson(req)) return error(403, "forbidden");
-    if (method === "POST" && path === "/login") return await login(req);
-    if (method === "POST" && path === "/logout") return json({ ok: true }, 200, { "set-cookie": clearSessionCookie() });
-
-    if (!adminPassword()) return error(503, "not_configured");
-    if (!isLoggedIn(req)) return error(401, "login_required");
+    if (!(await isAppAdmin(req))) return error(401, "login_required");
 
     if (method === "GET" && path === "/data") return await data();
     if (method === "POST" && path === "/mail") return await mail(req);
@@ -109,7 +101,7 @@ const admin = async (req: Request): Promise<Response> => {
     console.error("admin:", err);
     return error(500, "server_error");
   }
-};
+}
 
 export default admin;
 

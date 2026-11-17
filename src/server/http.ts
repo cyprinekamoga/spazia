@@ -11,17 +11,6 @@ export function error(status: number, code: string): Response {
   return json({ error: code }, status);
 }
 
-/**
- * Requests that change something must come from our own pages: same origin
- * and a JSON body (a plain cross-site form cannot send that).
- */
-export function isSameOriginJson(req: Request): boolean {
-  const origin = req.headers.get("origin");
-  const ownOrigin = new URL(req.url).origin;
-  const contentType = req.headers.get("content-type") ?? "";
-  return origin === ownOrigin && contentType.startsWith("application/json");
-}
-
 export async function readJson(req: Request): Promise<Record<string, unknown> | null> {
   try {
     const body = await req.json();

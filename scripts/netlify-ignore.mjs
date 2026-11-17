@@ -26,9 +26,9 @@ const SITE_ONLY = [
   /^src\/app\/\((sv|en|admin)\)\//,
   /^src\/app\/(robots|sitemap|global-not-found)\.tsx?$/,
   /^src\/views\//,
-  /^src\/components\/(admin|forms)\//,
+  /^src\/components\/forms\//,
   /^src\/server\//,
-  /^src\/content\/(sv|en|guides|market-prices|cities|universities)\.ts$/,
+  /^src\/content\/(en|guides|market-prices|universities)\.ts$/,
   /^netlify\/functions\//,
   /^public\/photos\//,
 ];

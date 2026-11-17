@@ -24,7 +24,7 @@ Research and the phased plan are in [`docs/research-och-plan.md`](docs/research-
 - **Town field** in both forms: free text with suggestions. The town is tidied before it is stored ("lulea" becomes "Luleå"), so the admin page can count sign-ups per town.
 - **Price comparison for renters** on the find page and every category page: pick what to store and for how long, and see the price next to a tyre hotel or a storage company. The competitor prices and their sources are in `src/content/market-prices.ts`; check them now and then.
 - **Guides** at `/guider` and `/en/guides`: tyre storage costs, renting out your garage, tax, and summer storage for students. Text and sources are in `src/content/guides.ts`.
-- **Admin page** at `/admin` (password protected):
+- **Leads** in the app's admin page (app.spazia.se/admin → Leads, login with two-factor code; spazia.se/admin forwards there):
   - **Översikt:** sign-ups per town, per storage type and per source.
   - **Anmälningar:** every sign-up with all answers, a status (Ny, Kontaktad, Publicerad, Matchad, Inte aktuell) and notes. You can also call, email, download a CSV or delete a sign-up (GDPR). Links in the team emails open the right sign-up.
   - **Mejla en stad:** email everyone in a town, e.g. "there are hosts near you now", in Swedish and English, with their name and town filled in. People already emailed about the same town are skipped.
@@ -178,7 +178,6 @@ Set these in Netlify under *Project configuration → Environment variables*. Se
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console verification code ("HTML tag" method). |
 | `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Sends leads to Supabase instead of Netlify Forms. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO` | Emails on every registration (see below). All are set in Netlify for Strato except `SMTP_PASS`, which only the mailbox owner should enter. |
-| `ADMIN_PASSWORD` | Password for `/admin`. Mark it as secret. Changing it logs everyone out. Without it, the admin page says it isn't switched on. |
 
 ## Emails on every registration
 
@@ -221,7 +220,7 @@ Without SMTP settings the function only logs a warning. Submissions are still st
 
 The two functions are:
 - `lead-emails` (runs on every form submission)
-- `admin` (`/api/admin/*`, needs the admin login)
+- `admin` (`/api/admin/*`, the Leads tab: needs an admin's Supabase login token, checked with `admin_check()`)
 
 ## Leads: Netlify Forms → Supabase
 

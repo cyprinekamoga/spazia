@@ -33,12 +33,28 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Where the leads API lives (the website, https://spazia.se/api/admin) and
+ * how to get the admin's login token. Set by the app's admin page.
+ */
+let apiBase = "/api/admin";
+let getToken: () => Promise<string | null> = async () => null;
+
+export function configureAdminApi(opts: { base: string; token: () => Promise<string | null> }) {
+  apiBase = opts.base;
+  getToken = opts.token;
+}
+
 export async function api<T = Record<string, unknown>>(path: string, init: { method?: string; body?: unknown } = {}): Promise<T> {
   const method = init.method ?? "GET";
-  const res = await fetch(`/api/admin${path}`, {
+  const token = await getToken();
+  const res = await fetch(`${apiBase}${path}`, {
     method,
     cache: "no-store",
-    headers: method === "GET" ? undefined : { "content-type": "application/json" },
+    headers: {
+      ...(method === "GET" ? {} : { "content-type": "application/json" }),
+      ...(token ? { authorization: `Bearer ${token}` } : {}),
+    },
     body: method === "GET" ? undefined : JSON.stringify(init.body ?? {}),
   });
   let json: Record<string, unknown> = {};
