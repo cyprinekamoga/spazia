@@ -9,7 +9,7 @@ import { Photo } from "@/components/Photo";
 import { PhotoHero, Section, SectionHeading } from "@/components/sections";
 import { fill, type Lang } from "@/lib/i18n";
 import { absoluteUrl, categoryPath, guidePath, pagePath, type PageKey } from "@/lib/routes";
-import { site } from "@/lib/site";
+import { renterSignupUrl, site } from "@/lib/site";
 
 /* ---------- Text with [label](target) links ---------- */
 
@@ -202,7 +202,7 @@ export function GuideView({ lang, guide }: { lang: Lang; guide: Guide }) {
   const t = getDictionary(lang);
   const p = t.guidesPage;
   const forHost = guide.audience === "host";
-  const ctaHref = `${pagePath("find", lang)}#anmalan`;
+  const ctaHref = renterSignupUrl(lang);
   const photo = photoData(guide.photo);
   const largest = photo.widths[photo.widths.length - 1];
 

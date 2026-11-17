@@ -13,12 +13,11 @@ import { fill } from "@/lib/i18n";
 import { searchListings, type SearchResult } from "@/lib/app/data";
 import { formatKr, fromPrice } from "@/lib/app/model";
 import { useLoad } from "@/lib/app/session";
-import { site } from "@/lib/site";
 import { Spinner, useOptionalSession } from "../AppShell";
 import { CoverPhoto } from "../ui";
 import { supabase } from "@/lib/supabase";
 import { RatingBadge } from "../Reviews";
-import { AlertButton } from "../SearchAlerts";
+import { AlertButton, WatchForm } from "../SearchAlerts";
 import { FavouriteButton } from "../Favourites";
 import { fetchBlockedIds, fetchFavouriteIds } from "@/lib/app/data";
 import { activeFilterCount, FilterPanel, filterKey, filtersFromParams, filtersToParams, SORT_KEYS, type SortKey } from "./SearchFilters";
@@ -253,19 +252,7 @@ export function SearchPage() {
         <div className="mt-8 card flex flex-col items-start gap-3 p-6">
           <SearchX size={28} className="text-brand" aria-hidden="true" />
           <p className="text-lg font-semibold text-night">{t.empty}</p>
-          {place ? (
-            <>
-              <p className="text-muted">{appText.alerts.text}</p>
-              <AlertButton uid={uid} place={place} category={category} maxPrice={filters.maxPrice} primary />
-            </>
-          ) : (
-            <>
-              <p className="text-muted">{t.emptyHint}</p>
-              <a href={`${site.url}/hitta-forvaring#anmalan`} className="btn btn-primary mt-1">
-                {t.emptyCta}
-              </a>
-            </>
-          )}
+          <WatchForm key={`${place}|${category ?? ""}`} uid={uid} place={place} category={category} maxPrice={filters.maxPrice} autoSave={params.get("bevaka") === "1"} />
         </div>
       ) : (
         <>

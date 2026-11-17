@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BellPlus, BellRing, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { appText } from "@/content/app";
 import { categories, type CategoryId } from "@/content/categories";
 import { L } from "@/lib/app/lang";
@@ -71,6 +72,131 @@ export function AlertButton({ uid, place, category, maxPrice, primary = false }:
         </p>
       )}
     </div>
+  );
+}
+
+/**
+ * Shown when a search finds nothing: say where and what you need, and get an
+ * email when a space turns up (a search alert). Without an account, the
+ * button goes to sign-up and back here, and the alert is saved on return
+ * (bevaka=1 in the address).
+ */
+export function WatchForm({
+  uid,
+  place,
+  category,
+  maxPrice,
+  autoSave = false,
+}: {
+  uid: string;
+  place: string;
+  category: CategoryId | null;
+  maxPrice: number | null;
+  autoSave?: boolean;
+}) {
+  const router = useRouter();
+  const [town, setTown] = useState(place);
+  const [cat, setCat] = useState<CategoryId | "">(category ?? "");
+  const [max, setMax] = useState(maxPrice ? String(maxPrice) : "");
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const autoRan = useRef(false);
+
+  async function save(alert: { place: string; category: CategoryId | null; max_price: number | null }) {
+    if (alert.place.length < 2) {
+      setError(t.needTown);
+      return;
+    }
+    if (!uid) {
+      const q = new URLSearchParams({ ort: alert.place, bevaka: "1" });
+      if (alert.category) q.set("typ", alert.category);
+      if (alert.max_price) q.set("pris", String(alert.max_price));
+      router.push(`/logga-in?next=${encodeURIComponent(`/sok?${q}`)}`);
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      await saveAlert(alert);
+      setDone(fill(t.saved, { place: alert.place }));
+    } catch (e) {
+      setError((e as Error).message === "too_many_alerts" ? t.tooMany : appText.common.error);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Back from sign-up with bevaka=1: save the alert they asked for.
+  useEffect(() => {
+    if (!autoSave || !uid || !place || autoRan.current) return;
+    autoRan.current = true;
+    void save({ place, category, max_price: maxPrice });
+    const url = new URL(window.location.href);
+    url.searchParams.delete("bevaka");
+    router.replace(`${url.pathname}${url.search}`);
+    // Runs once, when the account is there.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoSave, uid, place]);
+
+  function submit(e: FormEvent) {
+    e.preventDefault();
+    const n = Math.round(Number(max));
+    void save({ place: town.trim(), category: cat || null, max_price: n > 0 ? n : null });
+  }
+
+  if (done) {
+    return (
+      <p role="status" className="flex items-start gap-2 font-semibold text-pine">
+        <BellRing size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
+        {done}
+      </p>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} noValidate className="w-full space-y-3">
+      <div>
+        <h2 className="text-lg font-bold text-night">{t.formTitle}</h2>
+        <p className="mt-0.5 text-muted">{t.formLead}</p>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div>
+          <label htmlFor="watch-town" className="field-label">
+            {t.town}
+          </label>
+          <input id="watch-town" className="field-input" value={town} onChange={(e) => setTown(e.target.value)} autoComplete="address-level2" />
+        </div>
+        <div>
+          <label htmlFor="watch-what" className="field-label">
+            {t.what}
+          </label>
+          <select id="watch-what" className="field-input" value={cat} onChange={(e) => setCat(e.target.value as CategoryId | "")}>
+            <option value="">{t.allTypes}</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {L(c.name)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="watch-max" className="field-label">
+            {t.maxPriceLabel}
+          </label>
+          <input id="watch-max" className="field-input" inputMode="numeric" value={max} onChange={(e) => setMax(e.target.value.replace(/\D/g, ""))} />
+        </div>
+      </div>
+      {error && (
+        <p role="alert" className="text-sm font-medium text-[#b42318]">
+          {error}
+        </p>
+      )}
+      <button type="submit" disabled={busy} className="btn btn-primary">
+        <BellPlus size={18} aria-hidden="true" />
+        {uid ? t.formSave : t.formSignup}
+      </button>
+    </form>
   );
 }
 

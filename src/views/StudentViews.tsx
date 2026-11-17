@@ -8,14 +8,12 @@ import { categoryIcons } from "@/components/Icons";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { CheckList, FinalCta, PhotoHero, priceLabel, Section, SectionHeading } from "@/components/sections";
 import { fill, type Lang } from "@/lib/i18n";
-import { cityPath, pagePath, RENTER_PARAMS, universityPath } from "@/lib/routes";
-import { appSearchUrl } from "@/lib/site";
+import { cityPath, pagePath, universityPath } from "@/lib/routes";
+import { appSearchUrl, renterSignupUrl } from "@/lib/site";
 
-/** Sign up for storage, with boxes ticked and the town filled in. */
+/** Create an account in the app and search for box storage, with the town filled in. */
 function findHref(lang: Lang, town?: string): string {
-  const q = new URLSearchParams({ [RENTER_PARAMS.item]: "boxes" });
-  if (town) q.set(RENTER_PARAMS.town, town);
-  return `${pagePath("find", lang)}?${q.toString()}#anmalan`;
+  return renterSignupUrl(lang, { place: town, category: "boxes" });
 }
 
 function StudentPrices({ lang, t }: { lang: Lang; t: Dictionary }) {
@@ -118,7 +116,7 @@ export function StudentsView({ lang }: { lang: Lang }) {
         <FinalCta lang={lang} t={t} />
       </Section>
 
-      <MobileActionBar primary={{ href: findHref(lang), label: t.actionBar.find }} secondary={{ href: pagePath("host", lang), label: t.actionBar.host }} />
+      <MobileActionBar primary={{ href: findHref(lang), label: t.actionBar.find, track: "renter" }} secondary={{ href: pagePath("host", lang), label: t.actionBar.host }} />
     </>
   );
 }

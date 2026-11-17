@@ -51,11 +51,11 @@ To change a text or price: edit `ads.html` or `reel.html` and run `node marketin
 | Objective | Traffic, optimised for landing page views |
 | Location, age, placements | As campaign 1 (age 20–65) |
 | Budget | 50 kr a day for 7 days (about 350 kr) |
-| Link | `https://spazia.se/forvaring/dackforvaring` (price, a calculator comparing with a tyre hotel, and the button "Jag behöver förvaring" to the waitlist form) |
+| Link | `https://spazia.se/forvaring/dackforvaring` (price, a calculator comparing with a tyre hotel, and the button "Jag behöver förvaring", which leads to creating an account and searching in the app) |
 | URL parameters | `utm_source=meta&utm_medium=paid&utm_campaign=dack-lulea&utm_content={{ad.name}}` |
 | Button | "Läs mer" |
 
-There are few spaces in Luleå so far. Visitors who find nothing can join the waitlist ("Jag behöver förvaring"), and everyone on the waitlist in Luleå gets an email when a space there is published. Those leads are also the best argument when you talk to new hosts.
+There are few spaces in Luleå so far. Visitors who find nothing in the app see a form to watch Luleå ("Bevaka"), and get an email when a space there is published. There are no forms on the website any more. Those leads are also the best argument when you talk to new hosts.
 
 **Primary text, version A:**
 > Sommardäcken i hallen igen? Förvara dem hos en granne i Luleå för ca 65 kr i månaden, ca 390 kr för hela vintern. Hämta dem när du vill. Ingen bindningstid.
@@ -77,10 +77,10 @@ There are few spaces in Luleå so far. Visitors who find nothing can join the wa
 
 ## Measuring
 
-- **Spazia admin → Leads:** the "Källa" column shows the campaign and ad for every renter who joins the waitlist (from the UTM tags).
+- **Renters:** the website has no forms any more. A click on "Jag behöver förvaring" or "Skapa konto och sök" counts as a *Lead* (type renter) for the Meta Pixel and Plausible; the accounts and their alerts are in the app admin. Earlier waitlist sign-ups are under Leads, with the campaign in the "Källa" column.
 - **Hosts:** the "Jag har plats över" / "Lägg upp din plats" buttons go straight to creating an account in the app, with no form on the site. A click counts as a *Lead* for the Meta Pixel and Plausible. The sign-ups themselves are in the admin page under Users and Listings.
 - **Ads Manager:** after 3–4 days, look at click-through rate and cost per landing page view for each ad. Pause the weaker version (A or B) and keep the better one.
-- **What counts as success:** for the host campaign, the number of new hosts who publish a space. For the tyre campaign, people who join the waitlist.
+- **What counts as success:** for the host campaign, the number of new hosts who publish a space. For the tyre campaign, new accounts that search or save an alert.
 - Sign-ups in the app (app.spazia.se) aren't sent to Meta, only the click to sign up. That could be added later, so Meta can optimise for real sign-ups.
 
 ## Rules for the texts

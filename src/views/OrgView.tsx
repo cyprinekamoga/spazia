@@ -1,6 +1,7 @@
 import { Building2, GraduationCap, Landmark, Store } from "lucide-react";
 import { getDictionary } from "@/content";
-import { OrgForm } from "@/components/forms/OrgForm";
+import { Mail } from "lucide-react";
+import { site } from "@/lib/site";
 import { PhotoHero, Section, SectionHeading } from "@/components/sections";
 import type { Lang } from "@/lib/i18n";
 
@@ -48,9 +49,10 @@ export function OrgView({ lang }: { lang: Lang }) {
       <Section id="kontakt">
         <div className="mx-auto max-w-3xl">
           <SectionHeading title={p.formTitle} lead={p.formLead} />
-          <div className="mt-6 sm:mt-8">
-            <OrgForm lang={lang} t={t} />
-          </div>
+          <a href={`mailto:${site.email}?subject=${encodeURIComponent(p.mailSubject)}`} className="btn btn-primary mt-6 sm:mt-8">
+            <Mail size={18} aria-hidden="true" />
+            {site.email}
+          </a>
         </div>
       </Section>
     </>

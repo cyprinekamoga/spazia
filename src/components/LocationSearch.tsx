@@ -36,7 +36,7 @@ export function LocationSearch({
     // The app is a separate site (app.spazia.se), so this is a full page load.
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- absolute URL to another site
     if (/^https?:/.test(action)) window.location.assign(`${action}${query}`);
-    else router.push(`${action}${query}#anmalan`);
+    else router.push(`${action}${query}`);
   }
 
   return (

@@ -21,7 +21,7 @@ import {
   WhyGrid,
 } from "@/components/sections";
 import type { Lang } from "@/lib/i18n";
-import { pagePath, RENTER_PARAMS } from "@/lib/routes";
+import { pagePath } from "@/lib/routes";
 import { appSearchUrl } from "@/lib/site";
 
 export function HomeView({ lang }: { lang: Lang }) {
@@ -40,7 +40,7 @@ export function HomeView({ lang }: { lang: Lang }) {
         eyebrow={<span className="eyebrow !text-glow">{t.common.launchBadge}</span>}
       >
         <div className="w-full">
-          <LocationSearch action={lang === "sv" ? appSearchUrl() : findPath} {...t.hero.search} />
+          <LocationSearch action={appSearchUrl()} {...t.hero.search} />
           <HostSignupLink
             lang={lang}
             className="mt-4 inline-flex min-h-11 items-center font-semibold text-white underline decoration-glow decoration-2 underline-offset-6 hover:decoration-white"
@@ -68,7 +68,7 @@ export function HomeView({ lang }: { lang: Lang }) {
               return (
                 <li key={c.id}>
                   <Link prefetch={false}
-                    href={lang === "sv" ? appSearchUrl({ category: c.id }) : `${findPath}?${RENTER_PARAMS.item}=${c.id}#anmalan`}
+                    href={appSearchUrl({ category: c.id })}
                     className="flex min-h-11 items-center gap-2 rounded-full border border-line bg-snow px-4 py-2.5 font-semibold whitespace-nowrap text-night transition-colors hover:border-night/40"
                   >
                     <Icon size={19} className="shrink-0 text-brand" />

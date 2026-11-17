@@ -53,6 +53,20 @@ export function hostSignupUrl(lang: "sv" | "en" = "sv"): string {
   return `${site.appUrl}/logga-in?next=${encodeURIComponent("/vard/annons")}&lang=${lang}`;
 }
 
+/**
+ * Where "Jag behöver förvaring" and the other renter buttons lead: create an
+ * account in the app, then on to the search (town and type filled in). There
+ * is no form on the website; finding nothing in the app shows a form to watch
+ * the town.
+ */
+export function renterSignupUrl(lang: "sv" | "en" = "sv", { place, category }: { place?: string; category?: string } = {}): string {
+  const q = new URLSearchParams();
+  if (place) q.set("ort", place);
+  if (category) q.set("typ", category);
+  const next = `/sok${q.toString() ? `?${q}` : ""}`;
+  return `${site.appUrl}/logga-in?next=${encodeURIComponent(next)}&lang=${lang}`;
+}
+
 /** The app's public search, e.g. https://app.spazia.se/sok?ort=Göteborg&typ=tyres */
 export function appSearchUrl({ place, category }: { place?: string; category?: string } = {}): string {
   const q = new URLSearchParams();

@@ -7,11 +7,11 @@ import { guidePath } from "@/lib/routes";
 import { renterPrice } from "@/content/pricing";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { RenterCalculator } from "@/components/RenterCalculator";
-import { RenterForm } from "@/components/forms/RenterForm";
+import { RenterSignupLink } from "@/components/HostSignupLink";
 import { categoryIcons } from "@/components/Icons";
 import { Faq, PhotoHero, Section, SectionHeading } from "@/components/sections";
 import { formatNumber, type Lang } from "@/lib/i18n";
-import { appSearchUrl } from "@/lib/site";
+import { appSearchUrl, renterSignupUrl } from "@/lib/site";
 
 export function FindView({ lang }: { lang: Lang }) {
   const t = getDictionary(lang);
@@ -26,26 +26,32 @@ export function FindView({ lang }: { lang: Lang }) {
         title={p.title}
         lead={p.lead}
       >
-        {lang === "sv" && (
-          <a href={appSearchUrl()} className="btn btn-light">
-            {t.common.seeSpaces}
-          </a>
-        )}
-        <a href="#anmalan" className={lang === "sv" ? "btn btn-on-dark" : "btn btn-light"}>
-          {p.formTitle}
+        <RenterSignupLink lang={lang} className="btn btn-light">
+          {p.ctaSignup}
+        </RenterSignupLink>
+        <a href={appSearchUrl()} className="btn btn-on-dark">
+          {t.common.seeSpaces}
         </a>
       </PhotoHero>
 
       <Section id="anmalan">
-        <div className="grid gap-6 lg:grid-cols-[1fr_1.7fr] lg:gap-10">
-          {/* Phones: heading → form → prices → student tip. Desktop: info left, form right. */}
-          <div className="order-2 lg:col-start-2 lg:row-start-1">
-            <RenterForm lang={lang} t={t} />
-          </div>
-          <div className="contents lg:col-start-1 lg:row-start-1 lg:block lg:space-y-6">
+        <div className="grid gap-6 lg:grid-cols-2 lg:gap-10">
+          {/* Phones: heading and button → prices → student tip. Desktop: how it works left, prices and student tip right. */}
           <div className="order-1">
             <SectionHeading title={p.formTitle} lead={p.formLead} />
+            <ol className="mt-6 space-y-3">
+              {p.steps.map((step, i) => (
+                <li key={step} className="flex gap-3">
+                  <span className="font-display flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-night text-base font-bold text-glow">{i + 1}</span>
+                  <span className="leading-snug text-ink">{step}</span>
+                </li>
+              ))}
+            </ol>
+            <RenterSignupLink lang={lang} className="btn btn-primary mt-6">
+              {p.ctaSignup}
+            </RenterSignupLink>
           </div>
+          <div className="contents lg:block lg:space-y-6">
 
           <div className="card order-3 p-5">
             <h3 className="text-lg text-night">{p.pricesTitle}</h3>
@@ -93,7 +99,7 @@ export function FindView({ lang }: { lang: Lang }) {
       <Section tone="paper" id="pris">
         <SectionHeading title={t.renterCalc.title} lead={t.renterCalc.lead} />
         <div className="mt-7 sm:mt-10">
-          <RenterCalculator lang={lang} t={t} formHref="#anmalan" />
+          <RenterCalculator lang={lang} t={t} formHref={renterSignupUrl(lang)} />
         </div>
       </Section>
 
@@ -104,7 +110,7 @@ export function FindView({ lang }: { lang: Lang }) {
         </div>
       </Section>
 
-      <MobileActionBar primary={{ href: "#anmalan", label: t.actionBar.renterForm }} hideWhenVisibleId="anmalan" />
+      <MobileActionBar primary={{ href: renterSignupUrl(lang), label: t.actionBar.renterForm, track: "renter" }} />
     </>
   );
 }

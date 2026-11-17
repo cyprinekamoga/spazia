@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { HostSignupLink } from "@/components/HostSignupLink";
-import { appSearchUrl } from "@/lib/site";
+import { appSearchUrl, renterSignupUrl } from "@/lib/site";
 import { CalendarDays, Tag } from "lucide-react";
 import { getDictionary } from "@/content";
 import type { Category } from "@/content/categories";
@@ -20,18 +20,17 @@ import {
   priceLabel,
   Section,
   SectionHeading,
-  townFormHref,
   TrustGrid,
 } from "@/components/sections";
 import { fill, type Lang } from "@/lib/i18n";
-import { pagePath, RENTER_PARAMS } from "@/lib/routes";
+import { pagePath } from "@/lib/routes";
 import { RelatedGuides } from "@/views/GuideViews";
 
 /** SEO landing page per storage type, e.g. /forvaring/dackforvaring. */
 export function CategoryView({ lang, category }: { lang: Lang; category: Category }) {
   const t = getDictionary(lang);
   const p = t.categoryPage;
-  const findHref = `${pagePath("find", lang)}?${RENTER_PARAMS.item}=${category.id}#anmalan`;
+  const findHref = renterSignupUrl(lang, { category: category.id });
 
   return (
     <>
@@ -120,7 +119,7 @@ export function CategoryView({ lang, category }: { lang: Lang; category: Categor
         </div>
       </Section>
 
-      <MobileActionBar primary={{ href: findHref, label: t.actionBar.renterForm }} />
+      <MobileActionBar primary={{ href: findHref, label: t.actionBar.renterForm, track: "renter" }} />
     </>
   );
 }
@@ -129,7 +128,7 @@ export function CategoryView({ lang, category }: { lang: Lang; category: Categor
 export function CityView({ lang, city }: { lang: Lang; city: City }) {
   const t = getDictionary(lang);
   const p = t.cityPage;
-  const findHref = townFormHref("find", city.name, lang);
+  const findHref = renterSignupUrl(lang, { place: city.name });
   const vars = { name: city.name };
 
   return (
@@ -202,7 +201,7 @@ export function CityView({ lang, city }: { lang: Lang; city: City }) {
         </div>
       </Section>
 
-      <MobileActionBar primary={{ href: findHref, label: t.actionBar.find }} secondary={{ href: pagePath("host", lang), label: t.actionBar.host }} />
+      <MobileActionBar primary={{ href: findHref, label: t.actionBar.find, track: "renter" }} secondary={{ href: pagePath("host", lang), label: t.actionBar.host }} />
     </>
   );
 }

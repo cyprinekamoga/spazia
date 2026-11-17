@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { renterSignupUrl } from "@/lib/site";
 import { HostSignupLink } from "@/components/HostSignupLink";
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
@@ -7,7 +8,7 @@ import { categories, exampleGarageIncome, type Category } from "@/content/catego
 import { cities } from "@/content/cities";
 import type { PhotoKey } from "@/content/photos";
 import { fill, formatNumber, type Lang } from "@/lib/i18n";
-import { categoryPath, cityPath, pagePath, RENTER_PARAMS } from "@/lib/routes";
+import { categoryPath, cityPath, pagePath } from "@/lib/routes";
 import { seasonIcons, trustIcons, whyIcons } from "./Icons";
 import { Photo } from "./Photo";
 
@@ -317,20 +318,15 @@ export function CitiesSection({ lang, t }: { lang: Lang; t: Dictionary }) {
       </div>
       <p className="mt-6 max-w-xl leading-relaxed text-muted">
         {s.missing}{" "}
-        <Link prefetch={false}
-          href={`${pagePath("find", lang)}#anmalan`}
+        <a
+          href={renterSignupUrl(lang)}
           className="font-semibold text-night underline decoration-brand-bright decoration-2 underline-offset-4 hover:decoration-night"
         >
           {s.missingCta}
-        </Link>
+        </a>
       </p>
     </>
   );
-}
-
-/** Pre-filled form link for a town, e.g. /hitta-forvaring?ort=Göteborg#anmalan. */
-export function townFormHref(page: "find", town: string, lang: Lang): string {
-  return `${pagePath(page, lang)}?${RENTER_PARAMS.town}=${encodeURIComponent(town)}#anmalan`;
 }
 
 /* ---------- FAQ ---------- */

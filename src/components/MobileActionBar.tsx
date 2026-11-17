@@ -21,7 +21,7 @@ function subscribeEstimate(onChange: () => void) {
 }
 
 /** track: count the click as a lead (the host button that leads to sign-up in the app). */
-type Action = { href: string; label: string; track?: "host" };
+type Action = { href: string; label: string; track?: "host" | "renter" };
 
 /**
  * Sticky call-to-action bar for phones. It slides in once the visitor has

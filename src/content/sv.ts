@@ -183,7 +183,7 @@ export const sv = {
   citiesSection: {
     title: "I hela Sverige",
     lead: "Spazia finns i hela Sverige, från Malmö till Kiruna. Här är några av städerna.",
-    missing: "Hittar du inte din ort? Skriv in den i formuläret, vi finns i hela landet.",
+    missing: "Hittar du inte din ort? Sök på den i appen och bevaka den, vi finns i hela landet.",
     missingCta: "Hitta plats",
   },
   faq: {
@@ -195,11 +195,11 @@ export const sv = {
       },
       {
         q: "Hur kommer jag igång?",
-        a: "Vill du hyra ut: skapa ett konto i appen och lägg upp platsen, det tar några minuter. Letar du plats: sök i appen. Finns det inget nära dig än kan du lämna din ort i formuläret, så hör vi av oss när det kommer en plats.",
+        a: "Vill du hyra ut: skapa ett konto i appen och lägg upp platsen, det tar några minuter. Letar du plats: skapa ett konto och sök i appen. Finns det inget nära dig än kan du bevaka orten, så får du ett mejl när en plats dyker upp.",
       },
       {
         q: "Finns ni i min stad?",
-        a: "Ja, Spazia finns i hela Sverige, och värdar kan lägga upp en plats var som helst. Finns det ingen plats nära dig än kan du skriva din ort i formuläret, så hör vi av oss när det kommer en.",
+        a: "Ja, Spazia finns i hela Sverige, och värdar kan lägga upp en plats var som helst. Finns det ingen plats nära dig än kan du bevaka orten i appen, så får du ett mejl när det kommer en.",
       },
       {
         q: "Vad kostar det?",
@@ -350,7 +350,7 @@ export const sv = {
       "Förvara däck, skidor, cyklar, flyttlådor eller fordon, eller hyr en p-plats, hos en granne, i hela Sverige.",
     eyebrow: "Hitta förvaring",
     title: "Förvaring nära dig, hos en granne.",
-    lead: "Berätta vad du behöver plats för och var, så hjälper vi dig att hitta en granne nära dig.",
+    lead: "Sök bland platserna i appen. Finns det inget nära dig än kan du bevaka din ort, så får du ett mejl när en plats dyker upp.",
     pricesTitle: "Riktpriser",
     pricesLead: "Riktpriser per månad, inklusive serviceavgift. I storstäderna blir det ofta dyrare, och värden sätter det slutliga priset.",
     heatedNote: "Uppvärmd plats kostar ca 25 % mer för fordon, möbler och lådor.",
@@ -358,7 +358,13 @@ export const sv = {
     studentText:
       "Lämna lådorna och möblerna i studentstaden över sommaren i stället för att frakta hem dem. Du behöver inget svenskt BankID: logga in med e-post och betala med kort.",
     formTitle: "Hitta plats",
-    formLead: "Det är gratis och inte bindande. Vi hör av oss när vi har hittat en värd nära dig.",
+    formLead: "Allt sker i appen. Det är gratis att leta, och du betalar först när en värd har godkänt dig.",
+    steps: [
+      "Skapa ett konto med Google eller e-post.",
+      "Sök på din ort och välj plats. Värden svarar inom 24 timmar.",
+      "Finns det ingen plats än? Bevaka orten i appen, så får du ett mejl när en dyker upp.",
+    ],
+    ctaSignup: "Skapa konto och sök",
     faqTitle: "Vanliga frågor",
   },
   trustPage: {
@@ -705,7 +711,7 @@ export const sv = {
     renterTitle: "Behöver du plats i {name}?",
     hostTitle: "Bor du i {name} och har plats över?",
     categoriesTitle: "Det här kan du förvara",
-    renterText: "Berätta vad du vill förvara, så letar vi upp en granne i {name} med plats över.",
+    renterText: "Sök bland platserna i {name} i appen. Finns det ingen än kan du bevaka orten, så får du ett mejl när en plats dyker upp.",
     hostText: "Hyr ut plats i garaget, källaren eller på uppfarten. Du bestämmer vad du tar emot och när hyresgästerna får komma.",
     renterCta: "Jag behöver plats i {name}",
     seeSpaces: "Se lediga platser i {name}",
@@ -851,8 +857,8 @@ export const sv = {
       share: "Dela länken",
       copy: "Kopiera länken",
       copied: "Kopierad!",
-      shareText: "Jag har anmält mig till Spazia, där man hyr förvaring och parkering av grannar. Anmäl dig du också, så öppnar de snabbare i {town}.",
-      shareTextNoTown: "Jag har anmält mig till Spazia, där man hyr förvaring och parkering av grannar. Anmäl dig du också!",
+      shareText: "Jag har anmält mig till Spazia, där man hyr förvaring och parkering av grannar. Gå med du också, så kommer det fler platser i {town}.",
+      shareTextNoTown: "Jag har anmält mig till Spazia, där man hyr förvaring och parkering av grannar. Gå med du också!",
       invitedOne: "1 person har anmält sig via din länk.",
       invitedMany: "{count} personer har anmält sig via din länk.",
     },
@@ -888,7 +894,8 @@ export const sv = {
       "Ni får en kontaktperson hos oss, och vi hjälper till med annonser och avtal.",
     ],
     formTitle: "Hör av er",
-    formLead: "Fyll i formuläret, så återkommer vi. Det kostar ingenting att fråga.",
+    formLead: "Mejla oss och berätta om er organisation och vad ni behöver, så återkommer vi. Det kostar ingenting att fråga.",
+    mailSubject: "Spazia för organisationer",
   },
   studentPage: {
     metaTitle: "Förvaring för studenter",
@@ -961,7 +968,7 @@ export const sv = {
     otherGuides: "Fler guider",
     relatedTitle: "Läs mer",
     ctaFindTitle: "Behöver du plats?",
-    ctaFindText: "Berätta vad du behöver, så hjälper vi dig att hitta en granne nära dig. Det är gratis och inte bindande.",
+    ctaFindText: "Skapa ett konto och sök i appen. Finns det ingen plats nära dig än kan du bevaka orten och få ett mejl när det dyker upp en.",
     ctaHostTitle: "Har du plats över?",
     ctaHostText: "Skapa ett konto och lägg upp platsen på några minuter. Det är gratis, och bankuppgifter behövs först när du har fått din första hyresgäst.",
   },

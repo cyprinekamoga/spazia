@@ -185,7 +185,7 @@ export const en: Dictionary = {
   citiesSection: {
     title: "All over Sweden",
     lead: "Spazia is all over Sweden, from Malmö to Kiruna. Here are some of the cities.",
-    missing: "Can't find your town? Type it in the form, we cover the whole country.",
+    missing: "Can't find your town? Search for it in the app and watch it, we cover the whole country.",
     missingCta: "Find space",
   },
   faq: {
@@ -197,11 +197,11 @@ export const en: Dictionary = {
       },
       {
         q: "How do I get started?",
-        a: "To rent out space: create an account in the app and add your space, it takes a few minutes. Looking for space: search in the app. If there's nothing near you yet, leave your town in the form and we'll let you know when a space comes up.",
+        a: "To rent out space: create an account in the app and add your space, it takes a few minutes. Looking for space: search in the app. If there's nothing near you yet, watch the town and you'll get an email when a space comes up.",
       },
       {
         q: "Are you in my city?",
-        a: "Yes, Spazia is all over Sweden, and hosts can add a space anywhere. If there's no space near you yet, type your town in the form and we'll let you know when one comes up.",
+        a: "Yes, Spazia is all over Sweden, and hosts can add a space anywhere. If there's no space near you yet, watch your town in the app and you'll get an email when one comes up.",
       },
       {
         q: "What does it cost?",
@@ -352,7 +352,7 @@ export const en: Dictionary = {
       "Store tyres, skis, bikes, boxes or vehicles, or rent a parking space, with a neighbour, all over Sweden.",
     eyebrow: "Find storage",
     title: "Storage near you, at a neighbour's.",
-    lead: "Tell us what you need space for and where, and we'll help you find a neighbour near you.",
+    lead: "Search the spaces in the app. If there's nothing near you yet, watch your town and you'll get an email when a space comes up.",
     pricesTitle: "Guide prices",
     pricesLead: "Guide prices per month, including the service fee. Big cities are often more expensive, and the host sets the final price.",
     heatedNote: "Heated space costs about 25% more for vehicles, furniture and boxes.",
@@ -360,7 +360,13 @@ export const en: Dictionary = {
     studentText:
       "Leave your boxes and furniture in your student city over the summer instead of shipping them home. You don't need a Swedish BankID: log in with email and pay by card.",
     formTitle: "Find space",
-    formLead: "It's free and non-binding. We'll get in touch when we've found a host near you.",
+    formLead: "Everything happens in the app. Looking is free, and you only pay once a host has approved you.",
+    steps: [
+      "Create an account with Google or email.",
+      "Search for your town and pick a space. The host answers within 24 hours.",
+      "No space yet? Watch the town in the app and you'll get an email when one comes up.",
+    ],
+    ctaSignup: "Create account and search",
     faqTitle: "Frequently asked questions",
   },
   trustPage: {
@@ -707,7 +713,7 @@ export const en: Dictionary = {
     renterTitle: "Need space in {name}?",
     hostTitle: "Live in {name} and have spare space?",
     categoriesTitle: "What you can store",
-    renterText: "Tell us what you want to store, and we'll find a neighbour in {name} with room to spare.",
+    renterText: "Search the spaces in {name} in the app. If there's none yet, watch the town and you'll get an email when one comes up.",
     hostText: "Rent out space in your garage, basement or driveway. You decide what you accept and when renters can come.",
     renterCta: "I need space in {name}",
     seeSpaces: "See available spaces in {name}",
@@ -853,8 +859,8 @@ export const en: Dictionary = {
       share: "Share the link",
       copy: "Copy the link",
       copied: "Copied!",
-      shareText: "I've signed up for Spazia, where you rent storage and parking from neighbours. Sign up too, so they open sooner in {town}.",
-      shareTextNoTown: "I've signed up for Spazia, where you rent storage and parking from neighbours. Sign up too!",
+      shareText: "I've signed up for Spazia, where you rent storage and parking from neighbours. Join too, so more spaces come up in {town}.",
+      shareTextNoTown: "I've signed up for Spazia, where you rent storage and parking from neighbours. Join too!",
       invitedOne: "1 person has signed up through your link.",
       invitedMany: "{count} people have signed up through your link.",
     },
@@ -890,7 +896,8 @@ export const en: Dictionary = {
       "You get a contact person at Spazia, and we help with listings and agreements.",
     ],
     formTitle: "Get in touch",
-    formLead: "Fill in the form and we'll get back to you. Asking costs nothing.",
+    formLead: "Email us about your organisation and what you need, and we'll get back to you. Asking costs nothing.",
+    mailSubject: "Spazia for organisations",
   },
   studentPage: {
     metaTitle: "Storage for students",
@@ -963,7 +970,7 @@ export const en: Dictionary = {
     otherGuides: "More guides",
     relatedTitle: "Read more",
     ctaFindTitle: "Need space?",
-    ctaFindText: "Tell us what you need, and we'll help you find a neighbour near you. It's free and non-binding.",
+    ctaFindText: "Create an account and search in the app. If there's no space near you yet, watch the town and get an email when one comes up.",
     ctaHostTitle: "Got space to spare?",
     ctaHostText: "Create an account and add your space in a few minutes. It's free, and you only need bank details once you have your first renter.",
   },

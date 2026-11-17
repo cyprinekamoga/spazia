@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { trackLead } from "@/lib/tracking";
 import { useMemo, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import type { Dictionary } from "@/content";
@@ -196,7 +197,7 @@ export function RenterCalculator({
             <p className="mt-2 text-lg text-frost">{c.empty}</p>
           )}
 
-          <Link prefetch={false} href={formHref} className="btn btn-primary mt-6 w-full">
+          <Link prefetch={false} href={formHref} onClick={formHref.startsWith("http") ? () => trackLead("renter") : undefined} className="btn btn-primary mt-6 w-full">
             {c.cta}
           </Link>
 
