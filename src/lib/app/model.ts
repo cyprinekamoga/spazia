@@ -190,9 +190,13 @@ export function hostPayout(hostPrice: number): number {
   return Math.round((hostPrice * Math.round((1 - FEES.hostFee) * 100)) / 100);
 }
 
-/** A host price that gives renters our guide price, rounded to 5 kr. */
+/**
+ * A host price that gives renters our guide price. Whole kronor, since the
+ * guide prices are low (30 kr for tyres): rounding to 5 kr would put the
+ * renter's price visibly off the guide price.
+ */
 export function suggestedHostPrice(category: CategoryId): number {
-  return Math.max(10, Math.round(getCategory(category).price / (1 + FEES.renterServiceFee) / 5) * 5);
+  return Math.max(10, Math.round(getCategory(category).price / (1 + FEES.renterServiceFee)));
 }
 
 /** Host's monthly income from a request, after Spazia's fee (hourly items count 0). */

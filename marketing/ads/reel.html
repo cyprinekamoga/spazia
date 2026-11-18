@@ -54,7 +54,7 @@
       <span class="line h" style="font-size: 96px">Förvara dem för</span>
       <span class="line num"><small>ca </small><span id="count">0</span> kr</span>
       <span class="line h" style="font-size: 96px">i månaden</span>
-      <span class="line small" style="margin-top: 44px">Ca 390 kr för hela vintern.<br>Ingen bindningstid.</span>
+      <span class="line small" style="margin-top: 44px">Ca 180 kr för hela vintern.<br>Ingen bindningstid.</span>
     </div>
   </section>
   <!-- 4: the other side -->
@@ -63,9 +63,9 @@
     <div class="dim" style="background: linear-gradient(180deg, rgb(0 12 6 / 0.3) 0%, rgb(0 12 6 / 0) 45%, rgb(0 12 6 / 0) 75%, rgb(0 12 6 / 0.7) 100%)"></div>
     <div class="text center" style="top: 300px">
       <span class="line h" style="font-size: 96px">Har du ett garage?</span>
-      <span class="line h" style="font-size: 74px; margin-top: 14px">Hyr ut och tjäna</span>
-      <span class="line num" style="font-size: 176px; margin-top: 6px"><small>ca </small>450 kr<small>/mån</small></span>
-      <span class="line small" style="font-size: 38px; margin-top: 18px">Räknat på 8 däcksatser à 65 kr, efter Spazias avgifter.</span>
+      <span class="line h" style="font-size: 74px; margin-top: 14px">Halva garaget kan ge</span>
+      <span class="line num" style="font-size: 176px; margin-top: 6px"><small>ca </small>605 kr<small>/mån</small></span>
+      <span class="line small" style="font-size: 38px; margin-top: 18px">Räknat på 10 däcksatser, 4 skidpaket<br>och en skoter, efter Spazias avgifter.</span>
     </div>
   </section>
   <!-- 5: the brand -->
@@ -113,9 +113,9 @@
         line.style.transform = `translateY(${(1 - k) * 60}px)`;
       });
     }
-    // The price counts up to 65.
+    // The price counts up to 30.
     const c = easeOut((t - SCENES.s3[0] - 0.6) / 0.9);
-    $("#count").textContent = Math.round(65 * c);
+    $("#count").textContent = Math.round(30 * c);
   }
   window.render = render;
   window.DURATION = DURATION;

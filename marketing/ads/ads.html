@@ -100,13 +100,13 @@
 
   // Guide prices from src/content/categories.ts (per month, Spazia's fee included).
   const PRICES = [
-    ["tyres", "Däck", "per sats", 65],
-    ["boxes", "Lådor & möbler", "per m²", 115],
+    ["tyres", "Däck", "per sats", 30],
+    ["boxes", "Lådor & möbler", "per m²", 70],
     ["skis", "Skidor", "per paket", 55],
-    ["bikes", "Cykel", "", 70],
-    ["parking", "P-plats", "", 280],
-    ["snowmobile", "Skoter & släp", "", 360],
-    ["car", "Bil inomhus", "", 640],
+    ["bikes", "Cykel", "", 35],
+    ["parking", "P-plats", "", 140],
+    ["snowmobile", "Skoter & släp", "", 180],
+    ["car", "Bil inomhus", "", 320],
   ];
 
   const ADS = {
@@ -114,7 +114,7 @@
     tyres: () => `
       <img class="bg" src="photos/tyres.jpg" alt="">
       <div class="layer shade"></div>
-      <div class="sticker"><span class="s1">ca</span><span class="s2">65&nbsp;kr</span><span class="s3">i månaden</span></div>
+      <div class="sticker"><span class="s1">ca</span><span class="s2">30&nbsp;kr</span><span class="s3">i månaden</span></div>
       <div class="content">
         <p class="eyebrow">Däckförvaring i Luleå</p>
         <h1>Sommardäcken i&nbsp;hallen igen?</h1>
@@ -122,17 +122,18 @@
         <div class="foot">${LOGO_WHITE}<span class="url">spazia.se</span></div>
       </div>`,
 
-    // Hosts. 8 sets × 65 kr: host price 59 kr after the 10 % renter fee, 56 kr after the 5 % host fee ≈ 450 kr.
+    // Hosts. Half a double garage, as on the site (exampleGarageIncome): 10 tyre sets at 30 kr, 4 ski sets at 55 kr
+    // and a snowmobile at 180 kr is 700 kr from renters; minus the 10 % renter fee and the 5 % host fee ≈ 605 kr.
     host: () => `
       <img class="bg" src="photos/garage-night.jpg" alt="">
       <div class="layer shade"></div>
       <div class="top">
         <p class="eyebrow">Har du ett garage i Luleå?</p>
-        <h1>Ett tomt hörn kan ge</h1>
-        <p class="big"><small class="ca">ca</small>450&nbsp;kr<small class="per">/mån</small></p>
+        <h1>Halva garaget kan ge</h1>
+        <p class="big"><small class="ca">ca</small>605&nbsp;kr<small class="per">/mån</small></p>
       </div>
       <div class="content">
-        <p class="lead">Räknat på 8 däcksatser à 65 kr i månaden, efter Spazias avgifter. Du sätter priset själv.</p>
+        <p class="lead">Räknat på 10 däcksatser, 4 skidpaket och en skoter, efter Spazias avgifter. Du sätter priset själv.</p>
         <div class="foot">${LOGO_WHITE}<span class="url">Hyr ut på <b>spazia.se</b></span></div>
       </div>`,
 

@@ -8,7 +8,8 @@
   render.mjs prints to PDF and PNG); no parameter shows all three. Sizes are in
   millimetres; text and QR codes keep 10 mm from the edges, for printers that
   can't print to the edge. Prices: src/content/categories.ts (guide prices, fee
-  included). 450 kr: 8 sets × 65 kr, minus 10 % and 5 % in fees.
+  included). 605 kr: half a double garage as on the site (10 tyre sets, 4 ski sets
+  and a snowmobile = 700 kr from renters), minus 10 % and 5 % in fees.
 -->
 <style>
   @font-face { font-family: "Finlandica"; src: url(../ads/assets/finlandica-latin-wght-normal.woff2) format("woff2"); font-weight: 100 900; }
@@ -158,10 +159,10 @@
       </div>
       <div class="body" style="top:119mm">
         <div class="money">
-          <p class="lead">Ett tomt hörn i garaget kan ge dig</p>
-          <span class="num"><span class="hl">ca 450 kr</span></span><span class="per">i månaden</span>
+          <p class="lead">Halva garaget kan ge dig</p>
+          <span class="num"><span class="hl">ca 605 kr</span></span><span class="per">i månaden</span>
         </div>
-        <p class="note">Exempel: 8 däcksatser à 65 kr i månaden, efter Spazias avgifter. Du sätter priset själv.</p>
+        <p class="note">Exempel: 10 däcksatser, 4 skidpaket och en skoter, efter Spazias avgifter. Du sätter priset själv.</p>
         <div style="margin-top:5mm">${checks([
           "<b>Du bestämmer:</b> vad du tar emot, priset och vem som får hyra",
           "<b>Allt sköts i appen:</b> hyresavtal, betalning och kontakt",
@@ -190,10 +191,10 @@
       </div>
       <div class="body" style="top:130mm">
         <div class="prices">
-          <div class="price hi">${ICON(TYRE)}<p class="what">Däck</p><p class="kr">65 kr</p><p class="unit">per sats och mån</p></div>
-          <div class="price">${ICON(BOX)}<p class="what">Förråd</p><p class="kr">115 kr</p><p class="unit">per m² och mån</p></div>
-          <div class="price">${ICON(PARK)}<p class="what">P-plats</p><p class="kr">280 kr</p><p class="unit">per månad</p></div>
-          <div class="price">${ICON(BIKE)}<p class="what">Cykel</p><p class="kr">70 kr</p><p class="unit">per månad</p></div>
+          <div class="price hi">${ICON(TYRE)}<p class="what">Däck</p><p class="kr">30 kr</p><p class="unit">per sats och mån</p></div>
+          <div class="price">${ICON(BOX)}<p class="what">Förråd</p><p class="kr">70 kr</p><p class="unit">per m² och mån</p></div>
+          <div class="price">${ICON(PARK)}<p class="what">P-plats</p><p class="kr">140 kr</p><p class="unit">per månad</p></div>
+          <div class="price">${ICON(BIKE)}<p class="what">Cykel</p><p class="kr">35 kr</p><p class="unit">per månad</p></div>
         </div>
         <p class="note">Ungefärliga priser med avgift. Värden sätter det slutliga priset.</p>
         <div style="margin-top:5.5mm">${checks([
@@ -221,13 +222,13 @@
           <div class="side a">
             <h2>Har du plats över?</h2>
             <p>Hyr ut ett hörn i garaget, förrådet, källaren eller en p-plats. Gratis att annonsera, du sätter priset.</p>
-            <p class="big">ca 450 kr<small> /mån</small></p>
-            <p class="note" style="margin-top:1mm">för 8 däcksatser, efter avgifter</p>
+            <p class="big">ca 605 kr<small> /mån</small></p>
+            <p class="note" style="margin-top:1mm">för halva garaget, efter avgifter</p>
           </div>
           <div class="side b">
             <h2>Behöver du plats?</h2>
             <p>Däck, flyttlådor, cykeln, skotern eller bilen. Hos en granne nära dig, utan bindningstid.</p>
-            <p class="big">från 65 kr<small> /mån</small></p>
+            <p class="big">från 30 kr<small> /mån</small></p>
             <p class="note" style="margin-top:1mm">för en däcksats, avgift inräknad</p>
           </div>
         </div>

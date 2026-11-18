@@ -6,7 +6,7 @@ Three A4 posters with QR codes, for notice boards at ICA, Coop, libraries, laund
 
 | File | Who it's for | Where to put it up |
 |---|---|---|
-| `spazia-affisch-host-A4.pdf` | **Hosts**: "Har du plats över? Låt den tjäna pengar." ca 450 kr a month, 3 steps | Villa and terraced-house areas, garage areas, hardware stores, ICA/Coop near houses |
+| `spazia-affisch-host-A4.pdf` | **Hosts**: "Har du plats över? Låt den tjäna pengar." ca 605 kr a month for half a garage, 3 steps | Villa and terraced-house areas, garage areas, hardware stores, ICA/Coop near houses |
 | `spazia-affisch-renter-A4.pdf` | **Renters**: "Sommardäcken i hallen igen?" prices for tyres, storage, parking, bikes | Apartment buildings (laundry rooms, entrances), student housing, campus |
 | `spazia-affisch-tabs-A4.pdf` | **Both**, with 8 tear-off strips at the bottom | Shared boards: ICA, Coop, libraries, community halls, Pressbyrån |
 | `spazia-affischer-alla-A4.pdf` | All three in one file | Print a stack at once |
@@ -40,4 +40,4 @@ The `utm_source=affisch` part shows visits from the posters as their own source 
 
 Edit `posters.html` and run `node marketing/posters/render.mjs` from the repository root (needs Playwright with Chromium). Open `posters.html?p=host` (or `renter`, `tabs`) in a browser to see one poster; with no `?p=` all three show side by side.
 
-The texts follow the same rules as the ads (`marketing/ads/README.md`): prices are guide prices with "ca", the host decides the price, no promises of BankID or damage protection, and no made-up reviews. The 450 kr: 8 tyre sets × 65 kr, minus the 10 % renter fee and the 5 % host fee. Photos are from Unsplash (free for commercial use, including print).
+The texts follow the same rules as the ads (`marketing/ads/README.md`): prices are guide prices with "ca", the host decides the price, no promises of BankID or damage protection, and no made-up reviews. The 605 kr is the site's example of half a double garage: 10 tyre sets (30 kr), 4 ski sets (55 kr) and a snowmobile (180 kr) make 700 kr from renters, minus the 10 % renter fee and the 5 % host fee. Photos are from Unsplash (free for commercial use, including print).

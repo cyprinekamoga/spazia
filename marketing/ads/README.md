@@ -4,9 +4,8 @@ First paid campaign on Instagram and Facebook. It focuses on **hosts**, because 
 
 ## Before you start
 
-1. **Fix the fee in the database.** The site says 10 %, but the database still charges 15 %. Run the three lines in Supabase → SQL Editor (they're in `supabase/migrations/20261115000000_service_fee_10.sql`). Otherwise the first bookings from the ads will cost more than the price shown.
-2. Connect the Instagram account to a Meta Business account (business.facebook.com) and add a payment method.
-3. The Meta Pixel is already on spazia.se. It only counts visitors who accept cookies, so Meta will report fewer leads than really came in. The real number is in Spazia's admin (see "Measuring").
+1. Connect the Instagram account to a Meta Business account (business.facebook.com) and add a payment method.
+2. The Meta Pixel is already on spazia.se. It only counts visitors who accept cookies, so Meta will report fewer leads than really came in. The real number is in Spazia's admin (see "Measuring").
 
 ## The files (`out/`)
 
@@ -36,10 +35,10 @@ To change a text or price: edit `ads.html` or `reel.html` and run `node marketin
 | Button | "Läs mer" |
 
 **Primary text, version A** (test against version B):
-> Har du ett garage, en källare eller ett förråd med plats över? Hyr ut ett hörn till en granne i Luleå. 8 däcksatser à 65 kr i månaden ger dig ca 450 kr, efter Spazias avgifter. Du sätter priset och godkänner varje hyresgäst.
+> Har du ett garage, en källare eller ett förråd med plats över? Hyr ut till grannar i Luleå. Halva garaget, med 10 däcksatser, 4 skidpaket och en skoter, ger dig ca 605 kr i månaden efter Spazias avgifter. Du sätter priset och godkänner varje hyresgäst.
 
 **Primary text, version B:**
-> Ett tomt hörn i garaget kan bli ca 450 kr i månaden. Gratis att annonsera, betalning och hyresavtal sköts i appen och du godkänner varje hyresgäst.
+> Halva garaget kan bli ca 605 kr i månaden. Gratis att annonsera, betalning och hyresavtal sköts i appen och du godkänner varje hyresgäst.
 
 **Headline:** Tjäna pengar på ditt tomma utrymme
 **Description:** Gratis att annonsera
@@ -58,10 +57,10 @@ To change a text or price: edit `ads.html` or `reel.html` and run `node marketin
 There are few spaces in Luleå so far. Visitors who find nothing in the app see a form to watch Luleå ("Bevaka"), and get an email when a space there is published. There are no forms on the website any more. Those leads are also the best argument when you talk to new hosts.
 
 **Primary text, version A:**
-> Sommardäcken i hallen igen? Förvara dem hos en granne i Luleå för ca 65 kr i månaden, ca 390 kr för hela vintern. Hämta dem när du vill. Ingen bindningstid.
+> Sommardäcken i hallen igen? Förvara dem hos en granne i Luleå för ca 30 kr i månaden, ca 180 kr för hela vintern. Hämta dem när du vill. Ingen bindningstid.
 
 **Primary text, version B:**
-> Byter du hjul själv? Då behöver du inte betala för ett däckhotell. Förvara däcken hos en granne i Luleå för ca 65 kr i månaden.
+> Byter du hjul själv? Då behöver du inte betala för ett däckhotell. Förvara däcken hos en granne i Luleå för ca 30 kr i månaden.
 
 **Headline:** Däckförvaring hos grannar i Luleå
 **Description:** Ingen bindningstid
@@ -73,7 +72,7 @@ There are few spaces in Luleå so far. Visitors who find nothing in the app see 
 > #luleå #förvaring #däckförvaring #garage #hyraut #extrainkomst
 
 **Price list caption:**
-> Vad kostar det att förvara saker hos en granne i Luleå? Däck ca 65 kr, flyttlådor ca 115 kr per m², p-plats ca 280 kr i månaden. Värden sätter priset och det finns ingen bindningstid. Länk i bion 👆
+> Vad kostar det att förvara saker hos en granne i Luleå? Däck ca 30 kr, flyttlådor ca 70 kr per m², p-plats ca 140 kr i månaden. Värden sätter priset och det finns ingen bindningstid. Länk i bion 👆
 
 ## Measuring
 
@@ -86,6 +85,6 @@ There are few spaces in Luleå so far. Visitors who find nothing in the app see 
 ## Rules for the texts
 
 - Prices are guide prices from `src/content/categories.ts`; always write "ca" and keep "Värden sätter priset" or "Du sätter priset" where the price is the point.
-- The 450 kr: 8 sets × 65 kr, minus the 10 % renter fee (59 kr per set to the host) and the 5 % host fee (56 kr) ≈ 450 kr.
+- The 605 kr is the site's example of half a double garage: 10 tyre sets × 30 kr + 4 ski sets × 55 kr + a snowmobile at 180 kr = 700 kr from renters, minus the 10 % renter fee and the 5 % host fee ≈ 605 kr.
 - Compare with tyre hotels only by saying what each price includes (a tyre hotel includes the wheel change). Swedish marketing law requires a fair comparison.
 - Don't promise BankID or damage protection until they are live.

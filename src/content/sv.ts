@@ -203,7 +203,7 @@ export const sv = {
       },
       {
         q: "Vad kostar det?",
-        a: "Värden sätter priset. Riktpriset för en däcksats är omkring 65 kr i månaden och för flyttlådor omkring 115 kr per kvadratmeter. I storstäderna blir det ofta dyrare. Serviceavgiften på 10 % ingår i priset du ser, och det finns ingen bindningstid.",
+        a: "Värden sätter priset. Riktpriset för en däcksats är omkring 30 kr i månaden och för flyttlådor omkring 70 kr per kvadratmeter. I storstäderna blir det ofta dyrare. Serviceavgiften på 10 % ingår i priset du ser, och det finns ingen bindningstid.",
       },
       {
         q: "Är det säkert?",

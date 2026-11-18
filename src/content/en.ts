@@ -205,7 +205,7 @@ export const en: Dictionary = {
       },
       {
         q: "What does it cost?",
-        a: "The host sets the price. The guide price is about SEK 65 a month for a set of tyres and about SEK 115 per square metre for boxes. Big cities are often more expensive. The 15% service fee is included in the price you see, and you can cancel any month.",
+        a: "The host sets the price. The guide price is about SEK 30 a month for a set of tyres and about SEK 70 per square metre for boxes. Big cities are often more expensive. The 10% service fee is included in the price you see, and you can cancel any month.",
       },
       {
         q: "Is it safe?",
