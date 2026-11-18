@@ -4,7 +4,39 @@ Korta DM:s till olika slags konton. Varje del har två texter: **DM** (till pers
 
 Priserna är riktpriser (november 2026): däck ca 30 kr/mån, cykel ca 35 kr/mån, flyttlådor ca 70 kr/m², p-plats ca 140 kr/mån.
 
-## 1. Influencers och lokala konton
+## Lokala konton och influencers: längre version som förklarar mer
+
+**DM:**
+> Hej [namn]! 👋
+>
+> Vi har precis startat Spazia, en ny tjänst där grannar hyr ut plats till varandra.
+>
+> Så funkar det:
+> 🏠 Har du ett garage, förråd eller en p-plats som står tom kan du hyra ut den. Det är gratis att annonsera och du sätter priset själv.
+> 📦 Behöver du plats för däck, cykel, flyttlådor eller bilen hittar du den hos en granne, ofta mycket billigare än hos ett förrådsföretag. Däck från ca 30 kr/mån.
+> ✅ Hyresavtal och betalning sköts i appen, och det finns ingen bindningstid.
+>
+> Vi tror att många av dina följare antingen har saker som tar plats eller plats som står tom. Vill du dela det i din story eller i ett inlägg? Vi har en färdig text, bilder och en kort video som du kan använda. Säg till så skickar vi dem!
+>
+> Tack! 🙏
+> spazia.se · @_spazia_
+
+**Att dela, inlägg:**
+> Visste du att du kan hyra ut ditt tomma garage till grannar? 🏠
+>
+> Spazia är en ny tjänst där grannar hyr ut plats till varandra: garage, förråd, källare och p-platser.
+>
+> 📦 Behöver du plats? Förvara däcken från ca 30 kr/mån, cykeln för ca 35 kr/mån eller flyttlådor från ca 70 kr/m². Ingen bindningstid.
+> 💰 Har du plats över? Annonsera gratis och sätt ditt eget pris. Ett halvt garage med däck, skidor och en skoter kan ge ca 605 kr i månaden.
+> ✅ Hyresavtal och betalning sköts i appen.
+>
+> 👉 spazia.se · följ @_spazia_
+
+**Att dela, story:**
+> Tomt garage eller saker som tar plats? 🏠 På Spazia hyr grannar ut plats till varandra. Däck från ca 30 kr/mån, gratis att hyra ut.
+> 👉 spazia.se · @_spazia_
+
+## 1. Influencers och lokala konton, kort version
 
 **DM:**
 > Hej! Vi har precis startat Spazia, där grannar hyr ut plats till varandra: garage, förråd och p-platser. Vill du dela det med dina följare? Texten nedan går att kopiera rakt av 🙏
