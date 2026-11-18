@@ -8,8 +8,8 @@ import { categoryIcons } from "@/components/Icons";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { CheckList, FinalCta, PhotoHero, priceLabel, Section, SectionHeading } from "@/components/sections";
 import { fill, type Lang } from "@/lib/i18n";
-import { cityPath, pagePath, universityPath } from "@/lib/routes";
-import { appSearchUrl, renterSignupUrl } from "@/lib/site";
+import { cityPath, universityPath } from "@/lib/routes";
+import { appSearchUrl, hostSignupUrl, renterSignupUrl } from "@/lib/site";
 
 /** Create an account in the app and search for box storage, with the town filled in. */
 function findHref(lang: Lang, town?: string): string {
@@ -116,7 +116,7 @@ export function StudentsView({ lang }: { lang: Lang }) {
         <FinalCta lang={lang} t={t} />
       </Section>
 
-      <MobileActionBar primary={{ href: findHref(lang), label: t.actionBar.find, track: "renter" }} secondary={{ href: pagePath("host", lang), label: t.actionBar.host }} />
+      <MobileActionBar primary={{ href: findHref(lang), label: t.actionBar.find, track: "renter" }} secondary={{ href: hostSignupUrl(lang), label: t.actionBar.host, track: "host" }} />
     </>
   );
 }
@@ -191,7 +191,7 @@ export function UniversityView({ lang, university: u }: { lang: Lang; university
         </div>
       </Section>
 
-      <MobileActionBar primary={{ href: signUp, label: t.actionBar.find }} secondary={{ href: pagePath("host", lang), label: t.actionBar.host }} />
+      <MobileActionBar primary={{ href: signUp, label: t.actionBar.find }} secondary={{ href: hostSignupUrl(lang), label: t.actionBar.host, track: "host" }} />
     </>
   );
 }

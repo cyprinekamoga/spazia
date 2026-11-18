@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { HostSignupLink } from "@/components/HostSignupLink";
-import { appSearchUrl, renterSignupUrl } from "@/lib/site";
+import { appSearchUrl, hostSignupUrl, renterSignupUrl } from "@/lib/site";
 import { CalendarDays, Tag } from "lucide-react";
 import { getDictionary } from "@/content";
 import type { Category } from "@/content/categories";
@@ -23,7 +23,6 @@ import {
   TrustGrid,
 } from "@/components/sections";
 import { fill, type Lang } from "@/lib/i18n";
-import { pagePath } from "@/lib/routes";
 import { RelatedGuides } from "@/views/GuideViews";
 
 /** SEO landing page per storage type, e.g. /forvaring/dackforvaring. */
@@ -201,7 +200,7 @@ export function CityView({ lang, city }: { lang: Lang; city: City }) {
         </div>
       </Section>
 
-      <MobileActionBar primary={{ href: findHref, label: t.actionBar.find, track: "renter" }} secondary={{ href: pagePath("host", lang), label: t.actionBar.host }} />
+      <MobileActionBar primary={{ href: findHref, label: t.actionBar.find, track: "renter" }} secondary={{ href: hostSignupUrl(lang), label: t.actionBar.host, track: "host" }} />
     </>
   );
 }

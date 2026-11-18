@@ -22,7 +22,7 @@ import {
 } from "@/components/sections";
 import type { Lang } from "@/lib/i18n";
 import { pagePath } from "@/lib/routes";
-import { appSearchUrl } from "@/lib/site";
+import { appSearchUrl, hostSignupUrl } from "@/lib/site";
 
 export function HomeView({ lang }: { lang: Lang }) {
   const t = getDictionary(lang);
@@ -143,7 +143,7 @@ export function HomeView({ lang }: { lang: Lang }) {
 
       <MobileActionBar
         primary={{ href: findPath, label: t.actionBar.find }}
-        secondary={{ href: pagePath("host", lang), label: t.actionBar.host }}
+        secondary={{ href: hostSignupUrl(lang), label: t.actionBar.host, track: "host" }}
       />
     </>
   );

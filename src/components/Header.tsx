@@ -9,6 +9,7 @@ import type { Lang } from "@/lib/i18n";
 import { site } from "@/lib/site";
 import { pagePath, translatePath } from "@/lib/routes";
 import { Logo } from "./Logo";
+import { HostSignupLink } from "./HostSignupLink";
 
 export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
   const pathname = usePathname() ?? "/";
@@ -63,9 +64,9 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
           <a href={`${site.appUrl}/logga-in`} className="rounded-full px-3 py-2 text-sm font-semibold text-ink/80 hover:bg-frost/70 hover:text-ink">
             {t.nav.login}
           </a>
-          <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-primary !px-4 !py-2.5 text-[0.95rem]">
+          <HostSignupLink lang={lang} className="btn btn-primary !px-4 !py-2.5 text-[0.95rem]">
             {t.nav.hostCta}
-          </Link>
+          </HostSignupLink>
         </div>
 
         <button
@@ -105,9 +106,9 @@ export function Header({ lang, t }: { lang: Lang; t: Dictionary }) {
             <a href={`${site.appUrl}/logga-in`} className="btn btn-secondary mt-3 w-full">
               {t.nav.login}
             </a>
-            <Link prefetch={false} href={pagePath("host", lang)} className="btn btn-primary mt-2 w-full">
+            <HostSignupLink lang={lang} className="btn btn-primary mt-2 w-full">
               {t.nav.hostCta}
-            </Link>
+            </HostSignupLink>
           </nav>
         </div>
       )}

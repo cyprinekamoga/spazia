@@ -91,7 +91,13 @@ export function MobileActionBar({
           </p>
         ) : (
           secondary && (
-            <Link prefetch={false} href={secondary.href} tabIndex={visible ? 0 : -1} className="btn btn-secondary flex-1 !px-3 !py-3 text-[0.95rem]">
+            <Link
+              prefetch={false}
+              href={secondary.href}
+              tabIndex={visible ? 0 : -1}
+              onClick={secondary.track ? () => trackLead(secondary.track!) : undefined}
+              className="btn btn-secondary flex-1 !px-3 !py-3 text-[0.95rem]"
+            >
               {secondary.label}
             </Link>
           )

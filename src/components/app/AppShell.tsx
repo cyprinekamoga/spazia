@@ -86,9 +86,9 @@ function PublicHeader() {
           <LogoMark className="h-8 w-auto" id="public-logo" />
         </a>
         <nav aria-label="Spazia" className="flex items-center gap-1 sm:gap-2">
-          <a href={`${site.url}/bli-vard`} className="hidden min-h-11 items-center rounded-full px-3.5 text-[0.95rem] font-semibold text-muted hover:bg-frost hover:text-night sm:flex">
+          <Link prefetch={false} href={`/logga-in?next=${encodeURIComponent("/vard/annons")}`} className="hidden min-h-11 items-center rounded-full px-3.5 text-[0.95rem] font-semibold text-muted hover:bg-frost hover:text-night sm:flex">
             {t.rentOut}
-          </a>
+          </Link>
           <Link prefetch={false} href={`/logga-in?next=${encodeURIComponent(here)}`} className="btn btn-primary !min-h-11 !py-2 text-[0.95rem]">
             {t.login}
           </Link>
